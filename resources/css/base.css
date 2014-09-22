@@ -1,0 +1,575 @@
+/* 基本配置 */
+
+body {
+	background:lightgray;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size:10pt;
+	margin:0;
+	padding:0;
+}
+a {
+	color:blue;
+	text-decoration:none;
+}
+a:hover {
+	color:blue;
+	text-decoration: underline;
+}
+img {
+	border:none;
+	vertical-align:middle;
+}
+p.title_p {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	font-weight: bold;
+	color: black;
+	background-color: #C9D392;
+	width: 30%;
+	text-align:center;
+	margin: 10px auto;
+}
+p.good { 
+    font-weight: bold;
+    color: green;
+}
+p.bad { 
+    font-weight: bold;
+    color:red;
+}
+table {
+  background-color: #ffffff;
+  margin: 0 auto;
+  width:100%;
+}
+th {
+	font-weight: normal;
+	background-color: #777C59;
+	color: white;
+	text-align: center;
+}
+th.number {
+	text-align: right;
+	font-weight: normal;
+	background-color: #800000;
+	color: white;
+}
+th.ascending {
+  cursor: s-resize;
+}
+th.descending {
+  cursor: n-resize;
+}
+th:after {
+	content: "";
+	float: right;
+	margin-top: 7px;
+	visibility: hidden;
+}
+th.ascending:after {
+	border-width: 0 4px 4px;
+	border-style: solid;
+	border-color: #000 transparent;
+	visibility: visible;
+}
+th.descending:after {
+	border-bottom: none;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #000;
+	visibility: visible;
+}
+td {
+	text-align: left;
+}
+td.select {
+	background-color:#eee;
+}
+td.number {
+	text-align: right;
+}
+div.centre { 
+  margin: 0 auto;
+  text-align:center;
+}
+input.number{
+	text-align: right;
+}
+input.image {
+	border-width:0px;
+	background-color: transparent;
+}
+select {
+	font-family: Arial, Verdana, Helvetica, sans-serif;;
+	font-size:12px;
+}
+input.inputerror, input.error, select.error, select.selecterror, label.error {
+	color:red;
+	border: 2px solid red;
+}
+input:required, select:required, textarea:required {
+	background-color:lightyellow;
+}
+.EvenTableRows {
+	background-color: #72824D;
+}
+.OddTableRows {
+	background-color: #CAF17C;
+}
+div.error {
+	background-color:#fddbdb;
+	color: red;
+	border: 1px solid red;
+}
+div.warn {
+	background-color:#f5dbfd;
+	color: maroon;
+	border: 1px solid maroon;
+}
+div.success {
+	background-color:#b9ecb4;
+	color: darkgreen;
+	border: 1px solid darkgreen;
+}
+div.info {
+	background-color:#c7ccf6;
+	color: navy;
+	border: 0px solid navy;
+}
+div.page_help_text {
+	background: lightgrey top left no-repeat;
+	border: #a52a2a 1px solid;
+	padding-top:2px;
+	padding-bottom: 2px;
+	padding-left: 10px;
+	z-index: 1;
+	width: 80%;
+	float: none;
+	visibility: visible;
+	margin: 0 auto;
+	position: static;
+	font-weight: normal;
+	color: black;
+	text-align:center;
+}
+
+.search table {
+	width:80%;
+	background:#E0F3B1;
+    border:2px solid #E0F3B1;
+    border-collapse:collapse;
+}
+.search td {
+	border: 2px solid #ffffff;
+}
+
+
+
+/*** 行事曆calendar picker ***/
+
+.dpTbl {
+	border: solid navy 1px;
+}
+.dpTD {
+	border: 0;
+	width:20px;
+	background-color: #EEEEEE;
+	text-align:right;
+	cursor:pointer;
+}
+.dpDayHighlight {
+	border: 0;
+	width:20px;
+	background-color: yellow;
+	text-align:right;
+	cursor:pointer;
+}
+.dpTDHover {
+	border: 0;
+	width:20px;
+	background-color: #CCCCCC;
+	text-align:right;
+	cursor:pointer;
+}
+
+/*** end 行事曆calendar picker ***/
+
+/* Table type is used for UI tables type 1 */
+
+.table1 {
+  width:90%;
+  background: #eee;
+  border: 0px 0px 2px 2px #222 solid;
+  margin: 0 auto;
+}
+
+/* Table type is used for UI tables type 2 */
+
+.table2 {
+  width:90%;
+  background: #eee;
+  border: 0px 0px 2px 2px #222 solid;
+  margin: 0 auto;
+}
+.tableheader {
+	font-weight: normal;
+	background-color: #777C59;
+	color: white;
+}
+.notavailable {
+	font-weight:lighter;
+	font-style:italic;
+	color:#555555;
+}
+.label {
+	font-weight:bold;
+	font-style:normal;
+	font-size:120%;
+	color:black;
+}
+.table_index {
+	background-color: #F1FFDD;
+}
+.header {
+	background-image: url("");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	border: none;
+	margin: 0px;
+	padding: 0px;
+}
+input.inputerror {
+	background-color: #fddbdb;
+}
+textarea.texterror {
+	background-color: #fddbdb;
+}
+select.selecterror {
+	background-color: #fddbdb;
+}
+.OsRow {
+	background-color: #234567;
+	color: white;
+}
+
+/* end Table type is used for UI tables type 2 */
+
+/*** 頁面頂端header ***/
+
+#header_div {
+	overflow:hidden;
+	color:black;
+	padding-left:10px;
+	background:#B4BB86;
+	height:115px;
+}
+
+/*** logo user div ***/
+
+#logo_div {
+	display:table-cell; 
+	background:#B4BB86;	
+}
+#user_div {
+	display:table-cell;
+	background:#B4BB86;	
+}
+#user_div a {
+	color:#5A5F00;
+}
+#logo_div a:hover {
+	 color:black;
+	 text-decoration:none; 
+}
+#user_div a:hover {
+	color:black;
+	text-decoration:underline;
+}
+
+/*** end logo user div ***/
+
+/*** 主選單  menu ***/
+
+#menu_div {
+	float:right; 
+	background:#B4BB86;
+}
+#menu_div ul {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	overflow:auto;
+}
+#menu_div ul li {
+	float:left;
+	padding: 2px;
+}
+#menu_div ul li a {
+	display:block;
+	float:left;
+	height:30px;
+	width: 100px;
+	text-align: center;
+	border:thin outset #5A5F00;
+}
+#menu_div ul li ul {
+	position:absolute;
+	width:100px;
+	overflow:visible;
+	clear:left;
+	margin-top: 30px;
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 0;
+}
+
+#menu_div ul li ul li {
+	float:none;
+	text-align: center;
+}
+#menu_div ul li ul li a {
+	float:none;
+	width: 100%;
+}
+#menu_div ul li ul li ul {
+	margin-top: -34px;
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-left: 97px;
+	width: 100%;
+}
+#menu_div ul li ul {
+	visibility:hidden;
+}
+#menu_div ul li:hover ul {
+	visibility:visible;
+}
+#menu_div ul li:hover ul li ul {
+	visibility:hidden;
+}
+#menu_div ul li ul li:hover ul {
+	visibility:visible;
+}
+#menu_div ul li ul li:hover ul li ul {
+	visibility:hidden;
+}
+#menu_div ul li ul li ul li:hover ul {
+	visibility:visible;
+}
+#menu_div {
+	font-size:12px;
+	font-family:Arial, Helvetica, sans-serif;
+}
+#menu_div ul li a {
+	color:#5A5F00;
+	text-decoration:none;
+	line-height: 30px;
+	background:#B4BB86;
+}
+#menu_div ul li ul li a {
+	font-size:12px;
+	color:#5A5F00;
+	text-decoration:none;
+}
+#menu_div ul li:hover, #menu_div ul li a:hover {
+	padding: 4px;
+}
+#menu_div ul li:hover a {
+	color:#000000;
+}
+
+/*** end 主選單  menu ***/
+
+/*** 中間內容content ***/
+
+#content_div {
+	clear:both; 
+	overflow:hidden; 
+	color:black;
+	padding:5px;
+	text-align:center;
+/* 	background:Gainsboro; */
+}
+#content_div table {
+	width:auto; 
+	margin: 0 auto;
+	margin-bottom:10px;
+	background:#E0F3B1;
+    border:thin outset #E0F3B1;
+    padding:5px;
+}
+
+/*** content - 左邊 menu ***/
+
+#leftmenu_div {
+	float:left; 
+	white-space:nowrap;
+	text-align:center; 
+	width:11%;
+	background:#617C4F;
+}
+#leftmenu_div ul {
+	list-style:none; 
+	padding:0; 
+	margin:0;
+}
+#leftmenu_div li {
+	list-style:none;
+	padding:0; 
+}
+#leftmenu_div li a { 
+	display:block; 
+	padding:5px;
+	border:thin outset #617C4F;
+	color:white;
+}
+#leftmenu_div li a:hover {
+	text-decoration:none;
+	padding:10px;
+	border:thin inset #617C4F;
+	background:#5A5F00;	
+}
+#leftmenu_div .main_menu_selected a {
+	border:thin inset #5A5F00;	
+	background:#5A5F00;
+	color:white;	
+}
+
+/*** content - 右邊 menu ***/
+
+#SubMenuDiv {
+	display:table; 
+	width:89%;
+	text-align:left;
+	background:#008040;
+}
+#SubMenuDiv a:link, a:visited {
+	color:#5A5F00;
+	text-decoration:none;
+}
+#SubMenuDiv a:hover {
+	color:#5A5F00;
+	text-decoration:underline;
+}
+#SubMenuDiv ul {
+	list-style-type:none; 
+	padding:0; 
+	margin-left:3px;
+	margin-top:0;
+	margin-bottom:0;
+	border:thin outset #5A5F00;
+	background:#E0F3B1;
+}
+#SubMenuDiv li {
+	list-style:none;
+	padding:2px;
+	background:#E0F3B1;	
+}
+#SubMenuDiv li img {
+	vertical-align:middle; 
+}
+#SubMenuDiv .menu_group_headers {
+	background:#C9D392;
+	outline:thin outset #5A5F00;
+	text-align:center;
+	color:black;
+}
+#TransactionsDiv {
+	display:table-cell;
+	background:#ff0080;
+}
+#InquiriesDiv {
+	display:table-cell;
+	background:#000080;
+}
+#InquiriesDiv div { 
+	background:#C9D392;
+	color:black;
+	padding:2px;
+	border:thin outset #5A5F00;
+}
+#InquiriesDiv body {
+	background:#eee;
+	color:red;
+	padding:2px;
+}
+#MaintenanceDiv {
+	display:table-cell;
+	background:#8000ff;
+}
+.menu_group_item p {
+	color: #00f; 
+	text-indent: -10px; 
+	margin: 0 0 0 12px; 
+}
+
+/*** end 中間內容content ***/
+
+/*** 查詢內容 query ***/
+
+#query_div {
+	clear:both; 
+	overflow:hidden; 
+	color:black;
+	padding:5px;
+	text-align:center;
+/* 	background:Gainsboro; */
+}
+#query_div table {
+	width:80%;
+	background:#E0F3B1;
+    border:2px solid #E0F3B1;
+    border-collapse:collapse;
+}
+#query_div td {
+	border: 2px solid #ffffff;
+}
+
+/*** end 查詢內容 query ***/
+
+/*** 頁面底端 footer ***/
+
+#footer {
+	clear:both; 
+    overflow:hidden;	
+    background:#0080c0;
+}
+#FooterWrapDiv {
+	overflow:hidden;
+	padding:3px;
+}
+#FooterLogoDiv { 
+	float:right; 
+	background:white;
+    border-radius:8px;
+    padding:2px;
+}
+#FooterLogoDiv img {
+    vertical-align:middle;
+}
+#FooterVersionDiv {
+	float:left; 
+	margin-top:3px;
+}
+#FooterTimeDiv {
+	clear:left; 
+}
+
+/*** end 頁面底端 footer ***/
+#content1 {
+	width:auto; 
+	margin: 0 auto;
+	margin-bottom:10px;
+	background:#E0F3B1;
+    border:thin outset #E0F3B1;
+    padding:5px;
+}
+
+#content2 {
+	width:auto; 
+	margin: 0 auto;
+	margin-bottom:10px;
+	background:#E0F3B1;
+    border:thin outset #E0F3B1;
+    padding:5px;
+}
