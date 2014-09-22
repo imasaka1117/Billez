@@ -14,10 +14,10 @@ class Login_model extends CI_Model {
 				return $this->send_member_data($route_data);
 				break;
 			case '4_3':
-				return $this->send_password($route_data);
+				return $this->send_subscribe($route_data);
 				break;
 			case '4_4':
-				return $this->send_authentication($route_data);
+				return $this->send_bill($route_data);
 				break;
 		}
 	}
@@ -182,4 +182,103 @@ class Login_model extends CI_Model {
 		return $this->json->encode_json(1, $encode_data);
 	}
 	
+	/*
+	 * 查詢該會員的訂閱紀錄並回傳
+	 * $route_data	所需參數資料
+	 */
+	public function send_subscribe($route_data) {
+		$app = '4_3';
+		
+		//查詢該會員的訂閱紀錄
+		$sql_select = $this->sql->select(array('subscribe_code'), '');
+		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'subscribe', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'result_array');
+		$subscribe_list = array();
+		foreach($sql_result as $data) array_push($subscribe_list, $data['subscribe_code']);
+		if(count($subscribe_list) == 0) {
+			$json_data = $this->json->encode_json($app, '4_301');
+		} else {
+			$json_data = $this->json->encode_json($app, $subscribe_list);
+		}
+		
+		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
+		return $this->json->encode_json(1, $encode_data);
+	}
+	
+	/*
+	 * 查詢該會員有的帳單紀錄並回傳
+	 * $route_data	所需參數資料
+	 */
+	public function send_bill($route_data) {
+		$app = '4_4';
+		
+		//查詢該會員的訂閱紀錄
+		$sql_select = $this->sql->select(array('subscribe_code'), '');
+		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'subscribe', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'result_array');
+		$billez_code_list = array();
+		
+		//將訂閱碼丟到帳單編號集合
+		foreach($sql_result as $data) {
+			//查詢帳單編號
+			$sql_select = $this->sql->select(array('billez_code'), '');
+			$sql_where = $this->sql->where(array('like'), array('billez_code'), array($data['subscribe_code']), array('after'));
+			$sql_query = $this->query_model->query($sql_select, 'bill', '', $sql_where, '');
+			$sql_result = $this->sql->result($sql_query, 'result_array');
+			
+			foreach($sql_result as $sub_data) array_push($billez_code_list, $sub_data['billez_code']);
+		}
+		if(count($billez_code_list) == 0) {
+			$json_data = $this->json->encode_json($app, '4_401');
+		} else {
+			$bill_info = array();
+			//查詢各筆帳單資料
+			foreach($billez_code_list as $billez_code) {
+				$sql_select = $this->sql->select(array('bill.billez_code'), '');
+				$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
+				$sql_result = $this->sql->result($sql_query, 'row_array');
+				array_push($bill_info, $sql_result);
+			}
+			
+			
+			"SELECT DISTINCT `bill`.`billez_code`, 
+				CONCAT(`bill`.`trader_code`, `bill`.`bill_kind_code`, `identify_data`) AS `subscribe_code`
+				, `bill_owner`, `trader_code`.`name` as `trader_name`
+				, `bill_kind_code`.`name` as `bill_kind_name`
+				, IFNULL(`cvs_amount`, 'blank') AS `cvs_amount`
+				, IFNULL(`cvs_barcode1`, 'blank') AS `cvs_barcode1`
+				, IFNULL(`cvs_barcode2`, 'blank') AS `cvs_barcode2`
+				, IFNULL(`cvs_barcode3`, 'blank') AS `cvs_barcode3`
+				, IFNULL(`lowest_pay_amount`, 'blank') AS `lowest_pay_amount`
+				, IFNULL(`post_amount`, 'blank') AS `post_amount`
+				, IFNULL(`post_barcode1`, 'blank') AS `post_barcode1`
+				, IFNULL(`post_barcode2`, 'blank') AS `post_barcode2`
+				, IFNULL(`post_barcode3`, 'blank') AS `post_barcode3`
+				, IFNULL(`bank_amount`, 'blank') AS `bank_amount`
+				, IFNULL(`bank_barcode1`, 'blank') AS `bank_barcode1`
+				, IFNULL(`bank_barcode2`, 'blank') AS `bank_barcode2`
+				, IFNULL(`bank_barcode3`, 'blank') AS `bank_barcode3`
+				, `publish_time`, `due_time`
+				,(SELECT GROUP_CONCAT(`pay_place`) AS `mix` 
+				FROM `pay_place` WHERE `billez_code` = '$billez_code') AS `pay_place`
+			, `trader_bill`.`bill_ad_url` AS `ad_id`
+			, CONCAT(IFNULL(CONCAT(`data1`, ','), '')
+			, IFNULL(CONCAT(`data2`, ','), '')
+			, IFNULL(CONCAT(`data3`, ','), '')
+			, IFNULL(CONCAT(`data4`, ','), '')
+			, IFNULL(CONCAT(`data5`, ','), '')) AS `remark` 
+			FROM `bill` JOIN `trader_code` ON `trader_code` = `trader_code`.`code`
+			 JOIN `bill_kind_code` ON `bill_kind_code` = `bill_kind_code`.`code`
+			 JOIN `pay_place` ON `bill`.`billez_code` = `pay_place`.`billez_code`
+			 JOIN `trader_bill` ON `bill`.`trader_code` = `trader_bill`.`trader_code`
+			 WHERE `bill`.`billez_code` = '$billez_code'";
+			$json_data = $this->json->encode_json($app, $bill_info);
+		}
+		
+		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
+		return $this->json->encode_json(1, $encode_data);
+	}
 }//end

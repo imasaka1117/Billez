@@ -28,6 +28,9 @@ class Query_model extends CI_Model {
 			case 'sum':
 				$this->db->select_sum($select['fields'], 'sum');
 				break;
+			case 'function':
+				$this->db->select($select['fields'], FALSE);
+				break;
 			default:
 				$this->db->select($select['fields']);
 				break;

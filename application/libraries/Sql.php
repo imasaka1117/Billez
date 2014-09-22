@@ -77,6 +77,7 @@ class Sql {
 	public function select($fields, $condition) {
 		switch($condition) {
 			case '':
+			case 'function':
 				$string = '';
 				foreach($fields as $field) $string = $string . $field . ', ';
 				break;
@@ -84,7 +85,7 @@ class Sql {
 				$string = $fields[0];
 				break;
 		}
-		
+// 		echo $string;exit();
 		return array('fields' => $string, 'condition' => $condition);
 	}
 	

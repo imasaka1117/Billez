@@ -23,11 +23,15 @@ class App extends CI_Controller {
 	 * 最後再載入view輸出結果給APP
 	 */
 	public function index() {
-// 		$sql_select = $this->sql->select(array('*'), '');
-// 		$sql_where = $this->sql->where(array('where'), array('a'), array('a'), array(''));
-// 		$sql_query = $this->query_model->query($sql_select, 'ztest', '', $sql_where, '');
-// 		$sql_result = $this->sql->result($sql_query, 'row_array');
-// 		echo print_r($sql_result);exit();
+		$sql_select = $this->sql->select(array('CONCAT(a,b,c,d) as t', 'd'), 'function');
+		$sql_where = $this->sql->where(array('where'), array('c'), array('cc12'), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'ztest', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'result_array');
+// 		$a = array();
+// 		foreach ($sql_result as $sql_result1) {
+// 			array_push($a, $sql_result1['a']);
+// 		}
+		echo print_r($sql_result);exit();
 		
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
 		$route_data = $this->route_model->index($this->input->post());
