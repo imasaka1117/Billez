@@ -487,7 +487,7 @@ class Join_model extends CI_Model {
 			 * 這裡待加入簡訊內容規格
 			*/
 					
-			$sms_result = $this->sms->authentication_sms($route_data['mobile_phone'], $authentication_code);
+			$sms_result = $this->sms->send_sms(1, $route_data['mobile_phone'], $authentication_code);
 			
 			if($sms_result == 1) {
 				$result = 1;
@@ -594,7 +594,7 @@ class Join_model extends CI_Model {
 			 * 這裡待加入簡訊內容規格
 			*/
 					
-			$sms_result = $this->sms->authentication_sms($mobile_phone, $authentication_code);
+			$sms_result = $this->sms->send_sms(1, $mobile_phone, $authentication_code);
 				
 			if($sms_result == 1) {
 				$result = 1;

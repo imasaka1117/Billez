@@ -136,12 +136,10 @@ class Login_model extends CI_Model {
 			$outer_array = array();
 			
 			//查詢會員基本資料
-			$sql_select = $this->sql->select(array('email', 'last_name', 'first_name', 'mobile_phone', 'fb_id', 'google_id'), '');
+			$sql_select = $this->sql->select(array('email', 'last_name', 'first_name', 'mobile_phone', "IF (fb_id = '', 'blank', fb_id) AS fb_id", "IF (google_id = '', 'blank', google_id) AS google_id"), 'function');
 			$sql_where = $this->sql->where(array('where'), array('id'), array($id), array(''));
 			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 			$sql_result = $this->sql->result($sql_query, 'row_array');
-			if($sql_result['fb_id'] == '') $sql_result['fb_id'] = 'blank';
-			if($sql_result['google_id'] == '') $sql_result['google_id'] = 'blank';
 			$action_member_info = $sql_result;
 			
 			//查詢公鑰
@@ -236,45 +234,38 @@ class Login_model extends CI_Model {
 			$bill_info = array();
 			//查詢各筆帳單資料
 			foreach($billez_code_list as $billez_code) {
-				$sql_select = $this->sql->select(array('bill.billez_code'), '');
-				$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
+				$sql_select = $this->sql->select(array('bill.billez_code', 
+													   'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data) AS subscribe_code', 
+													   'bill_owner',
+													   'trader_code.name AS trader_name', 
+													   'bill_kind_code.name AS bill_kind_name', 
+													   "IFNULL(cvs_amount, 'blank') AS cvs_amount", 
+													   "IFNULL(cvs_barcode1, 'blank') AS cvs_barcode1",
+													   "IFNULL(cvs_barcode2, 'blank') AS cvs_barcode2",
+													   "IFNULL(cvs_barcode3, 'blank') AS cvs_barcode3", 
+													   "IFNULL(lowest_pay_amount, 'blank') AS lowest_pay_amount",
+													   "IFNULL(post_amount, 'blank') AS post_amount",
+													   "IFNULL(post_barcode1, 'blank') AS post_barcode1", 
+													   "IFNULL(post_barcode2, 'blank') AS post_barcode2", 
+													   "IFNULL(post_barcode3, 'blank') AS post_barcode3", 
+													   "IFNULL(bank_amount, 'blank') AS bank_amount", 
+													   "IFNULL(bank_barcode1, 'blank') AS bank_barcode1",
+													   "IFNULL(bank_barcode2, 'blank') AS bank_barcode2",
+													   "IFNULL(bank_barcode3, 'blank') AS bank_barcode3", 
+													   'publish_time',
+													   'due_time',
+													   'pay_place.pay_place AS pay_place', 
+													   'pay_place.overdue_pay_place AS overdue_pay_place',
+													   'trader_bill.bill_ad_url AS ad_id', 
+													   "CONCAT(IFNULL(CONCAT(data1, ','), ''), IFNULL(CONCAT(data2, ','), ''), IFNULL(CONCAT(data3, ','), ''), IFNULL(CONCAT(data4, ','), ''), IFNULL(CONCAT(data5, ','), '')) AS remark"
+													  ), 'function');
+				$sql_join = $this->sql->join(array('trader_code', 'bill_kind_code', 'pay_place', 'trader_bill'), array('trader_code = trader_code.code', 'bill_kind_code = bill_kind_code.code', 'bill.billez_code = pay_place.billez_code', 'bill.trader_code = trader_bill.trader_code'), array('', '', '', ''));
+				$sql_where = $this->sql->where(array('where'), array('bill.billez_code'), array($billez_code), array(''));
+				$sql_other = $this->sql->other(array('distinct'), array(''));
+				$sql_query = $this->query_model->query($sql_select, 'bill', $sql_join, $sql_where, $sql_other);
 				$sql_result = $this->sql->result($sql_query, 'row_array');
 				array_push($bill_info, $sql_result);
 			}
-			
-			
-			"SELECT DISTINCT `bill`.`billez_code`, 
-				CONCAT(`bill`.`trader_code`, `bill`.`bill_kind_code`, `identify_data`) AS `subscribe_code`
-				, `bill_owner`, `trader_code`.`name` as `trader_name`
-				, `bill_kind_code`.`name` as `bill_kind_name`
-				, IFNULL(`cvs_amount`, 'blank') AS `cvs_amount`
-				, IFNULL(`cvs_barcode1`, 'blank') AS `cvs_barcode1`
-				, IFNULL(`cvs_barcode2`, 'blank') AS `cvs_barcode2`
-				, IFNULL(`cvs_barcode3`, 'blank') AS `cvs_barcode3`
-				, IFNULL(`lowest_pay_amount`, 'blank') AS `lowest_pay_amount`
-				, IFNULL(`post_amount`, 'blank') AS `post_amount`
-				, IFNULL(`post_barcode1`, 'blank') AS `post_barcode1`
-				, IFNULL(`post_barcode2`, 'blank') AS `post_barcode2`
-				, IFNULL(`post_barcode3`, 'blank') AS `post_barcode3`
-				, IFNULL(`bank_amount`, 'blank') AS `bank_amount`
-				, IFNULL(`bank_barcode1`, 'blank') AS `bank_barcode1`
-				, IFNULL(`bank_barcode2`, 'blank') AS `bank_barcode2`
-				, IFNULL(`bank_barcode3`, 'blank') AS `bank_barcode3`
-				, `publish_time`, `due_time`
-				,(SELECT GROUP_CONCAT(`pay_place`) AS `mix` 
-				FROM `pay_place` WHERE `billez_code` = '$billez_code') AS `pay_place`
-			, `trader_bill`.`bill_ad_url` AS `ad_id`
-			, CONCAT(IFNULL(CONCAT(`data1`, ','), '')
-			, IFNULL(CONCAT(`data2`, ','), '')
-			, IFNULL(CONCAT(`data3`, ','), '')
-			, IFNULL(CONCAT(`data4`, ','), '')
-			, IFNULL(CONCAT(`data5`, ','), '')) AS `remark` 
-			FROM `bill` JOIN `trader_code` ON `trader_code` = `trader_code`.`code`
-			 JOIN `bill_kind_code` ON `bill_kind_code` = `bill_kind_code`.`code`
-			 JOIN `pay_place` ON `bill`.`billez_code` = `pay_place`.`billez_code`
-			 JOIN `trader_bill` ON `bill`.`trader_code` = `trader_bill`.`trader_code`
-			 WHERE `bill`.`billez_code` = '$billez_code'";
 			$json_data = $this->json->encode_json($app, $bill_info);
 		}
 		

@@ -39,7 +39,13 @@ class Query_model extends CI_Model {
 		$this->db->from($from);
 		
 		if($join != '') {
-			foreach($join as $item) $this->db->join($item['table'], $item['field']);
+			foreach($join as $item) {
+				if($item['style'] == '') {
+					$this->db->join($item['table'], $item['field']);
+				} else {
+					$this->db->join($item['table'], $item['field'], $item['style']);
+				}			
+			}
 		}
 		
 		if($where != '') {

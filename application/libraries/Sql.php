@@ -85,8 +85,25 @@ class Sql {
 				$string = $fields[0];
 				break;
 		}
-// 		echo $string;exit();
+		
 		return array('fields' => $string, 'condition' => $condition);
+	}
+	
+	/*
+	 * 產生查詢所需的合併資料表資料
+	 * $table	要合併的資料表
+	 * $field	要連結的欄位名稱
+	 * $style	要合併的方法,若沒有則傳入空白'' ex: left、right、outer、inner、left outer 以及 right outer
+	 */
+	public function join($table, $field, $style) {
+		$count = count($table);
+		$array = array();
+		
+		for($i = 0; $i < $count; $i++) {
+			$temp_array = array('table' => $table[$i], 'field' => $field[$i], 'style' => $style[$i]);
+			array_push($array, $temp_array);
+		}
+		return $array;
 	}
 	
 	/*

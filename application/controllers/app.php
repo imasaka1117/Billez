@@ -23,8 +23,8 @@ class App extends CI_Controller {
 	 * 最後再載入view輸出結果給APP
 	 */
 	public function index() {
-		$sql_select = $this->sql->select(array('CONCAT(a,b,c,d) as t', 'd'), 'function');
-		$sql_where = $this->sql->where(array('where'), array('c'), array('cc12'), array(''));
+		$sql_select = $this->sql->select(array('CONCAT(a,b,c,d) as t', '`ztest`.`d` as `r`'), 'function');
+		$sql_where = $this->sql->where(array('where'), array('ztest.ac'), array('cc12'), array(''));
 		$sql_query = $this->query_model->query($sql_select, 'ztest', '', $sql_where, '');
 		$sql_result = $this->sql->result($sql_query, 'result_array');
 // 		$a = array();
@@ -64,7 +64,9 @@ class App extends CI_Controller {
 				$data['response'] = $this->login_model->index($route_data);
 				break;
 			case '5':
-				;
+				$this->load->library('push');
+				$this->load->library('sms');
+				$data['response'] = $this->subscribe_model->index($route_data);
 				break;
 			case '6':
 				;
