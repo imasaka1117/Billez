@@ -204,7 +204,7 @@ class Join_model extends CI_Model {
 					$sql_result = $this->sql->result($sql_query, 'row_array');
 						
 					//產生會員編號
-					$id = $this->create->id($sql_result['max']);
+					$id = $this->create->id('AC', $sql_result['max']);
 					$id_key['id'] 			= $id;
 					$id_key['public_key'] 	= $key['public_key'];
 					//丟到回傳格式
@@ -284,7 +284,7 @@ class Join_model extends CI_Model {
 				$sql_result = $this->sql->result($sql_query, 'row_array');
 				
 				//產生會員編號
-				$id = $this->create->id($sql_result['max']);
+				$id = $this->create->id('AC', $sql_result['max']);
 				$id_key['id'] 			= $id;
 				$id_key['public_key'] 	= $key['public_key'];
 				//丟到回傳格式
@@ -485,9 +485,9 @@ class Join_model extends CI_Model {
 		} else {
 			/*
 			 * 這裡待加入簡訊內容規格
-			*/
+			 */
 					
-			$sms_result = $this->sms->send_sms(1, $route_data['mobile_phone'], $authentication_code);
+			$sms_result = $this->sms->send_sms(1, $route_data['mobile_phone'], '', $authentication_code);
 			
 			if($sms_result == 1) {
 				$result = 1;
@@ -594,7 +594,7 @@ class Join_model extends CI_Model {
 			 * 這裡待加入簡訊內容規格
 			*/
 					
-			$sms_result = $this->sms->send_sms(1, $mobile_phone, $authentication_code);
+			$sms_result = $this->sms->send_sms(1, $mobile_phone, '', $authentication_code);
 				
 			if($sms_result == 1) {
 				$result = 1;

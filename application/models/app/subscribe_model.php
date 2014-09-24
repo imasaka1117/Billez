@@ -270,7 +270,11 @@ class Subscribe_model extends CI_Model {
 			$json_data = $this->json->encode_json($app, '5_401');
 		} else {
 			if(count($action_member_info) == 0) {
-				$sms_result = $this->sms->send_sms(2, $route_data['mobile_phone'], array('billez_code' => $route_data['billez_code'], 'message' => $route_data['message']));
+				/*
+				 * 待增加簡訊內容規格
+				 */
+				
+				$sms_result = $this->sms->send_sms(2, $route_data['mobile_phone'], '', array('billez_code' => $route_data['billez_code'], 'message' => $route_data['message']));
 				
 				if($sms_result == 1) {
 					$result = 1;
@@ -316,7 +320,7 @@ class Subscribe_model extends CI_Model {
 				}
 
 				//執行推播
-				$this->push->send_push('gcm_3');
+				$this->push->send_push('gcm_1');
 				
 				//新增帳單分享記錄
 				array_push(Sql::$table, 'bill_share_log');

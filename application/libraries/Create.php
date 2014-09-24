@@ -4,17 +4,18 @@ class Create {
 	/*
 	 * 產生各種編號
 	 * 規則是前兩碼是該種類縮寫加上 AA00001
+	 * $prefix	為該ID的前綴字 
 	 * $max_id	該種類的最大編號
 	 */
-	public function id($max_id) {
-		$id 			= '';
-		$first_word 	= '';
-		$second_word 	= '';
-		$number 		= '';
+	public function id($prefix, $max_id) {
+		$id = '';
+		$first_word = '';
+		$second_word = '';
+		$number = '';
 	
 		//如果還沒有編號,就是AA00001為開始
 		if($max_id == '') {
-			$id = 'AA00001';
+			$id = $prefix . 'AA00001';
 		} else {
 			//分析$max_id並組合出最大代號+1
 			$first_word = substr($max_id, 2, 1);
@@ -37,7 +38,7 @@ class Create {
 			}
 	
 			//組合編號
-			$id = chr($first_word) . chr($second_word) . str_pad($number, 5, 0,STR_PAD_LEFT);
+			$id = $prefix . chr($first_word) . chr($second_word) . str_pad($number, 5, 0,STR_PAD_LEFT);
 		}
 	
 		return $id;
