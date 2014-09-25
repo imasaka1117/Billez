@@ -46,10 +46,11 @@ class Sql {
 	 */
 	public function clear_static() {
 		Sql::$table = array();
-		Sql::$data = array();
+		Sql::$select = array();
 		Sql::$log = array();
 		Sql::$error = array();
 		Sql::$where = array();
+		Sql::$kind = array();
 	}
 	
 	/*

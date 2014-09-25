@@ -23,20 +23,25 @@ class App extends CI_Controller {
 	 * 最後再載入view輸出結果給APP
 	 */
 	public function index() {
-// 		$sql_select = $this->sql->select(array('CONCAT(a,b,c,d) as t', '`ztest`.`d` as `r`'), 'function');
-// 		$sql_where = $this->sql->where(array('where'), array('ztest.ac'), array('cc12'), array(''));
-// 		$sql_query = $this->query_model->query($sql_select, 'ztest', '', $sql_where, '');
-// 		$sql_result = $this->sql->result($sql_query, 'result_array');
-// 		$a = array();
-// 		foreach ($sql_result as $sql_result1) {
-// 			array_push($a, $sql_result1['a']);
-// 		}
-// 		$query = $this->db->query('ALTER TABLE `ztest` ADD `gg` varchar(255) COLLATE utf8_bin DEFAULT NULL');
-
-		echo base_url();exit();
+		//測試區
+		$route_data = array();
+// 		$route_data['id'] = 'ACAA00002';
+		$route_data['mobile_phone_id'] = 'APA91bH8_TT8u8BX45SCecJ9BzDYy7QLeiDkP21MymZ6dv6-9dmywQODeTzQShc7XQw99w6JCLnG_JsX4E65eD5zt9qPSPl_TuUjwdeumuhDSFat7Q1hnxVaVvIzDUNQJ72MszX76mCh-KJNNFbvzFuWCCctxg5x2A';
+		$route_data['control_param'] = '1';
+		$route_data['sub_param'] = '1_2';
 		
+// 		$route_data['new_email'] = 'imasaka111@yahoo.com.tw111';
+// 		$route_data['password'] = 'dddd111';
+		$route_data['email'] = 'imasaka111@yahoo.com.tw111';
+// 		$route_data['authentication_code'] = '111111';
+// 		$route_data['fb_id'] = fb1';
+// 		$route_data['mobile_phone'] = '0988301480';
+// 		$route_data['last_name'] = '王';
+// 		$route_data['first_name'] = '家';
+// 		echo $json_data;exit();
+// 		return $this->json->encode_json(1, $encode_data);
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
-		$route_data = $this->route_model->index($this->input->post());
+// 		$route_data = $this->route_model->index($this->input->post());
 		
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
@@ -94,10 +99,11 @@ class App extends CI_Controller {
 				$data['response'] = $this->activity_model->index($route_data);
 				break;
 			case '11':
-				;
+				$this->load->model('app/change_model');
+				$data['response'] = $this->change_model->index($route_data);
 				break;
-			case '':
-				;
+			default:
+				$data['response'] = '未授權進入';
 				break;
 		}
 		

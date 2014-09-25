@@ -54,14 +54,14 @@ class Alter_model extends CI_Model {
 		//查詢要更改的電子郵件是否已經有人使用
 		$sql_select = $this->sql->select(array('email'), '');
 		$sql_where = $this->sql->where(array('where', 'where'), array('id !=', 'email'), array($route_data['id'], $route_data['new_email']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
+		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 		$sql_result = $this->sql->result($sql_query, 'num_rows');
-		
+
 		if($sql_result) {
 			$json_data = $this->json->encode_json($app, '3_101');
-			
+			echo $json_data;exit();
 			$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-			return $this->json->encode_json(1, $encode_data);
+			return $this->json->encode_json('vale', $encode_data);
 		}
 		
 		//若是手機號碼沒改,就直接更新資料
@@ -103,9 +103,9 @@ class Alter_model extends CI_Model {
 			} else {
 				$json_data = $this->json->encode_json($app, '3_103');
 			}
-			
+			echo $json_data;exit();
 			$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-			return $this->json->encode_json(1, $encode_data);
+			return $this->json->encode_json('vale', $encode_data);
 		}
 		
 		//將每一筆的修改資料紀錄的第一筆作為暫存資料,待驗證後使用這筆資料轉移到基本資料
@@ -159,6 +159,9 @@ class Alter_model extends CI_Model {
 		} else {
 			$json_data = $this->json->encode_json($app, '3_106');
 		}
+		echo $json_data;exit();
+		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -198,7 +201,7 @@ class Alter_model extends CI_Model {
 			$json_data = $this->json->encode_json($app, '3_201');
 
 			$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-			return $this->json->encode_json(1, $encode_data);
+			return $this->json->encode_json('vale', $encode_data);
 		}
 		
 		//更新簡訊次數
@@ -264,7 +267,7 @@ class Alter_model extends CI_Model {
 		
 		$json_data = $this->json->encode_json($app, '3_204');
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -345,6 +348,6 @@ class Alter_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}	
 }

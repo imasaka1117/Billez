@@ -54,6 +54,6 @@ class Problem_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 }//end

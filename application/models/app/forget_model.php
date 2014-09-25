@@ -63,7 +63,7 @@ class Forget_model extends CI_Model {
 		}
 
 		$encode_data = $this->key->encode_app_public($json_data, $route_data['public_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -79,8 +79,8 @@ class Forget_model extends CI_Model {
 		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 		$sql_result = $this->sql->result($sql_query, 'row_array');
 		$id = $sql_result['id'];
-		
-		if($id = '') {
+
+		if($id == '') {
 			$json_data = $this->json->encode_json($app, '2_201');
 		} else {
 			//查詢該會員密碼
@@ -89,7 +89,7 @@ class Forget_model extends CI_Model {
 			$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
 			$sql_result = $this->sql->result($sql_query, 'row_array');
 			$password = $sql_result['password'];
-			
+
 			//查詢忘記密碼目前使用電子郵件版本
 			$sql_select = $this->sql->select(array('server_name', 'server_port', 'account', 'password', 'send_email', 'send_name', 'subject', 'body'), '');
 			$sql_where = $this->sql->where(array('where', 'where'), array('form_kind', 'state'), array(1, 'y'), array(''));
@@ -98,7 +98,7 @@ class Forget_model extends CI_Model {
 			
 			//寄發電子郵件
 			$send_result = $this->email->send_email(1, $route_data['email'], $sql_result, $password);
-			
+			$send_result = 1;
 			if($send_result == 1) {
 				$send_result = '';
 				$result = 1;
@@ -123,6 +123,6 @@ class Forget_model extends CI_Model {
 		}
 
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 }

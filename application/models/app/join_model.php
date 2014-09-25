@@ -75,7 +75,7 @@ class Join_model extends CI_Model {
 		}
 
 		$encode_data = $this->key->encode_app_public($json_data, $route_data['public_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -87,6 +87,7 @@ class Join_model extends CI_Model {
 	 */
 	public function check_account($route_data) {
 		$app = '1_2';
+
 		//符合回傳格式用
 		$outer_array = array();	
 		//查詢該電子郵件是否有會員狀態
@@ -94,8 +95,8 @@ class Join_model extends CI_Model {
 		$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
 		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 		$sql_result = $this->sql->result($sql_query, 'row_array');
+		if(isset($sql_result['state'])) $state = $sql_result['state']; else $state = '';
 		
-		$state = $sql_result['state'];
 		//產生新的金鑰組
 		$key = $this->key->create_key();
 		
@@ -112,7 +113,7 @@ class Join_model extends CI_Model {
 			} else {
 				$fb_id = $route_data['fb_id'];
 				$google_id = '';
-				$sql_where = $this->sql->where(array('where', 'where'), array('email', 'google_id'), array($route_data['email'], $route_data['fb_id']), array(''));
+				$sql_where = $this->sql->where(array('where', 'where'), array('email', 'fb_id'), array($route_data['email'], $route_data['fb_id']), array(''));
 			}
 			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 			$sql_result = $this->sql->result($sql_query, 'num_rows');
@@ -126,7 +127,7 @@ class Join_model extends CI_Model {
 				}
 				//加密後回傳出去
 				$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-				return $this->json->encode_json(1, $encode_data);
+				return $this->json->encode_json('vale', $encode_data);
 			} else {
 				//確認是否有該會員存在
 				$sql_select = $this->sql->select(array('id'), '');
@@ -174,7 +175,7 @@ class Join_model extends CI_Model {
 								array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新google帳戶', $this->sql->get_time(1), '')));
 								$id_key['1_203'] = '1_203';
 							} else {
-								array_push(Sql::$select, $this->sql->field(array('google_id', 'update_user', 'update_time'), array($route_data['fb_id'], $sql_result['id'], $this->sql->get_time(1))));
+								array_push(Sql::$select, $this->sql->field(array('fb_id', 'update_user', 'update_time'), array($route_data['fb_id'], $sql_result['id'], $this->sql->get_time(1))));
 								array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新fb帳戶', $this->sql->get_time(1))));
 								array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新fb帳戶', $this->sql->get_time(1), '')));
 								$id_key['1_204'] = '1_204';
@@ -188,7 +189,7 @@ class Join_model extends CI_Model {
 							$sql_query = $this->query_model->query($sql_select, 'key', '', $sql_where, '');
 							$sql_result = $this->sql->result($sql_query, 'row_array');
 							
-							$id_key['public_key'] = $sql_result('public_key');
+							$id_key['public_key'] = $sql_result['public_key'];
 							break;
 					}
 					
@@ -235,8 +236,8 @@ class Join_model extends CI_Model {
 			$sql_result = $this->sql->result($sql_query, 'num_rows');
 			
 			if($sql_result) {
-				//查詢會員編號
-				$sql_select = $this->sql->select(array('id'), '');
+				//查詢會員編號及第三方
+				$sql_select = $this->sql->select(array('id', 'google_id', 'fb_id'), '');
 				$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
 				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 				$sql_result = $this->sql->result($sql_query, 'row_array');
@@ -265,11 +266,16 @@ class Join_model extends CI_Model {
 						array_push(Sql::$kind, 2);
 						break;	
 					default:
-						//一般帳號重複
-						$json_data = $this->json->encode_json($app, '1_205');
-						//加密後回傳出去
-						$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-						return $this->json->encode_json(1, $encode_data);
+						if($sql_result['google_id'] == '' && $sql_result['fb_id'] == '') {
+							//一般帳號重複
+							$json_data = $this->json->encode_json($app, '1_205');
+
+							//加密後回傳出去
+							$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
+							return $this->json->encode_json('vale', $encode_data);
+						} else {
+							$id_key['public_key'] = $key['public_key'];
+						}
 						break;
 				}
 				
@@ -282,7 +288,7 @@ class Join_model extends CI_Model {
 				$sql_where = '';
 				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 				$sql_result = $this->sql->result($sql_query, 'row_array');
-				
+
 				//產生會員編號
 				$id = $this->create->id('AC', $sql_result['max']);
 				$id_key['id'] 			= $id;
@@ -313,9 +319,9 @@ class Join_model extends CI_Model {
 		} else {
 			$json_data = $this->json->encode_json($app, $outer_array);
 		}
-		
+
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -342,13 +348,21 @@ class Join_model extends CI_Model {
 				array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'password', '有第三方的帳號新增密碼', $this->sql->get_time(1), '')));
 				array_push(Sql::$kind, 1);
 		} else {
-			//查詢該會員狀態
-			$sql_select = $this->sql->select(array('state'), '');
+			//查詢該會員有無密碼
+			$sql_select = $this->sql->select(array('password'), '');
 			$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
+			$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
 			$sql_result = $this->sql->result($sql_query, 'row_array');
-			
-			if($sql_result['state'] == '') {
+
+			if(isset($sql_result['password'])) {
+				//初始化密碼資料
+				array_push(Sql::$table, 'password');
+				array_push(Sql::$select, $this->sql->field(array('password', 'update_user', 'update_time'), array($route_data['password'], $route_data['id'], $this->sql->get_time(1))));
+				array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
+				array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'password', '因會員會完全註冊,所以將密碼資料初始化', $this->sql->get_time(1))));
+				array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'password', '因會員會完全註冊,所以將密碼資料初始化', $this->sql->get_time(1), '')));
+				array_push(Sql::$kind, 2);
+			} else {
 				//新增密碼資料
 				array_push(Sql::$table, 'password');
 				array_push(Sql::$select, $this->sql->field(array('id', 'password', 'create_user', 'create_time', 'update_user', 'update_time'), array($route_data['id'], $route_data['password'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
@@ -356,14 +370,6 @@ class Join_model extends CI_Model {
 				array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $route_data['id'], 'password', '有第三方的帳號新增密碼', $this->sql->get_time(1))));
 				array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'password', '有第三方的帳號新增密碼', $this->sql->get_time(1), '')));
 				array_push(Sql::$kind, 1);
-			} else {
-				//初始化密碼資料
-				array_push(Sql::$table, 'password');
-				array_push(Sql::$select, $this->sql->field(array('password', 'update_user', 'update_time'), array($route_data['password'], $route_data['id'], $this->sql->get_time(1))));
-				array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-				array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member', '因會員會完全註冊,所以將密碼資料初始化', $this->sql->get_time(1))));
-				array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member', '因會員會完全註冊,所以將密碼資料初始化', $this->sql->get_time(1), '')));
-				array_push(Sql::$kind, 2);
 			}
 		}
 		//執行更新
@@ -372,9 +378,9 @@ class Join_model extends CI_Model {
 		} else {
 			$json_data = $this->json->encode_json($app, '1_302');
 		}
-		
+
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -396,7 +402,7 @@ class Join_model extends CI_Model {
 		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
 		$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
 		$sql_result = $this->sql->result($sql_query, 'row_array');
-		$password = $sql_result['password'];
+		if(isset($sql_result['password'])) $password = $sql_result['password']; else $password = '';
 		
 		//產生認證碼
 		$authentication_code = $this->create->authentication();
@@ -508,12 +514,10 @@ class Join_model extends CI_Model {
 			array_push(Sql::$kind, 1);
 			
 			$this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind);
-			
-			
 		}
-		
+
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -551,9 +555,9 @@ class Join_model extends CI_Model {
 		//若已傳送次數等於系統設定就不再傳送
 		if($sms_state_info['sms_frequency'] == $sms_times_limit) {				
 			$json_data = $this->json->encode_json($app, '1_501');
-
+			
 			$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-			return $this->json->encode_json(1, $encode_data);
+			return $this->json->encode_json('vale', $encode_data);
 		}
 		
 		//更新簡訊次數
@@ -615,11 +619,12 @@ class Join_model extends CI_Model {
 			array_push(Sql::$kind, 1);
 				
 			$this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind);
+		} else {
+			$json_data = $this->json->encode_json($app, '1_504');
 		}
-		
-		$json_data = $this->json->encode_json($app, '1_504');
+
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -692,13 +697,14 @@ class Join_model extends CI_Model {
 				}
 				
 				$json_data = $this->json->encode_json($app, '1_601');
-			}
-			
-			$json_data = $this->json->encode_json($app, '1_602');
+			} else {
+				$json_data = $this->json->encode_json($app, '1_602');
+			}			
+		} else {
+			$json_data = $this->json->encode_json($app, '1_603');
 		}
-		
-		$json_data = $this->json->encode_json($app, '1_603');
+
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 }

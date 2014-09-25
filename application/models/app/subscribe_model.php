@@ -73,7 +73,7 @@ class Subscribe_model extends CI_Model {
 		$json_data = $this->json->encode_json($app, $array);
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -214,10 +214,28 @@ class Subscribe_model extends CI_Model {
 			}
 		} else {
 			$json_data = $this->json->encode_json($app, '5_201');
+
+			//查詢修改記錄的訂閱失敗資料
+			$sql_select = $this->sql->select(array('subscribe_fail'), '');
+			$sql_where = $this->sql->where(array('where', 'where'), array('id', 'frequency'), array($route_data['id'], 1), array(''));
+			$sql_query = $this->query_model->query($sql_select, 'action_member_alter_log', '', $sql_where, '');
+			$sql_result = $this->sql->result($sql_query, 'row_array');
+			$new_subscribe_fail = $sql_result['subscribe_fail'] . ',' . substr($route_data['subscribe_code'], 6);
+			
+			//將失敗的資料存放在會員修改記錄中
+			array_push(Sql::$table, 'action_member_alter_log');
+			array_push(Sql::$select, $this->sql->field(array('subscribe_fail', 'update_user', 'update_time'), array($new_subscribe_fail, $route_data['id'], $this->sql->get_time(1))));
+			array_push(Sql::$where, $this->sql->where(array('where', 'where'), array('id', 'frequency'), array($route_data['id'], 1), array('')));
+			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member_alter_log', '訂閱帳單訂閱失敗存放失敗資料', $this->sql->get_time(1))));
+			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member_alter_log', '訂閱帳單訂閱失敗存放失敗資料', $this->sql->get_time(1), '')));
+			array_push(Sql::$kind, 2);
+			
+			//執行更新
+			$this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind);
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -243,7 +261,7 @@ class Subscribe_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -356,6 +374,6 @@ class Subscribe_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 }//end

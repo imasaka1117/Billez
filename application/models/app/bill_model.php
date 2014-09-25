@@ -91,7 +91,7 @@ class Bill_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -127,7 +127,7 @@ class Bill_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -219,7 +219,7 @@ class Bill_model extends CI_Model {
 		}
 		
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
@@ -230,8 +230,115 @@ class Bill_model extends CI_Model {
 	public function possible_bill($route_data) {
 		$app = '7_4';
 		
+		//查詢會員修改資料紀錄
+		$sql_select = $this->sql->select(array('email', 'CONCAT(last_name, first_name) AS name', 'mobile_phone', 'bill_memo', 'subscribe_fail'), 'function');
+		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'action_member_alter_log', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'result_array');
 		
+		//存放各種需要比對的資料
+		$possible_data = array();
 		
+		foreach($sql_result as $result) {
+			foreach($result as $item => $value) {
+				if($item == 'bill_memo' || $item == 'subscribe_fail') {
+					$datas = split(",", $value);
+						
+					foreach($datas as $data) {
+						if($data != '') array_push($possible_data, $data);
+					}
+				} else {
+					array_push($possible_data, $value);
+				}
+			}
+		}
 		
+		//查詢會員備忘錄資料
+		$sql_select = $this->sql->select(array('*'), '');
+		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'action_member_data', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'row_array');
+		
+		for($i = 0; $i < 5; $i++) array_shift($sql_result);		
+		
+		foreach($sql_result as $result) {		
+			if($result != '') {
+				$datas = split(',', $result);
+				array_push($possible_data,$datas[2]);
+			}
+		}
+		
+		//查詢會員手機號碼
+		$sql_select = $this->sql->select(array('mobile_phone'), '');
+		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'row_array');
+		array_push($possible_data,$sql_result['mobile_phone']);
+		
+		//查詢該會員有訂閱帳單的訂閱碼
+		$sql_select = $this->sql->select(array('subscribe_code'), '');
+		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
+		$sql_query = $this->query_model->query($sql_select, 'subscribe', '', $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'result_array');
+		$subscribe_code_list = array();
+		foreach($sql_result as $result) array_push($subscribe_code_list, $result['subscribe_code']);	
+
+		//查詢可能帳單
+		$sql_select = $this->sql->select(array('data1',
+											   'data2', 
+											   'data3', 
+											   'data4', 
+											   'data5',  
+											   'bill_owner', 
+											   'identify_data',
+											   'trader_code.name AS trader_name', 
+											   'bill_kind_code.name AS bill_kind_name', 
+											   'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data) AS subscribe_code', 
+											   "IFNULL(trader_contract.send_condition_times, 'blank') AS send_condition_times"
+												), 'function');
+		$sql_where = $this->sql->where(array('where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'where', 'where', 'where_not_in'), 
+									   array('identify_data', 'bill_owner', 'data1', 'data2', 'data3', 'data4', 'data5', 'YEAR(NOW()) - YEAR(publish_time) =', 'MONTH(NOW()) - MONTH(publish_time) =', 'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data)'), 
+									   array($possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, 0, 0, $subscribe_code_list), 
+									   array(''));
+		$sql_join = $this->sql->join(array('trader_code', 'bill_kind_code', 'trader_contract'), 
+									 array('bill.trader_code = trader_code.code', 'bill.bill_kind_code = bill_kind_code.code', 'bill.trader_code = trader_contract.trader_code AND bill.bill_kind_code = trader_contract.bill_kind_code'), 
+									 array('', '', ''));
+		$sql_query = $this->query_model->query($sql_select, 'bill', $sql_join, $sql_where, '');
+		$sql_result = $this->sql->result($sql_query, 'result_array');
+		$possible_bill_list = array();
+		
+		//比對必須要有兩筆以上相同才列為可能帳單
+		foreach($sql_result as $result) {
+			$i = 0;
+			
+			foreach($result as $item => $data) {
+				switch ($item) {
+					case 'subscribe_code':
+					case 'trader_name':
+					case 'bill_kind_name':
+					case 'send_condition_times':
+						continue;
+						break;
+					default:
+						foreach ($possible_data as $possible) {
+							if($data == $possible) {
+								$i++;
+								break;
+							}
+						}
+						break;
+				}
+				if($i == 2) {
+					for($j = 0; $j < 5; $j++) array_shift($result);
+					array_push($possible_bill_list, $result);
+					break;
+				}
+			}
+		}
+			
+		$json_data = $this->json->encode_json($app, $possible_bill_list);
+		
+		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 }//end

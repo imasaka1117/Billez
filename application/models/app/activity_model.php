@@ -47,7 +47,7 @@ class Activity_model extends CI_Model {
 		$json_data = $this->json->encode_json($app, '10_01');
 
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json(1, $encode_data);
+		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*

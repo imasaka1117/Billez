@@ -104,7 +104,7 @@ class Key {
 		
 		for($i = 0;$i < $array_count;$i++) {
 			//openssl公鑰加密函式
-			openssl_public_encrypt($data, $crypted, $public_key);
+			openssl_public_encrypt($array[$i], $crypted, $public_key);
 			$json_array['vale'] = base64_encode($crypted);
 			array_push($outer_array, $json_array);
 		}

@@ -4,12 +4,12 @@ class Json {
 	
 	/*
 	 * 轉換為json格式
-	 * $code	回傳給APP的狀態碼或判別碼, 值為1為將加密資料轉成json格式[{"vale":"加密文"},{"vale":"加密文"}]
+	 * $code	回傳給APP的狀態碼或判別碼, 值為vale為將加密資料轉成json格式[{"vale":"加密文"},{"vale":"加密文"}]
 	 * $data	回傳所需的資料
 	 */
 	public function encode_json($code, $data) {
 		switch($code) {
-			case 1:
+			case 'vale':
 				$json = json_encode($data);
 				break;
 			default:
