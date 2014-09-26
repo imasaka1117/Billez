@@ -237,6 +237,35 @@ class Sql {
 	}
 	
 	/*
+	 * 用來處理更新和查詢時候用到的額外條件處理
+	 * $other 額外條件集合
+	 */
+	public function condition_other($other) {
+		foreach($other as $item) {
+			switch($item['command']) {
+				case 'group_by':
+					$this->db->group_by($item['field']);
+					break;
+				case 'distinct':
+					$this->db->distinct();
+					break;
+				case 'having':
+					$this->db->having($item['condition']);
+					break;
+				case 'or_having':
+					$this->db->or_having($item['condition']);
+					break;
+				case 'order_by':
+					$this->db->order_by($item['field'], $item['sort']);
+					break;
+				case 'limit':
+					$this->db->limit($item['amount'], $item['start']);
+					break;
+			}
+		}
+	}
+	
+	/*
 	 * 執行查詢函式
 	 * 因為CI有提供多種查詢函式
 	 * 所以可以用字串控制要執行哪些額外條件查詢
@@ -270,31 +299,7 @@ class Sql {
 		}
 	
 		if($query['where'] != '') $this->condition_where($query['where']);
-	
-		if($query['other'] != '') {
-			foreach($query['other'] as $item) {
-				switch($item['command']) {
-					case 'group_by':
-						$this->db->group_by($item['field']);
-						break;
-					case 'distinct':
-						$this->db->distinct();
-						break;
-					case 'having':
-						$this->db->having($item['condition']);
-						break;
-					case 'or_having':
-						$this->db->or_having($item['condition']);
-						break;
-					case 'order_by':
-						$this->db->order_by($item['field'], $item['sort']);
-						break;
-					case 'limit':
-						$this->db->limit($item['amount'], $item['start']);
-						break;
-				}
-			}
-		}
+		if($query['other'] != '') $this->condition_other($query['other']);
 	
 		return $this->db->get();
 	}
