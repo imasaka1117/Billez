@@ -9,8 +9,6 @@ class App extends CI_Controller {
 		
 		//為openssl的檔案在linux平台需要這個檔案放在同一目錄下才會啟用,windows就不須這行
 // 		$_SERVER['OPENSSL_CONF'] = 'openssl.cnf';
-		$this->load->model('db/insert_update_model');
-		$this->load->model('db/query_model');
 		$this->load->model('app/route_model');
 		$this->load->library('key');
 		$this->load->library('json');
@@ -24,18 +22,18 @@ class App extends CI_Controller {
 	 */
 	public function index() {
 		//測試區
-		$route_data = array();
+// 		$route_data = array();
 // 		$route_data['id'] = 'ACAA00002';
-		$route_data['mobile_phone_id'] = 'APA91bH8_TT8u8BX45SCecJ9BzDYy7QLeiDkP21MymZ6dv6-9dmywQODeTzQShc7XQw99w6JCLnG_JsX4E65eD5zt9qPSPl_TuUjwdeumuhDSFat7Q1hnxVaVvIzDUNQJ72MszX76mCh-KJNNFbvzFuWCCctxg5x2A';
-		$route_data['control_param'] = '1';
-		$route_data['sub_param'] = '1_2';
+// 		$route_data['mobile_phone_id'] = 'APA91bH8_TT8u8BX45SCecJ9BzDYy7QLeiDkP21MymZ6dv6-9dmywQODeTzQShc7XQw99w6JCLnG_JsX4E65eD5zt9qPSPl_TuUjwdeumuhDSFat7Q1hnxVaVvIzDUNQJ72MszX76mCh-KJNNFbvzFuWCCctxg5x2A';
+// 		$route_data['control_param'] = '4';
+// 		$route_data['sub_param'] = '4_2';
 		
-// 		$route_data['new_email'] = 'imasaka111@yahoo.com.tw111';
+// 		$route_data['new_email'] = 'imasaka1112@yahoo.com.tw111';
 // 		$route_data['password'] = 'dddd111';
-		$route_data['email'] = 'imasaka111@yahoo.com.tw111';
+// 		$route_data['email'] = 'imasaka111222@yahoo.com.tw111';
 // 		$route_data['authentication_code'] = '111111';
-// 		$route_data['fb_id'] = fb1';
-// 		$route_data['mobile_phone'] = '0988301480';
+// 		$route_data['fb_id'] = 'fb1';
+// 		$route_data['mobile_phone'] = '0988301481';
 // 		$route_data['last_name'] = '王';
 // 		$route_data['first_name'] = '家';
 // 		echo $json_data;exit();

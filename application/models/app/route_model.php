@@ -87,20 +87,21 @@ class Route_model extends CI_Model {
 	 * $encode			加密資料
 	 */
 	public function check_mobile_phone_id($id, $mobile_phone_id, $encode) {
-// 		$sql_select = $this->sql->select(array('private_key'), '');
-// 		$sql_where = $this->sql->where(array('where'), array('id'), array($id), array(''));
-// 		$sql_query = $this->query_model->query($sql_select, 'key', '', $sql_where, '');
-// 		$sql_result = $this->sql->result($sql_query, 'row_array');
-
-		$sql_result = $this->sql->result($this->query_model->query($this->sql->select(array('private_key'), ''), 'key', '', $this->sql->where(array('where'), array('id'), array($id), array('')), ''), 'row_array');
+		//查詢私鑰
+		$sql_result = $this->sql->result($this->query_model->query($this->sql->select(array('private_key'), ''), 
+																   'key', 
+															       '', 
+																   $this->sql->where(array('where'), array('id'), array($id), array('')), 
+																   ''), 
+										 'row_array');
 		
-		//更新資料處理,正常為六個一組
-		array_push(Sql::$table, 'action_member');
-		array_push(Sql::$select, $this->sql->field(array('mobile_phone_id', 'update_user', 'update_time'), array($mobile_phone_id, $id, $this->sql->get_time(1))));
-		array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($id), array('')));
-		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))));
-		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')));
-		array_push(Sql::$kind, 2);
+		//更新資料處理
+		$this->sql->add_static('action_member', 
+							   $this->sql->field(array('mobile_phone_id', 'update_user', 'update_time'), array($mobile_phone_id, $id, $this->sql->get_time(1))), 
+							   $this->sql->where(array('where'), array('id'), array($id), array('')), 
+							   $this->sql->field(Sql::$user_log, array(1, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))), 
+							   $this->sql->field(Sql::$system_log, array(1, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')), 
+							   2);
 		
 		//執行更新
 		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind) === FALSE) {

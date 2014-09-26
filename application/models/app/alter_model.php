@@ -263,9 +263,11 @@ class Alter_model extends CI_Model {
 			array_push(Sql::$kind, 1);
 				
 			$this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind);
+		} else {
+			$json_data = $this->json->encode_json($app, '3_204');
 		}
 		
-		$json_data = $this->json->encode_json($app, '3_204');
+		echo $json_data;exit();
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
 		return $this->json->encode_json('vale', $encode_data);
 	}
@@ -346,7 +348,7 @@ class Alter_model extends CI_Model {
 		} else {
 			$json_data = $this->json->encode_json($app, '3_303');
 		}
-		
+		echo $json_data;exit();
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
 		return $this->json->encode_json('vale', $encode_data);
 	}	

@@ -90,7 +90,7 @@ class Login_model extends CI_Model {
 			$sql_where = $this->sql->where(array('where', 'or_where'), array('fb_id', 'google_id'), array($third_code, $third_code), array(''));
 			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 			$sql_result = $this->sql->result($sql_query, 'row_array');
-			
+			echo $sql_result['id'];
 			if($sql_result['id'] = '') {
 				$json_data = $this->json->encode_json($app, '4_201');
 			} else {
@@ -102,13 +102,13 @@ class Login_model extends CI_Model {
 			$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
 			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 			$sql_result = $this->sql->result($sql_query, 'row_array');
-			
-			if($sql_result['id'] == '') {
+			if(isset($sql_result['id'])) $id = $sql_result['id']; else $id = '';
+			if($id == '') {
 				$json_data = $this->json->encode_json($app, '4_201');
 			} else {
 				//查詢會員狀態
 				$sql_select = $this->sql->select(array('state'), '');
-				$sql_where = $this->sql->where(array('where'), array('id'), array($sql_result['id']), array(''));
+				$sql_where = $this->sql->where(array('where'), array('id'), array($id), array(''));
 				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
 				$sql_result = $this->sql->result($sql_query, 'row_array');
 				$state = $sql_result['state'];
@@ -118,13 +118,13 @@ class Login_model extends CI_Model {
 				
 				//查詢密碼是否正確
 				$sql_select = $this->sql->select(array('id'), '');
-				$sql_where = $this->sql->where(array('where', 'where'), array('id', 'password'), array($sql_result['id'], $route_data['password']), array(''));
+				$sql_where = $this->sql->where(array('where', 'where'), array('id', 'password'), array($id, $route_data['password']), array(''));
 				$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
 				$sql_result = $this->sql->result($sql_query, 'num_rows');
 				
 				//密碼錯誤
-				if($sql_result) {
-					$id = $sql_result['id'];
+				if(!$sql_result) {
+					$id = $id;
 				} else {
 					$json_data = $this->json->encode_json($app, '4_203');
 				}
@@ -160,12 +160,12 @@ class Login_model extends CI_Model {
 			$action_member_data = $sql_result;
 			
 			//將不用的資料取出
-			for($i = 0;$i < 5;$i++) {											
+			for($i = 0;$i < 6;$i++) {											
 				array_shift($action_member_data);
 			}
 			
 			//將帳單備忘錄做處理
-			foreach($action_member_data as $item => $value) {	
+			foreach($action_member_data as $item => $value) {
 				if($value != '') {
 					$other_datas = split(',', $value);
 					$action_member_info[$other_datas[0]] = $other_datas[1];
@@ -175,7 +175,7 @@ class Login_model extends CI_Model {
 			array_push($outer_array, $action_member_info);
 			$json_data = $this->json->encode_json($app, $outer_array);
 		}
-		
+		echo $json_data;exit();
 		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
 		return $this->json->encode_json('vale', $encode_data);
 	}
