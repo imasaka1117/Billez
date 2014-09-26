@@ -241,38 +241,26 @@ class Sql {
 	 * 因為CI有提供多種查詢函式
 	 * 所以可以用字串控制要執行哪些額外條件查詢
 	 * 基本上命名都跟函式名稱一樣
-	 * $select	欲查詢的欄位及是否有特殊查詢
-	 * $from	欲查詢的資料表
-	 * $join	使用到其他的資料表及相連欄位,若是沒有則傳入''
-	 * $where	查詢的條件,若是沒有則傳入''
-	 * $other	是否有其他的特殊指令,ex : order by ,若是沒有則傳入''
+	 * select	欲查詢的欄位及是否有特殊查詢
+	 * from		欲查詢的資料表
+	 * join		使用到其他的資料表及相連欄位,若是沒有則傳入''
+	 * where	查詢的條件,若是沒有則傳入''
+	 * other	是否有其他的特殊指令,ex : order by ,若是沒有則傳入''
 	 */
-	public function query($select, $from, $join, $where, $other) {
-		switch($select['condition']) {
-			case 'max':
-				$this->db->select_max($select['fields'], 'max');
-				break;
-			case 'min':
-				$this->db->select_min($select['fields'], 'min');
-				break;
-			case 'avg':
-				$this->db->select_avg($select['fields'], 'avg');
-				break;
-			case 'sum':
-				$this->db->select_sum($select['fields'], 'sum');
-				break;
+	public function query($query) {
+		switch($query['select']['condition']) {
 			case 'function':
-				$this->db->select($select['fields'], FALSE);
+				$this->db->select($query['select']['fields'], FALSE);
 				break;
 			default:
-				$this->db->select($select['fields']);
+				$this->db->select($query['select']['fields']);
 				break;
 		}
 	
-		$this->db->from($from);
+		$this->db->from($query['from']);
 	
-		if($join != '') {
-			foreach($join as $item) {
+		if($query['join'] != '') {
+			foreach($query['join'] as $item) {
 				if($item['style'] == '') {
 					$this->db->join($item['table'], $item['field']);
 				} else {
@@ -281,10 +269,10 @@ class Sql {
 			}
 		}
 	
-		if($where != '') $this->condition_where($where);
+		if($query['where'] != '') $this->condition_where($query['where']);
 	
-		if($other != '') {
-			foreach($other as $item) {
+		if($query['other'] != '') {
+			foreach($query['other'] as $item) {
 				switch($item['command']) {
 					case 'group_by':
 						$this->db->group_by($item['field']);
