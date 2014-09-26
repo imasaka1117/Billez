@@ -87,10 +87,12 @@ class Route_model extends CI_Model {
 	 * $encode			加密資料
 	 */
 	public function check_mobile_phone_id($id, $mobile_phone_id, $encode) {
-		$sql_select = $this->sql->select(array('private_key'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($id), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'key', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+// 		$sql_select = $this->sql->select(array('private_key'), '');
+// 		$sql_where = $this->sql->where(array('where'), array('id'), array($id), array(''));
+// 		$sql_query = $this->query_model->query($sql_select, 'key', '', $sql_where, '');
+// 		$sql_result = $this->sql->result($sql_query, 'row_array');
+
+		$sql_result = $this->sql->result($this->query_model->query($this->sql->select(array('private_key'), ''), 'key', '', $this->sql->where(array('where'), array('id'), array($id), array('')), ''), 'row_array');
 		
 		//更新資料處理,正常為六個一組
 		array_push(Sql::$table, 'action_member');
