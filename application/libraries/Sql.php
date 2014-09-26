@@ -56,20 +56,20 @@ class Sql {
 	/*
 	 * 將要新增或更新的資料放入靜態變數
 	 * 之後再一次新增或更新
-	 * $table	資料表
-	 * $select	要查詢欄位
-	 * $where	更新條件
-	 * $log		使用紀錄
-	 * $error	錯誤記錄
-	 * $kind	新增或更新
+	 * table	資料表
+	 * select	要查詢欄位
+	 * where	更新條件
+	 * log		使用紀錄
+	 * error	錯誤記錄
+	 * kind		新增或更新
 	 */
-	public function add_static($table, $select, $where, $log, $error, $kind) {
-		array_push(Sql::$table, $table);
-		array_push(Sql::$select, $select);
-		array_push(Sql::$where, $where);
-		array_push(Sql::$log, $log);
-		array_push(Sql::$error, $error);
-		array_push(Sql::$kind, $kind);
+	public function add_static($sql) {
+		array_push(Sql::$table, $sql['table']);
+		array_push(Sql::$select, $sql['select']);
+		array_push(Sql::$where, $sql['where']);
+		array_push(Sql::$log, $sql['log']);
+		array_push(Sql::$error, $sql['error']);
+		array_push(Sql::$kind, $sql['kind']);
 	}
 	
 	
@@ -304,35 +304,35 @@ class Sql {
 	 * 使用迴圈
 	 * 若其中有一個新增/更新出錯則整個回復並回傳FALSE
 	 * where 種類請看query_model的query方法
-	 * $table		Sql::$table 存放的資料表名稱
-	 * $select		Sql::$select存放的資料及欄位
-	 * $where		Sql::$where	存放的欲限制資料條件
-	 * $user_log	Sql::$log	存放的記錄資料
-	 * $system_log	Sql::$error	存放的發生錯誤時寫入錯誤記錄資料
-	 * $kind		Sql::$kind	存放的要新增或更新資料
+	 * table		Sql::$table 存放的資料表名稱
+	 * select		Sql::$select存放的資料及欄位
+	 * where		Sql::$where	存放的欲限制資料條件
+	 * user_log		Sql::$log	存放的記錄資料
+	 * system_log	Sql::$error	存放的發生錯誤時寫入錯誤記錄資料
+	 * kind			Sql::$kind	存放的要新增或更新資料
 	 */
-	public function execute_sql($table, $select, $where, $user_log, $system_log, $kind) {
-		$count = count($table);
+	public function execute_sql($sql) {
+		$count = count($sql['table']);
 	
 		$this->db->trans_begin();
 	
 		for($i = 0; $i < $count; $i++) {
-			if($where[$i] != '') $this->condition_where($where[$i]);
+			if($sql['where'][$i] != '') $this->condition_where($sql['where'][$i]);
 	
-			if($kind[$i] == 2) {
-				$this->db->update($table[$i], $select[$i]);
+			if($sql['kind'][$i] == 2) {
+				$this->db->update($sql['table'][$i], $sql['select'][$i]);
 			} else {
-				$this->db->insert($table[$i], $select[$i]);
+				$this->db->insert($sql['table'][$i], $sql['select'][$i]);
 			}
 				
 	
 			if($this->db->trans_status() === FALSE) {
-				$system_log[$i]['db_message'] = $this->db->_error_message();
+				$sql['system_log'][$i]['db_message'] = $this->db->_error_message();
 				$this->db->trans_rollback();
-				$this->db->insert('system_log', $system_log[$i]);
+				$this->db->insert('system_log', $sql['system_log'][$i]);
 				return FALSE;
 			} else {
-				$this->db->insert('user_log', $user_log[$i]);
+				$this->db->insert('user_log', $sql['user_log'][$i]);
 			}
 		}
 	

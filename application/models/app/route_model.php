@@ -55,13 +55,12 @@ class Route_model extends CI_Model {
 	 * $mobile_phone_id	手機ID
 	 */
 	public function decode_tempdata($encode, $mobile_phone_id) {
-		//查詢函式
-		$sql_result = $this->sql->result($this->query_model->query($this->sql->select(array('private_key'), ''), 
-															'moblie_phone_id_and_key', 
-															'', 
-															$this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array('')),
-															''), 
-										 'row_array');
+		//查詢該手機ID私鑰
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('private_key')),
+																	 	 'from' => 'moblie_phone_id_and_key',
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array('')),
+																		 'other' => '')), 'row_array');
 		
 		/*
 		 * 解密APP資料函式
@@ -89,15 +88,15 @@ class Route_model extends CI_Model {
 																		 'other' => '')), 'row_array');
 		
 		//更新資料處理
-		$this->sql->add_static('action_member', 
-							   $this->sql->field(array('mobile_phone_id', 'update_user', 'update_time'), array($mobile_phone_id, $id, $this->sql->get_time(1))), 
-							   $this->sql->where(array('where'), array('id'), array($id), array('')), 
-							   $this->sql->field(Sql::$user_log, array(1, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))), 
-							   $this->sql->field(Sql::$system_log, array(1, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')), 
-							   2);
+		$this->sql->add_static(array('table'=> 'action_member', 
+									 'select'=> $this->sql->field(array('mobile_phone_id', 'update_user', 'update_time'), array($mobile_phone_id, $id, $this->sql->get_time(1))), 
+									 'where'=> $this->sql->where(array('where'), array('id'), array($id), array('')), 
+									 'user_log'=> $this->sql->field(Sql::$user_log, array(2, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))), 
+									 'system_log'=> $this->sql->field(Sql::$system_log, array(2, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')), 
+									 'kind'=> 2));
 		
 		//執行更新
-		if(!$this->sql->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
+		if(!$this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 			/*
 			 * 更新失敗處理
 			 * 將錯誤訊息轉成json格式
