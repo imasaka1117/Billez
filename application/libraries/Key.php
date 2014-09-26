@@ -41,15 +41,22 @@ class Key {
 	 * 使用base64是為了能順利在http傳輸,因為加密後是屬於二進位,不利傳輸
 	 * $data		欲加密的json格式資料
 	 * $private_key	用來加密的私鑰
+	 * $kind		用公鑰加密或私鑰加密 若是公鑰則輸入public
 	 */
-	public function encode_app($data, $private_key) {
+	public function encode_app($data, $private_key, $kind) {
 		$outer_array = array();
 		$array = str_split($data, 100);
 		$array_count = count($array);
 
 		for($i = 0;$i < $array_count;$i++) {
-			//openssl私鑰加密函式
-			openssl_private_encrypt($array[$i], $crypted, $private_key);
+			if($kind == 'public') {
+				//openssl公鑰加密函式
+				openssl_public_encrypt($array[$i], $crypted, $public_key);				
+			} else {
+				//openssl私鑰加密函式
+				openssl_private_encrypt($array[$i], $crypted, $private_key);
+			}
+			
 			$json_array['vale'] = base64_encode($crypted);
 			array_push($outer_array, $json_array);
 		}
@@ -90,25 +97,5 @@ class Key {
 		$public_key = openssl_pkey_get_details($key);			
 		
 		return array('private_key' => $private_Key, 'public_key' => $public_key['key']);
-	}
-	
-	/*
-	 * 使用APP公鑰加密資料
-	 * $data		欲加密的資料
-	 * $public_key	APP給的公鑰
-	 */
-	public function encode_app_public($data, $public_key) {
-		$outer_array = array();
-		$array = str_split($data, 100);
-		$array_count = count($array);
-		
-		for($i = 0;$i < $array_count;$i++) {
-			//openssl公鑰加密函式
-			openssl_public_encrypt($array[$i], $crypted, $public_key);
-			$json_array['vale'] = base64_encode($crypted);
-			array_push($outer_array, $json_array);
-		}
-		
-		return $outer_array;
 	}
 }

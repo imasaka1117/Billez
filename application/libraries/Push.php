@@ -57,25 +57,21 @@ class Push {
 	 * $message 要傳送給手機的訊息
 	 */
 	public function send_push($message) {
-		$google_api_key = 'AIzaSyBYJOblFP9_L96Ws8WumtMdqOcT3y7gkqY';
-	
-		//傳送到GCM的網址
-		$url 	 = 'https://android.googleapis.com/gcm/send';
-		$gcm_ids = array_values(array_unique(Push::$moblie_phone_id));
-	
 		//傳送欄位,資料內容和要push的手機ID
 		$fields = array(
-				'registration_ids' => $gcm_ids,
+				'registration_ids' => array_values(array_unique(Push::$moblie_phone_id)),
 				'data'             => array( 'message' => $message)
 		);
-		//表頭設定
-		$headers = array('Authorization: key=' . $google_api_key,'Content-Type: application/json');
+		//表頭設定 
+		//api key
+		$headers = array('Authorization: key=AIzaSyBYJOblFP9_L96Ws8WumtMdqOcT3y7gkqY', 'Content-Type: application/json');
 	
 		//開啟連結
 		$ch = curl_init();
 	
 		//設定網址,傳送變數和資料
-		curl_setopt($ch, CURLOPT_URL, $url);
+		//傳送到GCM的網址
+		curl_setopt($ch, CURLOPT_URL, 'https://android.googleapis.com/gcm/send');
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

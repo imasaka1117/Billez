@@ -45,11 +45,8 @@ class Route_model extends CI_Model {
 	 */
 	public function merge($public_key, $mobile_phone_id, $first) {
 		//將APP給的公鑰合成為Server能用的公鑰
-		$public_key = $this->key->merge_key($public_key, $mobile_phone_id, $first);
 		//產生引導資料
-		$route_data = $this->key->route_data('', array('public_key', 'sub_param', 'mobile_phone_id', 'control_param'), array($public_key, $first . '_1', $mobile_phone_id, $first));
-	
-		return $route_data;
+		return $this->key->route_data('', array('public_key', 'sub_param', 'mobile_phone_id', 'control_param'), array($this->key->merge_key($public_key, $mobile_phone_id, $first), $first . '_1', $mobile_phone_id, $first));
 	}
 	
 	/*
@@ -58,11 +55,13 @@ class Route_model extends CI_Model {
 	 * $mobile_phone_id	手機ID
 	 */
 	public function decode_tempdata($encode, $mobile_phone_id) {
-		//查詢函式,通常為五個組合select where other query result
-		$sql_select = $this->sql->select(array('private_key'), '');
-		$sql_where = $this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'moblie_phone_id_and_key', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+		//查詢函式
+		$sql_result = $this->sql->result($this->query_model->query($this->sql->select(array('private_key'), ''), 
+															'moblie_phone_id_and_key', 
+															'', 
+															$this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array('')),
+															''), 
+										 'row_array');
 		
 		/*
 		 * 解密APP資料函式
@@ -72,12 +71,7 @@ class Route_model extends CI_Model {
 		 * 所以再將json轉為陣列
 		 * 最後產生引導資料
 		 */
-		$encode_data = $this->json->decode_json(1, $encode);
-		$json_data = $this->key->decode_app($encode_data, $sql_result['private_key']);
-		$decode_data = $this->json->decode_json(1, $json_data);
-		$route_data = $this->key->route_data($decode_data, array('mobile_phone_id', 'private_key'), array($mobile_phone_id, $sql_result['private_key']));
-		
-		return $route_data;
+		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $sql_result['private_key'])), array('mobile_phone_id', 'private_key'), array($mobile_phone_id, $sql_result['private_key']));
 	}
 	
 	/*
@@ -88,12 +82,11 @@ class Route_model extends CI_Model {
 	 */
 	public function check_mobile_phone_id($id, $mobile_phone_id, $encode) {
 		//查詢私鑰
-		$sql_result = $this->sql->result($this->query_model->query($this->sql->select(array('private_key'), ''), 
-																   'key', 
-															       '', 
-																   $this->sql->where(array('where'), array('id'), array($id), array('')), 
-																   ''), 
-										 'row_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('private_key')), 
+																		 'from' => 'key', 
+																		 'join'=> '', 
+																		 'where' => $this->sql->where(array('where'), array('id'), array($id), array('')), 
+																		 'other' => '')), 'row_array');
 		
 		//更新資料處理
 		$this->sql->add_static('action_member', 
@@ -104,26 +97,17 @@ class Route_model extends CI_Model {
 							   2);
 		
 		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind) === FALSE) {
+		if(!$this->sql->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
 			/*
 			 * 更新失敗處理
 			 * 將錯誤訊息轉成json格式
 			 * 再將訊息加密
 			 * 產生引導資料
 			 */
-			$json_data = $this->json->encode_json('0_1', '0_101');
-			$encode_data = $this->key->encode_app($json_data, $sql_result['private_key']);
-			$route_data = $this->key->route_data('', array('control_param', 'data'), array('0', $this->json->encode_json('app', $encode_data)));
-			
-			return $route_data;
+			return $this->key->route_data('', array('control_param', 'data'), array('0', $this->json->encode_json('app', $this->key->encode_app($this->json->encode_json('0_1', '0_101'), $sql_result['private_key'], ''))));
 		}
 		
 		//更新成功處理,解密及產生引導資料
-		$encode_data = $this->json->decode_json(1, $encode);
-		$json_data = $this->key->decode_app($encode_data, $sql_result['private_key']);
-		$decode_data = $this->json->decode_json(1, $json_data);
-		$route_data = $this->key->route_data($decode_data, array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $sql_result['private_key']));
-		
-		return $route_data;
+		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $sql_result['private_key'])), array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $sql_result['private_key']));
 	}
 }
