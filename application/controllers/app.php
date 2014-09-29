@@ -38,9 +38,18 @@ class App extends CI_Controller {
 // 		$route_data['first_name'] = '家';
 // 		echo $json_data;exit();
 // 		return $this->json->encode_json(1, $encode_data);
-		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
-// 		$route_data = $this->route_model->index($this->input->post());
 		
+		$_POST['public_key'] = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkWKC/USWUTfiGpi3JKkWQ3LwO
+hJ4IFUZRaEQVPLc0lwfl4+ZJsW2dJe+9picxFVbNHB+hH8tBsRlIh3t2JYcnBveI
+U4WxqIDGYjqr5dtp1qaf2LKohsM1xaNxZepA+JeU0PkTwkFYCLj1lWLfvI0tuzG2
+9aHuKCSoDHRZjwSKGwIDAQAB";
+		$_POST['mobile_phone_id'] = 'mobile_phone_id';
+		$_POST['first'] = 1;
+		
+		
+		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
+		$route_data = $this->route_model->index($this->input->post());
+echo print_r($route_data);exit();
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
 			case '0':

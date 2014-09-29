@@ -57,13 +57,15 @@ class Push {
 	 * $message 要傳送給手機的訊息
 	 */
 	public function send_push($message) {
+		//api key
+		
 		//傳送欄位,資料內容和要push的手機ID
 		$fields = array(
 				'registration_ids' => array_values(array_unique(Push::$moblie_phone_id)),
 				'data'             => array( 'message' => $message)
 		);
 		//表頭設定 
-		//api key
+		
 		$headers = array('Authorization: key=AIzaSyBYJOblFP9_L96Ws8WumtMdqOcT3y7gkqY', 'Content-Type: application/json');
 	
 		//開啟連結

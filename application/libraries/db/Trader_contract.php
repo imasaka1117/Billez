@@ -1,0 +1,50 @@
+<?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
+
+class Trader_contract {
+	var $table_name = 'trader_contract';
+	var $id = 'id';
+	var $name = 'name';
+	var $trader_code = 'trader_code';
+	var $bill_kind_code = 'bill_kind_code';
+	var $age = 'age';
+	var $begin = 'begin';
+	var $end = 'end';
+	var $publish_kind = 'publish_kind';
+	var $publish_day = 'publish_day';
+	var $publish_week = 'publish_week';
+	var $publish_month = 'publish_month';
+	var $publish_season_month = 'publish_season_month';
+	var $enter_kind = 'enter_kind';
+	var $enter_day = 'enter_day';
+	var $enter_week = 'enter_week';
+	var $enter_month = 'enter_month';
+	var $enter_season_month = 'enter_season_month';
+	var $collection_kind = 'collection_kind';
+	var $collection_day = 'collection_day';
+	var $collection_week = 'collection_week';
+	var $collection_month = 'collection_month';
+	var $collection_season_month = 'collection_season_month';
+	var $bill_price_kind = 'bill_price_kind';
+	var $month_rent_price = 'month_rent_price';
+	var $entity_price = 'entity_price';
+	var $action_price = 'action_price';
+	var $send_condition = 'send_condition';
+	var $send_condition_times = 'send_condition_times';
+	var $contract_remark = 'contract_remark';
+	var $email_send = 'email_send';
+	var $email_publish_kind = 'email_publish_kind';
+	var $email_publish_day = 'email_publish_day';
+	var $email_publish_week = 'email_publish_week';
+	var $email_publish_month = 'email_publish_month';
+	var $email_publish_season_month = 'email_publish_season_month';
+	var $ftp_ip = 'ftp_ip';
+	var $ftp_account = 'ftp_account';
+	var $ftp_password = 'ftp_password';
+	var $ftp_path = 'ftp_path';
+	var $ftp_receive_path = 'ftp_receive_path';
+	var $create_user = 'create_user';
+	var $create_time = 'create_time';
+	var $update_user = 'update_user';
+	var $update_time = 'update_time';
+	
+}

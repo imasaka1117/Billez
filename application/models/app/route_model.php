@@ -38,15 +38,57 @@ class Route_model extends CI_Model {
 	}
 	
 	/*
-	 * 處理公鑰及產生所需資料
+	 * 產生金鑰組並回傳加密公鑰
+	 * 因為怕被駭客攔截
+	 * 所以使用APP產生的公鑰去加密要給APP的公鑰
 	 * $public_key		公鑰
 	 * $mobile_phone_id	手機ID
 	 * $first			引導碼
 	 */
 	public function merge($public_key, $mobile_phone_id, $first) {
-		//將APP給的公鑰合成為Server能用的公鑰
-		//產生引導資料
-		return $this->key->route_data('', array('public_key', 'sub_param', 'mobile_phone_id', 'control_param'), array($this->key->merge_key($public_key, $mobile_phone_id, $first), $first . '_1', $mobile_phone_id, $first));
+		$app = $first . '_1';
+		
+		//新增一對金鑰組
+		$key = $this->key->create_key();
+		
+		//用意是要符合json格式
+		$server_public_key['public_key'] = $key['public_key'];
+		$json_array = array();
+		array_push($json_array, $server_public_key);
+		
+		//組合APP給的公鑰
+		$app_public_key = $this->key->merge_key($public_key);
+
+		//查詢手機ID是否存在,若存在則更新金鑰組,不存在則新增一個手機ID及金鑰組
+		$sql_result = $this->sql->result($this->sql->query(array('select' => $this->sql->select(array('mobile_phone_id')),
+																		 'from' => 'moblie_phone_id_and_key',
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array('')),
+																	 	 'other' => '')), 'num_rows');
+		if($sql_result) {
+			//更新該手機ID金鑰組
+			$this->sql->add_static(array('table'=> 'moblie_phone_id_and_key',
+										 'select'=> $this->sql->field(array('private_key', 'public_key', 'update_time'), array($key['private_key'], $key['public_key'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array('')),
+										 'user_log'=> $this->sql->field(Sql::$user_log, array(2, 1, 'moblie_phone_id_and_key', '該手機ID存在,更新金鑰組', $this->sql->get_time(1))),
+										 'system_log'=> $this->sql->field(Sql::$system_log, array(2, 1, 'moblie_phone_id_and_key', '該手機ID存在,更新金鑰組', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+		} else {
+			//新增一個手機ID及金鑰組
+			$this->sql->add_static(array('table'=> 'moblie_phone_id_and_key',
+									  	 'select'=> $this->sql->field(array('mobile_phone_id', 'private_key', 'public_key', 'create_time', 'update_time'), array($mobile_phone_id, $key['private_key'], $key['public_key'], $this->sql->get_time(1), $this->sql->get_time(1))),
+										 'where'=> '',
+										 'user_log'=> $this->sql->field(Sql::$user_log, array(1, 1, 'moblie_phone_id_and_key', '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1))),
+										 'system_log'=> $this->sql->field(Sql::$system_log, array(1, 1, 'moblie_phone_id_and_key', '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1), '')),
+										 'kind'=> 1));
+		}
+		
+		//執行新增/更新,並回傳APP公鑰加密資料
+		if($this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $json_array), $app_public_key, 'public'));
+		} else {
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $first . '_101'), $app_public_key, 'public'));
+		}
 	}
 	
 	/*
@@ -56,12 +98,11 @@ class Route_model extends CI_Model {
 	 */
 	public function decode_tempdata($encode, $mobile_phone_id) {
 		//查詢該手機ID私鑰
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('private_key')),
+		$sql_result = $this->sql->result($this->sql->query(array('select' => $this->sql->select(array('private_key')),
 																	 	 'from' => 'moblie_phone_id_and_key',
 																		 'join'=> '',
 																		 'where' => $this->sql->where(array('where'), array('mobile_phone_id'), array($mobile_phone_id), array('')),
 																		 'other' => '')), 'row_array');
-		
 		/*
 		 * 解密APP資料函式
 		 * 先將json轉為陣列
@@ -80,33 +121,40 @@ class Route_model extends CI_Model {
 	 * $encode			加密資料
 	 */
 	public function check_mobile_phone_id($id, $mobile_phone_id, $encode) {
-		//查詢私鑰
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('private_key')), 
-																		 'from' => 'key', 
-																		 'join'=> '', 
-																		 'where' => $this->sql->where(array('where'), array('id'), array($id), array('')), 
+		//查詢該會員金鑰
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('private_key')),
+																		 'from' => 'key',
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array('id'), array($id), array('')),
 																		 'other' => '')), 'row_array');
-		
-		//更新資料處理
-		$this->sql->add_static(array('table'=> 'action_member', 
-									 'select'=> $this->sql->field(array('mobile_phone_id', 'update_user', 'update_time'), array($mobile_phone_id, $id, $this->sql->get_time(1))), 
-									 'where'=> $this->sql->where(array('where'), array('id'), array($id), array('')), 
-									 'user_log'=> $this->sql->field(Sql::$user_log, array(2, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))), 
-									 'system_log'=> $this->sql->field(Sql::$system_log, array(2, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')), 
-									 'kind'=> 2));
-		
-		//執行更新
-		if(!$this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
-			/*
-			 * 更新失敗處理
-			 * 將錯誤訊息轉成json格式
-			 * 再將訊息加密
-			 * 產生引導資料
-			 */
-			return $this->key->route_data('', array('control_param', 'data'), array('0', $this->json->encode_json('app', $this->key->encode_app($this->json->encode_json('0_1', '0_101'), $sql_result['private_key'], ''))));
+		$private_key = $sql_result['private_key'];
+		//查詢該會員手機ID
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('mobile_phone_id')),
+																		 'from' => 'action_member',
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array('id'), array($id), array('')),
+																		 'other' => '')), 'row_array');
+		if($sql_result['mobile_phone_id'] != $mobile_phone_id) {
+			//更新資料處理
+			$this->sql->add_static(array('table'=> 'action_member',
+										 'select'=> $this->sql->field(array('mobile_phone_id', 'update_user', 'update_time'), array($mobile_phone_id, $id, $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array('id'), array($id), array('')),
+										 'user_log'=> $this->sql->field(Sql::$user_log, array(2, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))),
+										 'system_log'=> $this->sql->field(Sql::$system_log, array(2, $id, 'action_member', '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+			//執行更新
+			if(!$this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+				/*
+				 * 更新失敗處理
+				 * 將錯誤訊息轉成json格式
+				 * 再將訊息加密
+			  	 * 產生引導資料
+				 */
+				return $this->key->route_data('', array('control_param', 'data'), array('0', $this->json->encode_json('app', $this->key->encode_app($this->json->encode_json('0_1', '0_101'), $private_key, ''))));
+			}
 		}
 		
-		//更新成功處理,解密及產生引導資料
-		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $sql_result['private_key'])), array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $sql_result['private_key']));
+		//若手機ID相同,產生引導資料
+		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $sql_result['private_key'])), array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $private_key));
 	}
 }

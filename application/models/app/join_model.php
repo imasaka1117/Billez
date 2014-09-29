@@ -7,9 +7,6 @@ class Join_model extends CI_Model {
 	 */
 	public function index($route_data) {
 		switch($route_data['sub_param']) {
-			case '1_1':
-				return $this->create_key($route_data);
-				break;
 			case '1_2':
 				return $this->check_account($route_data);
 				break;
@@ -26,56 +23,6 @@ class Join_model extends CI_Model {
 				return $this->check_authentication($route_data);
 				break;
 		}
-	}
-	
-	/*
-	 * 產生金鑰組並回傳加密公鑰
-	 * 因為怕被駭客攔截
-	 * 所以使用APP產生的公鑰去加密要給APP的公鑰
-	 * $route_data 所需參數
-	 */
-	public function create_key($route_data) {
-		$app = '1_1';
-		$key = $this->key->create_key();				
-		
-		//用意是要符合json格式
-		$public_key['public_key'] = $key['public_key'];				
-		$outer_array = array();						
-		array_push($outer_array, $public_key);		
-
-		//查詢手機ID是否存在,若存在則更新金鑰組,不存在則新增一個手機ID及金鑰組
-		$sql_select = $this->sql->select(array('mobile_phone_id'), '');
-		$sql_where = $this->sql->where(array('where'), array('mobile_phone_id'), array($route_data['mobile_phone_id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'moblie_phone_id_and_key', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'num_rows');
-		
-		if($sql_result) {
-			//更新金鑰組
-			array_push(Sql::$table, 'moblie_phone_id_and_key');
-			array_push(Sql::$select, $this->sql->field(array('private_key', 'public_key', 'update_time'), array($key['private_key'], $key['public_key'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where'), array('mobile_phone_id'), array($route_data['mobile_phone_id']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, 1, 'moblie_phone_id_and_key', '該手機ID存在,更新金鑰組', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, 1, 'moblie_phone_id_and_key', '該手機ID存在,更新金鑰組', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);	
-		} else {
-			//新增一個手機ID及金鑰組
-			array_push(Sql::$table, 'moblie_phone_id_and_key');
-			array_push(Sql::$select, $this->sql->field(array('mobile_phone_id', 'private_key', 'public_key', 'create_time', 'update_time'), array($route_data['mobile_phone_id'], $key['private_key'], $key['public_key'], $this->sql->get_time(1), $this->sql->get_time(1))));
-			array_push(Sql::$where, '');
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, 1, 'moblie_phone_id_and_key', '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, 1, 'moblie_phone_id_and_key', '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 1);
-		}
-		
-		//執行新增/更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind) === FALSE) {
-			$json_data = $this->json->encode_json($app, '1_101');
-		} else {
-			$json_data = $this->json->encode_json($app, $outer_array);
-		}
-
-		$encode_data = $this->key->encode_app_public($json_data, $route_data['public_key']);
-		return $this->json->encode_json('vale', $encode_data);
 	}
 	
 	/*
