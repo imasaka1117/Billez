@@ -1,6 +1,6 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
-class Table {
+class Table_1 {
 	/*
 	 * 整個資料庫的表格名稱
 	 * 加進新的之前先查詢是否已經有現存的
