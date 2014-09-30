@@ -1,12 +1,12 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Level {
-	var $table_name = 'level';
-	var $code = 'code';
-	var $kind = 'kind';
-	var $name = 'name';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $l = 'level';
+	var $l_1 = 'code';
+	var $l_2 = 'kind';
+	var $l_3 = 'name';
+	var $l_4 = 'create_user';
+	var $l_5 = 'create_time';
+	var $l_6 = 'update_user';
+	var $l_7 = 'update_time';
 }

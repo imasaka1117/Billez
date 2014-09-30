@@ -1,13 +1,13 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Push_log {
-	var $table_name = 'push_log';
-	var $id = 'id';
-	var $mobile_phone = 'mobile_phone';
-	var $mobile_phone_id = 'mobile_phone_id';
-	var $event = 'event';
-	var $time = 'time';
-	var $result = 'result';
-	var $gcm_message = 'gcm_message';
+	var $pl = 'push_log';
+	var $pl_1 = 'id';
+	var $pl_2 = 'mobile_phone';
+	var $pl_3 = 'mobile_phone_id';
+	var $pl_4 = 'event';
+	var $pl_5 = 'time';
+	var $pl_6 = 'result';
+	var $pl_7 = 'gcm_message';
 	
 }

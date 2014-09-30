@@ -1,19 +1,19 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Action_member {
-	var $table_name = 'action_member';
-	var $id = 'id';
-	var $email = 'email';
-	var $last_name = 'last_name';
-	var $first_name = 'first_name';
-	var $mobile_phone = 'mobile_phone';
-	var $mobile_phone_id = 'mobile_phone_id';
-	var $state = 'state';
-	var $fb_id = 'fb_id';
-	var $google_id = 'google_id';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $am = 'action_member';
+	var $am_1 = 'id';
+	var $am_2 = 'email';
+	var $am_3 = 'last_name';
+	var $am_4 = 'first_name';
+	var $am_5 = 'mobile_phone';
+	var $am_6 = 'mobile_phone_id';
+	var $am_7 = 'state';
+	var $am_8 = 'fb_id';
+	var $am_9 = 'google_id';
+	var $am_10 = 'create_user';
+	var $am_11 = 'create_time';
+	var $am_12 = 'update_user';
+	var $am_13 = 'update_time';
 
 }

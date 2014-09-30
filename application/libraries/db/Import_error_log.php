@@ -1,18 +1,18 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Import_error_log {
-	var $table_name = 'import_error_log';
-	var $trader_code = 'trader_code';
-	var $bill_kind_code = 'bill_kind_code';
-	var $file_name = 'file_name';
-	var $file_path = 'file_path';
-	var $kind = 'kind';
-	var $reason = 'reason';
-	var $data = 'data';
-	var $user = 'user';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
-	var $time = 'time';
-	var $result = 'result';
+	var $iel = 'import_error_log';
+	var $iel_1 = 'trader_code';
+	var $iel_2 = 'bill_kind_code';
+	var $iel_3 = 'file_name';
+	var $iel_4 = 'file_path';
+	var $iel_5 = 'kind';
+	var $iel_6 = 'reason';
+	var $iel_7 = 'data';
+	var $iel_8 = 'user';
+	var $iel_9 = 'update_user';
+	var $iel_10 = 'update_time';
+	var $iel_11 = 'time';
+	var $iel_12 = 'result';
 
 }

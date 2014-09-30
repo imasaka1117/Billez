@@ -1,15 +1,15 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Trader_machinery {
-	var $table_name = 'trader_machinery';
-	var $trader_code = 'trader_code';
-	var $bill_kind_code = 'bill_kind_code';
-	var $machinery_code = '$machinery_code';
-	var $machinery_contract = 'machinery_contract';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $tm = 'trader_machinery';
+	var $tm_1 = 'trader_code';
+	var $tm_2 = 'bill_kind_code';
+	var $tm_3 = '$machinery_code';
+	var $tm_4 = 'machinery_contract';
+	var $tm_5 = 'create_user';
+	var $tm_6 = 'create_time';
+	var $tm_7 = 'update_user';
+	var $tm_8 = 'update_time';
 	
 
 	

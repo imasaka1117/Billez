@@ -1,13 +1,13 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Key {
-	var $table_name = 'key';
-	var $id = 'id';
-	var $private_key = 'private_key';
-	var $public_key = 'public_key';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $k = 'key';
+	var $k_1 = 'id';
+	var $k_2 = 'private_key';
+	var $k_3 = 'public_key';
+	var $k_4 = 'create_user';
+	var $k_5 = 'create_time';
+	var $k_6 = 'update_user';
+	var $k_7 = 'update_time';
 	
 }

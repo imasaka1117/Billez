@@ -1,20 +1,20 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Bill_import_log {
-	var $table_name = 'bill_import_log';
-	var $batch_code = 'batch_code';
-	var $trader_code = 'trader_code';
-	var $bill_kind_code = 'bill_kind_code';
-	var $import_bill_kind = 'import_bill_kind';
-	var $year = 'year';
-	var $month = 'month';
-	var $import_time = 'import_time';
-	var $file_name = 'file_name';
-	var $pushed = 'pushed';
-	var $times = 'times';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $bil = 'bill_import_log';
+	var $bil_1 = 'batch_code';
+	var $bil_2 = 'trader_code';
+	var $bil_3 = 'bill_kind_code';
+	var $bil_4 = 'import_bill_kind';
+	var $bil_5 = 'year';
+	var $bil_6 = 'month';
+	var $bil_7 = 'import_time';
+	var $bil_8 = 'file_name';
+	var $bil_9 = 'pushed';
+	var $bil_10 = 'times';
+	var $bil_11 = 'create_user';
+	var $bil_12 = 'create_time';
+	var $bil_13 = 'update_user';
+	var $bil_14 = 'update_time';
 	
 }

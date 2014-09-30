@@ -1,14 +1,14 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Sms_state {
-	var $table_name = 'sms_state';
-	var $id = 'id';
-	var $authentication_code = 'authentication_code';
-	var $sms_frequency = 'sms_frequency';
-	var $authentication_code2 = 'authentication_code2';
-	var $authentication_code3 = 'authentication_code3';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $ss = 'sms_state';
+	var $ss_1 = 'id';
+	var $ss_2 = 'authentication_code';
+	var $ss_3 = 'sms_frequency';
+	var $ss_4 = 'authentication_code2';
+	var $ss_5 = 'authentication_code3';
+	var $ss_6 = 'create_user';
+	var $ss_7 = 'create_time';
+	var $ss_8 = 'update_user';
+	var $ss_9 = 'update_time';
 }

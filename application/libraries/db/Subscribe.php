@@ -1,16 +1,16 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Subscribe {
-	var $table_name = 'subscribe';
-	var $id = 'id';
-	var $subscribe_code = 'subscribe_code';
-	var $state = 'state';
-	var $time = 'time';
-	var $send_condition = 'send_condition';
-	var $remark = 'remark';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $s = 'subscribe';
+	var $s_1 = 'id';
+	var $s_2 = 'subscribe_code';
+	var $s_3 = 'state';
+	var $s_4 = 'time';
+	var $s_5 = 'send_condition';
+	var $s_6 = 'remark';
+	var $s_7 = 'create_user';
+	var $s_8 = 'create_time';
+	var $s_9 = 'update_user';
+	var $s_10 = 'update_time';
 	
 }

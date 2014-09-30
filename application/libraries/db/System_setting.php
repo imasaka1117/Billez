@@ -1,20 +1,20 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class System_setting {
-	var $table_name = 'system_setting';
-	var $code = 'code';
-	var $using = 'using';
-	var $name = 'name';
-	var $push_times = 'push_times';
-	var $sms_times = 'sms_times';
-	var $push_300_time = 'push_300_time';
-	var $get_file_time = 'get_file_time';
-	var $possible_bill_time = 'possible_bill_time';
-	var $error_list_time = 'error_list_time';
-	var $repeat_push_time = 'repeat_push_time';
-	var $create_user = 'create_user';
-	var $create_time = 'create_time';
-	var $update_user = 'update_user';
-	var $update_time = 'update_time';
+	var $ss = 'system_setting';
+	var $ss_1 = 'code';
+	var $ss_2 = 'using';
+	var $ss_3 = 'name';
+	var $ss_4 = 'push_times';
+	var $ss_5 = 'sms_times';
+	var $ss_6 = 'push_300_time';
+	var $ss_7 = 'get_file_time';
+	var $ss_8 = 'possible_bill_time';
+	var $ss_9 = 'error_list_time';
+	var $ss_10 = 'repeat_push_time';
+	var $ss_11 = 'create_user';
+	var $ss_12 = 'create_time';
+	var $ss_13 = 'update_user';
+	var $ss_14 = 'update_time';
 	
 }
