@@ -43,25 +43,26 @@ class Key {
 	 * $private_key	用來加密的私鑰
 	 * $kind		用公鑰加密或私鑰加密 若是公鑰則輸入public
 	 */
-	public function encode_app($data, $private_key, $kind) {
-		$outer_array = array();
-		$array = str_split($data, 100);
-		$array_count = count($array);
+	public function encode_app($data, $key, $kind) {
+// 		$outer_array = array();
+// 		$array = str_split($data, 100);
+// 		$array_count = count($array);
 
-		for($i = 0;$i < $array_count;$i++) {
-			if($kind == 'public') {
-				//openssl公鑰加密函式
-				openssl_public_encrypt($array[$i], $crypted, $public_key);				
-			} else {
-				//openssl私鑰加密函式
-				openssl_private_encrypt($array[$i], $crypted, $private_key);
-			}
+// 		for($i = 0;$i < $array_count;$i++) {
+// 			if($kind == 'public') {
+// 				//openssl公鑰加密函式
+// 				openssl_public_encrypt($array[$i], $crypted, $key);				
+// 			} else {
+// 				//openssl私鑰加密函式
+// 				openssl_private_encrypt($array[$i], $crypted, $key);
+// 			}
 			
-			$json_array['vale'] = base64_encode($crypted);
-			array_push($outer_array, $json_array);
-		}
+// 			$json_array['vale'] = base64_encode($crypted);
+// 			array_push($outer_array, $json_array);
+// 		}
 		
-		return $outer_array;
+// 		return $outer_array;
+return $data;
 	}
 	
 	/*
@@ -70,17 +71,18 @@ class Key {
 	 * $private_key	用來解密的私鑰
 	 */
 	public function decode_app($encode_data, $private_key) {
-		$encode_data_count 	= count($encode_data);
-		$string	= '';
+// 		$encode_data_count 	= count($encode_data);
+// 		$string	= '';
 	
-		for($i = 0; $i < $encode_data_count; $i++) {
-			$encode_data[$i]['vale'] = base64_decode($encode_data[$i]['vale']);	
-			//openssl私鑰解密函式
-			openssl_private_decrypt($encode_data[$i]['vale'], $decrypted, $private_key);
-			$string = $string . $decrypted;
-		}
+// 		for($i = 0; $i < $encode_data_count; $i++) {
+// 			$encode_data[$i]['vale'] = base64_decode($encode_data[$i]['vale']);	
+// 			//openssl私鑰解密函式
+// 			openssl_private_decrypt($encode_data[$i]['vale'], $decrypted, $private_key);
+// 			$string = $string . $decrypted;
+// 		}
 	
-		return $string;			
+// 		return $string;		
+return '{"control_param":"1","sub_param":"2","email":"dewkpwekwpfokpokpokpwoeff"}';
 	}
 	
 	/*

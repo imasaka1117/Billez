@@ -11,8 +11,11 @@ class App extends CI_Controller {
 // 		$_SERVER['OPENSSL_CONF'] = 'openssl.cnf';
 		$this->load->model('app/route_model');
 		$this->load->model('db/query_model');
-		$this->load->library('db/field');
-		$this->load->library('db/table');
+		$this->load->library('db/field_1');
+		$this->load->library('db/field_2');
+		$this->load->library('db/field_3');
+		$this->load->library('db/field_4');
+		$this->load->library('db/table_1');
 		$this->load->library('key');
 		$this->load->library('json');
 		$this->load->library('sql');
@@ -42,17 +45,17 @@ class App extends CI_Controller {
 // 		echo $json_data;exit();
 // 		return $this->json->encode_json(1, $encode_data);
 		
-// 		$_POST['public_key'] = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkWKC/USWUTfiGpi3JKkWQ3LwO
+// $_POST['public_key'] = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkWKC/USWUTfiGpi3JKkWQ3LwO
 // hJ4IFUZRaEQVPLc0lwfl4+ZJsW2dJe+9picxFVbNHB+hH8tBsRlIh3t2JYcnBveI
 // U4WxqIDGYjqr5dtp1qaf2LKohsM1xaNxZepA+JeU0PkTwkFYCLj1lWLfvI0tuzG2
 // 9aHuKCSoDHRZjwSKGwIDAQAB";
-// 		$_POST['mobile_phone_id'] = 'mobile_phone_id1';
-// 		$_POST['first'] = 1;
-		
+		$_POST['mobile_phone_id'] = '2222';
+		$_POST['encode'] = '{"control_param":"1","sub_param":"2","email":"dewkpwekwpfokpokpokpwoeff"}';
+		$_POST['id'] = 'ACAA00002';
 		
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
 		$route_data = $this->route_model->index($this->input->post());
-// echo print_r($route_data);exit();
+echo print_r($route_data);exit();
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
 			case '0':

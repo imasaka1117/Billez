@@ -141,10 +141,10 @@ class Query_model extends CI_Model {
 			if($this->db->trans_status() === FALSE) {
 				$sql['system_log'][$i]['db_message'] = $this->db->_error_message();
 				$this->db->trans_rollback();
-				$this->db->insert(Table::$system_log, $sql['error'][$i]);
+				$this->db->insert(Table_1::$system_log, $sql['error'][$i]);
 				return FALSE;
 			} else {
-				$this->db->insert(Table::$user_log, $sql['log'][$i]);
+				$this->db->insert(Table_1::$user_log, $sql['log'][$i]);
 			}
 		}
 	
