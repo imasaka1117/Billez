@@ -221,18 +221,32 @@ class Sql {
 					$this->db->or_where_not_in($item['field'], $item['value']);
 					break;
 				case 'like':
-					$this->db->like($item['field'], $item['value'], $item['control']);
-					break;
 				case 'or_like':
-					$this->db->or_like($item['field'], $item['value'], $item['control']);
-					break;
 				case 'not_like':
-					$this->db->not_like($item['field'], $item['value'], $item['control']);
-					break;
 				case 'or_not_like':
-					$this->db->or_not_like($item['field'], $item['value'], $item['control']);
+					$this->condition_like($item);
 					break;
 			}
+		}
+	}
+	
+	/*
+	 * 
+	 */
+	public function condition_like($like) {
+		switch($like['command']) {
+				case 'like':
+					$this->db->like($like['field'], $like['value'], $like['control']);
+					break;
+				case 'or_like':
+					$this->db->or_like($like['field'], $like['value'], $like['control']);
+					break;
+				case 'not_like':
+					$this->db->not_like($like['field'], $like['value'], $like['control']);
+					break;
+				case 'or_not_like':
+					$this->db->or_not_like($like['field'], $like['value'], $like['control']);
+					break;
 		}
 	}
 	
