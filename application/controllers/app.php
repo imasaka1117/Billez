@@ -10,6 +10,9 @@ class App extends CI_Controller {
 		//為openssl的檔案在linux平台需要這個檔案放在同一目錄下才會啟用,windows就不須這行
 // 		$_SERVER['OPENSSL_CONF'] = 'openssl.cnf';
 		$this->load->model('app/route_model');
+		$this->load->model('db/query_model');
+		$this->load->library('db/field');
+		$this->load->library('db/table');
 		$this->load->library('key');
 		$this->load->library('json');
 		$this->load->library('sql');
@@ -27,7 +30,7 @@ class App extends CI_Controller {
 // 		$route_data['mobile_phone_id'] = 'APA91bH8_TT8u8BX45SCecJ9BzDYy7QLeiDkP21MymZ6dv6-9dmywQODeTzQShc7XQw99w6JCLnG_JsX4E65eD5zt9qPSPl_TuUjwdeumuhDSFat7Q1hnxVaVvIzDUNQJ72MszX76mCh-KJNNFbvzFuWCCctxg5x2A';
 // 		$route_data['control_param'] = '4';
 // 		$route_data['sub_param'] = '4_2';
-		
+
 // 		$route_data['new_email'] = 'imasaka1112@yahoo.com.tw111';
 // 		$route_data['password'] = 'dddd111';
 // 		$route_data['email'] = 'imasaka111222@yahoo.com.tw111';
@@ -39,17 +42,17 @@ class App extends CI_Controller {
 // 		echo $json_data;exit();
 // 		return $this->json->encode_json(1, $encode_data);
 		
-		$_POST['public_key'] = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkWKC/USWUTfiGpi3JKkWQ3LwO
-hJ4IFUZRaEQVPLc0lwfl4+ZJsW2dJe+9picxFVbNHB+hH8tBsRlIh3t2JYcnBveI
-U4WxqIDGYjqr5dtp1qaf2LKohsM1xaNxZepA+JeU0PkTwkFYCLj1lWLfvI0tuzG2
-9aHuKCSoDHRZjwSKGwIDAQAB";
-		$_POST['mobile_phone_id'] = 'mobile_phone_id';
-		$_POST['first'] = 1;
+// 		$_POST['public_key'] = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkWKC/USWUTfiGpi3JKkWQ3LwO
+// hJ4IFUZRaEQVPLc0lwfl4+ZJsW2dJe+9picxFVbNHB+hH8tBsRlIh3t2JYcnBveI
+// U4WxqIDGYjqr5dtp1qaf2LKohsM1xaNxZepA+JeU0PkTwkFYCLj1lWLfvI0tuzG2
+// 9aHuKCSoDHRZjwSKGwIDAQAB";
+// 		$_POST['mobile_phone_id'] = 'mobile_phone_id1';
+// 		$_POST['first'] = 1;
 		
 		
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
 		$route_data = $this->route_model->index($this->input->post());
-echo print_r($route_data);exit();
+// echo print_r($route_data);exit();
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
 			case '0':
