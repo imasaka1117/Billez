@@ -89,7 +89,6 @@ class Query_model extends CI_Model {
 				break;
 			default:
 				$this->db->select($query['select']['fields']);
-				$this->db->select('mobile_phone_id');
 				break;
 		}
 		

@@ -71,18 +71,17 @@ return $data;
 	 * $private_key	用來解密的私鑰
 	 */
 	public function decode_app($encode_data, $private_key) {
-// 		$encode_data_count 	= count($encode_data);
-// 		$string	= '';
+		$encode_data_count 	= count($encode_data);
+		$string	= '';
 	
-// 		for($i = 0; $i < $encode_data_count; $i++) {
-// 			$encode_data[$i]['vale'] = base64_decode($encode_data[$i]['vale']);	
-// 			//openssl私鑰解密函式
-// 			openssl_private_decrypt($encode_data[$i]['vale'], $decrypted, $private_key);
-// 			$string = $string . $decrypted;
-// 		}
+		for($i = 0; $i < $encode_data_count; $i++) {
+			$encode_data[$i]['vale'] = base64_decode($encode_data[$i]['vale']);	
+			//openssl私鑰解密函式
+			openssl_private_decrypt($encode_data[$i]['vale'], $decrypted, $private_key);
+			$string = $string . $decrypted;
+		}
 	
-// 		return $string;		
-return '{"control_param":"1","sub_param":"2","email":"dewkpwekwpfokpokpokpwoeff"}';
+		return $string;		
 	}
 	
 	/*

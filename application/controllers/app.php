@@ -27,6 +27,12 @@ class App extends CI_Controller {
 	 * 最後再載入view輸出結果給APP
 	 */
 	public function index() {
+		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
+// 		$route_data = $this->route_model->index($this->input->post());
+		
+		
+		
+		
 		//測試區
 // 		$route_data = array();
 // 		$route_data['id'] = 'ACAA00002';
@@ -42,20 +48,11 @@ class App extends CI_Controller {
 // 		$route_data['mobile_phone'] = '0988301481';
 // 		$route_data['last_name'] = '王';
 // 		$route_data['first_name'] = '家';
-// 		echo $json_data;exit();
-// 		return $this->json->encode_json(1, $encode_data);
+
+		$route_data['control_param'] = 1;
 		
-// $_POST['public_key'] = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkWKC/USWUTfiGpi3JKkWQ3LwO
-// hJ4IFUZRaEQVPLc0lwfl4+ZJsW2dJe+9picxFVbNHB+hH8tBsRlIh3t2JYcnBveI
-// U4WxqIDGYjqr5dtp1qaf2LKohsM1xaNxZepA+JeU0PkTwkFYCLj1lWLfvI0tuzG2
-// 9aHuKCSoDHRZjwSKGwIDAQAB";
-		$_POST['mobile_phone_id'] = '2222';
-		$_POST['encode'] = '{"control_param":"1","sub_param":"2","email":"dewkpwekwpfokpokpokpwoeff"}';
-		$_POST['id'] = 'ACAA00002';
 		
-		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
-		$route_data = $this->route_model->index($this->input->post());
-echo print_r($route_data);exit();
+		
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
 			case '0':

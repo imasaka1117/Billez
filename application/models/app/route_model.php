@@ -120,7 +120,7 @@ class Route_model extends CI_Model {
 	 * $mobile_phone_id	手機ID
 	 * $encode			加密資料
 	 */
-	public function check_mobile_phone_id($id, $mobile_phone_id, $encode) {!!!!!!!!!!!!!!!
+	public function check_mobile_phone_id($id, $mobile_phone_id, $encode) {
 		//查詢該會員金鑰
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$private_key), ''),
 																		 'from' => Table_1::$key,
@@ -138,12 +138,12 @@ class Route_model extends CI_Model {
 			//更新資料處理
 			$this->sql->add_static(array('table'=> Table_1::$action_member,
 										 'select'=> $this->sql->field(array(Field_1::$mobile_phone_id, Field_1::$update_user, Field_1::$update_time), array($mobile_phone_id, $id, $this->sql->get_time(1))),
-										 'where'=> $this->sql->where(array('where'), array(Field::$id), array($id), array('')),
-										 'user_log'=> $this->sql->field(Sql::$user_log, array(2, $id, Table_1::$action_member, '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))),
-										 'system_log'=> $this->sql->field(Sql::$system_log, array(2, $id, Table_1::$action_member, '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')),
+										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '因登入手機ID變更,所以更新手機ID', $this->sql->get_time(1), '')),
 										 'kind'=> 2));
 			//執行更新
-			if(!$this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			if(!$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 				/*
 				 * 更新失敗處理
 				 * 將錯誤訊息轉成json格式
@@ -155,6 +155,6 @@ class Route_model extends CI_Model {
 		}
 		
 		//若手機ID相同,產生引導資料
-		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $sql_result['private_key'])), array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $private_key));
+		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $private_key)), array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $private_key));
 	}
 }
