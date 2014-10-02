@@ -156,32 +156,35 @@ class Join_model extends CI_Model {
 					//回傳錯誤代碼1_201
 					return $route_data['sub_param'] . '01';
 				}
+				
+				//將一般帳號更新第三方資料
+				$this->sql->add_static(array('table'=> Table_1::$action_member,
+											 'select'=> $this->sql->field(array(Field_1::$fb_id, Field_1::$google_id, Field_1::$update_user, Field_1::$update_time), array($third_id['fb_id'], $third_id['google_id'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))),
+											 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
+											 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1))),
+											 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1), '')),
+											 'kind'=> 2));
+				//執行更新
+				if(!$this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+					//回傳錯誤代碼1_203
+					return $route_data['sub_param'] . '03';
+				}
 			}
-			回傳編號和宮要
-			一般會員新增第三方編號
-			
-			
 			//查詢該帳號公鑰
 			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$public_key), ''),
-					'from' => Table_1::key,
-					'join'=> '',
-					'where' => $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-					'other' => '')), 'row_array');
-			
+																			 'from' => Table_1::key,
+																			 'join'=> '',
+																			 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
+																			 'other' => '')), 'row_array');
+			//組合回傳資料
+			$json_array = array();
+			$temp_array['id'] = $id;
+			$temp_array['public_key'] = $key['public_key'];
+			array_push($json_array, $temp_array);
+			return $json_array;
 			
 			
 		}
-		
-		//檢查該帳號是否有密碼存在
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$password), ''),
-																		 'from' => Table_1::$password,
-																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($sql_result['id']), array('')),
-																		 'other' => '')), 'row_array');
-		$exist = $sql_result;
-		
-		
-		
 	}
 	
 	/*
