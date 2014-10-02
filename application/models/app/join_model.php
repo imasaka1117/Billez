@@ -232,11 +232,7 @@ class Join_model extends CI_Model {
 			$third_party = $route_data['fb_id'];
 		}
 		
-		$third_id['google_id'] = $google_id;
-		$third_id['fb_id'] = $fb_id;
-		$third_id['third_party'] = $third_party;
-		
-		return $third_id;
+		return array('google_id' => $google_id, 'fb_id' => $fb_id, 'third_party' => $third_party);
 	}
 	
 	/*
@@ -320,10 +316,10 @@ class Join_model extends CI_Model {
 	}
 	
 	/*
-	 * 更新資料及寄送認證碼簡訊
-	 * $route_data	所需參數
+	 * 新增其他行動會員資料或初始化
+	 * $route_data 所需參數資料
 	 */
-	public function send_authentication($route_data) {
+	public function more_data($route_data) {
 		//查詢電子郵件
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email), ''),
 																		 'from' => Table_1::$action_member,
@@ -333,7 +329,7 @@ class Join_model extends CI_Model {
 		//產生認證碼
 		$authentication_code = $this->create->authentication();
 		$email = $sql_result['email'];
-
+		
 		//查詢會員修改資料紀錄有無紀錄存在,若有則要初始化
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																		 'from' => Table_1::$action_member_alter_log,
@@ -390,6 +386,21 @@ class Join_model extends CI_Model {
 		
 		//執行
 		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			return $authentication_code;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/*
+	 * 更新資料及寄送認證碼簡訊
+	 * $route_data	所需參數
+	 */
+	public function send_authentication($route_data) {
+		$authentication_code = $this->more_data($route_data);
+		
+		//若執行成功則是認證碼
+		if($authentication_code) {
 			/*
 			 * 這裡待加入簡訊內容規格
 			 */
