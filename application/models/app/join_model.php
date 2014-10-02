@@ -6,24 +6,23 @@ class Join_model extends CI_Model {
 	 * $route_data從APP來的參數
 	 */
 	public function index($route_data) {
-		$this->insert_member(1,1);
-// 		switch($route_data['sub_param']) {
-// 			case '1_2':
-// 				return $this->check_account($route_data);
-// 				break;
-// 			case '1_3':
-// 				return $this->send_password($route_data);
-// 				break;
-// 			case '1_4':
-// 				return $this->send_authentication($route_data);
-// 				break;
-// 			case '1_5':
-// 				return $this->send_again($route_data);
-// 				break;
-// 			case '1_6':
-// 				return $this->check_authentication($route_data);
-// 				break;
-// 		}
+		switch($route_data['sub_param']) {
+			case '1_2':
+				return $this->check_account($route_data);
+				break;
+			case '1_3':
+				return $this->send_password($route_data);
+				break;
+			case '1_4':
+				return $this->send_authentication($route_data);
+				break;
+			case '1_5':
+				return $this->send_again($route_data);
+				break;
+			case '1_6':
+				return $this->check_authentication($route_data);
+				break;
+		}
 	}
 	
 	/*
@@ -47,26 +46,26 @@ class Join_model extends CI_Model {
 		$this->sql->add_static(array('table'=> Table_1::$action_member,
 									 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$email, Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone, Field_1::$mobile_phone_id, Field_1::$state, Field_1::$fb_id, Field_1::$google_id, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($id, $route_data['email'], '', '', '', $route_data['mobile_phone_id'], 1, $third_id['fb_id'], $third_id['google_id'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))),
 									 'where'=> '',
-									 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $id, Table_1::$action_member, '加入會員_新增行動會員初始資料', $this->sql->get_time(1))),
-									 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $id, Table_1::$action_member, '加入會員_新增行動會員初始資料', $this->sql->get_time(1), '')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $id, Table_1::$action_member, '加入會員_新增行動會員初始資料', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $id, Table_1::$action_member, '加入會員_新增行動會員初始資料', $this->sql->get_time(1), '')),
 									 'kind'=> 1));
 		//新增金鑰
 		$this->sql->add_static(array('table'=> Table_1::$key,
 									 'select'=> $this->sql->field(array(Field_1::$id, Field_2::$private_key, Field_2::$public_key, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($id, $key['private_key'], $key['public_key'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))),
 									 'where'=> '',
-									 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $id, Table_1::$key, '加入會員_新增金鑰資料', $this->sql->get_time(1))),
-									 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $id, Table_1::$key, '加入會員_新增金鑰資料', $this->sql->get_time(1), '')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $id, Table_1::$key, '加入會員_新增金鑰資料', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $id, Table_1::$key, '加入會員_新增金鑰資料', $this->sql->get_time(1), '')),
 									 'kind'=> 1));
 		//新增密碼(預先新增空密碼)
 		$this->sql->add_static(array('table'=> Table_1::$password,
 									 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$password, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($id, '', $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))),
 								 	 'where'=> '',
-									 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $id, Table_1::$password, '加入會員_新增密碼資料(預先新增)', $this->sql->get_time(1))),
-									 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $id, Table_1::$password, '加入會員_新增密碼資料(預先新增)', $this->sql->get_time(1), '')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $id, Table_1::$password, '加入會員_新增密碼資料(預先新增)', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $id, Table_1::$password, '加入會員_新增密碼資料(預先新增)', $this->sql->get_time(1), '')),
 									 'kind'=> 1));
 							
 		//執行更新
-		if($this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 			//組合回傳資料
 			$json_array = array();
 			$temp_array['id'] = $id;
@@ -95,6 +94,8 @@ class Join_model extends CI_Model {
 																		 'other' => '')), 'row_array');
 		$id = $sql_result['id'];
 		$state = $sql_result['state'];
+		$json_array = array();
+		$temp_array['id'] = $id;
 		
 		//檢查該帳號狀態
 		if($state == 1 || $state == 3) {
@@ -102,28 +103,26 @@ class Join_model extends CI_Model {
 			$this->sql->add_static(array('table'=> Table_1::$action_member,
 										 'select'=> $this->sql->field(array(Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone, Field_1::$mobile_phone_id, Field_1::$state, Field_1::$fb_id, Field_1::$google_id, Field_1::$update_user, Field_1::$update_time), array('', '', '', $route_data['mobile_phone_id'], 1, $third_id['fb_id'], $third_id['google_id'], $id, $this->sql->get_time(1))),
 										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-										 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '加入會員_初始化行動會員基本資料', $this->sql->get_time(1))),
-										 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '加入會員_初始化行動會員基本資料', $this->sql->get_time(1), '')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '加入會員_初始化行動會員基本資料', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '加入會員_初始化行動會員基本資料', $this->sql->get_time(1), '')),
 										 'kind'=> 2));
 			//初始化金鑰
 			$this->sql->add_static(array('table'=> Table_1::$key,
 										 'select'=> $this->sql->field(array(Field_2::$private_key, Field_2::$public_key, Field_1::$update_user, Field_1::$update_time), array($key['private_key'], $key['public_key'], $id, $this->sql->get_time(1))),
 										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-										 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$key, '加入會員_初始化行動會員金鑰組', $this->sql->get_time(1))),
-										 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$key, '加入會員_初始化行動會員金鑰組', $this->sql->get_time(1), '')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$key, '加入會員_初始化行動會員金鑰組', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$key, '加入會員_初始化行動會員金鑰組', $this->sql->get_time(1), '')),
 										 'kind'=> 2));
 			//初始化密碼
 			$this->sql->add_static(array('table'=> Table_1::$password,
-										 'select'=> $this->sql->field(array(Field_1::$password, ), array()),
+										 'select'=> $this->sql->field(array(Field_1::$password, Field_1::$update_user, Field_1::$update_time), array('', $id, $this->sql->get_time(1))),
 										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-										 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$password, '加入會員_初始化行動會員密碼', $this->sql->get_time(1))),
-										 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$password, '加入會員_初始化行動會員密碼', $this->sql->get_time(1), '')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$password, '加入會員_初始化行動會員密碼', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$password, '加入會員_初始化行動會員密碼', $this->sql->get_time(1), '')),
 										 'kind'=> 2));
 			//執行更新
-			if($this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
-				//組合回傳資料
-				$json_array = array();
-				$temp_array['id'] = $id;
+			if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+				//組合回傳資料	
 				$temp_array['public_key'] = $key['public_key'];
 				array_push($json_array, $temp_array);
 				return $json_array;
@@ -133,25 +132,38 @@ class Join_model extends CI_Model {
 			}
 		} else {
 			if($third_id['google_id'] == '' && $third_id['fb_id'] == '') {
-				//查詢該帳號是否有第三方資料
+				//查詢該帳號是否有第三方資料,有的話則是已有第三方而新增一般
 				$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$fb_id, Field_1::$google_id), ''),
 																				 'from' => Table_1::$action_member,
 																				 'join'=> '',
 																				 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-																				 'other' => '')), 'num_rows');
-				if(!$sql_result) {
+																				 'other' => '')), 'row_array');
+				if($sql_result['fb_id'] == '' && $sql_result['google_id'] == '') {
 					//沒有則代表一般申請重複
 					//回傳錯誤代碼1_202
 					return $route_data['sub_param'] . '02';
 				}
 			} else {
-				//檢查密碼是否存在
-				$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$password), ''),
-																				 'from' => Table_1::$password,
+				//查詢是否電子郵件有重複
+				$email_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+																				 'from' => Table_1::$action_member,
 																				 'join'=> '',
-																				 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-																				 'other' => '')), 'row_array');
-				if($sql_result == '') {
+																				 'where' => $this->sql->where(array('where'), array(Field_1::$femail), array($route_data['email']), array('')),
+																				 'other' => '')), 'num_rows');
+				//查詢該第三方碼fb是否有重複
+				$fb_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+																				 'from' => Table_1::$action_member,
+																				 'join'=> '',
+																				 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_id['fb_id'], $third_id['fb_id']), array('')),
+																				 'other' => '')), 'num_rows');
+				//查詢該第三方碼google是否有重複
+				$goole_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+																				 'from' => Table_1::$action_member,
+																				 'join'=> '',
+																				 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_id['google_id'], $third_id['google_id']), array('')),
+																				 'other' => '')), 'num_rows');
+
+				if($email_repeat || $fb_repeat || $goole_repeat) {
 					//沒有則代表第三方申請重複
 					//回傳錯誤代碼1_201
 					return $route_data['sub_param'] . '01';
@@ -161,29 +173,25 @@ class Join_model extends CI_Model {
 				$this->sql->add_static(array('table'=> Table_1::$action_member,
 											 'select'=> $this->sql->field(array(Field_1::$fb_id, Field_1::$google_id, Field_1::$update_user, Field_1::$update_time), array($third_id['fb_id'], $third_id['google_id'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))),
 											 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
-											 'user_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1))),
-											 'system_log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1), '')),
+											 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1))),
+											 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1), '')),
 											 'kind'=> 2));
 				//執行更新
-				if(!$this->sql->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+				if(!$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 					//回傳錯誤代碼1_203
 					return $route_data['sub_param'] . '03';
 				}
 			}
 			//查詢該帳號公鑰
 			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$public_key), ''),
-																			 'from' => Table_1::key,
+																			 'from' => Table_1::$key,
 																			 'join'=> '',
 																			 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
 																			 'other' => '')), 'row_array');
 			//組合回傳資料
-			$json_array = array();
-			$temp_array['id'] = $id;
-			$temp_array['public_key'] = $key['public_key'];
+			$temp_array['public_key'] = $sql_result['public_key'];
 			array_push($json_array, $temp_array);
 			return $json_array;
-			
-			
 		}
 	}
 	
@@ -247,256 +255,16 @@ class Join_model extends CI_Model {
 			
 			if(!$sql_result) {
 				//不存在則新增第三方會員
-				if(!$exist) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $this->insert_member($key, $route_data, $third_id)), $route_data['private_key']));
+				if(!$exist) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->insert_member($key, $route_data, $third_id)), $route_data['private_key'], ''));
 			}
 		} else {
 			//沒有第三方參數
 			//不存在則新增一般會員
-			if(!$exist) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $this->insert_member($key, $route_data, $third_id)), $route_data['private_key']));
+			if(!$exist) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->insert_member($key, $route_data, $third_id)), $route_data['private_key'], ''));
 		}
 
 		//存在則檢查狀態做判斷
-		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $this->check_state($key, $route_data, $third_id)), $route_data['private_key']));
-
-
-		
-		
-		
-		
-		//符合回傳格式用
-		$outer_array = array();	
-		//查詢該電子郵件是否有會員狀態
-		$sql_select = $this->sql->select(array('state'), '');
-		$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		if(isset($sql_result['state'])) $state = $sql_result['state']; else $state = '';
-		
-		//產生新的金鑰組
-		$key = $this->key->create_key();
-		
-// -------------------有第三方
-		//檢查是否有第三方參數
-		if(isset($route_data['google_id']) || isset($route_data['fb_id'])) {
-			//查詢會員電子郵件
-			$sql_select = $this->sql->select(array('email'), '');
-			//google或fb
-			if(isset($route_data['google_id'])) {
-				$google_id = $route_data['google_id'];
-				$fb_id = '';
-				$sql_where = $this->sql->where(array('where', 'where'), array('email', 'google_id'), array($route_data['email'], $route_data['google_id']), array(''));
-			} else {
-				$fb_id = $route_data['fb_id'];
-				$google_id = '';
-				$sql_where = $this->sql->where(array('where', 'where'), array('email', 'fb_id'), array($route_data['email'], $route_data['fb_id']), array(''));
-			}
-			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-			$sql_result = $this->sql->result($sql_query, 'num_rows');
-				
-			//判斷是否重複申請google或者fb
-			if($sql_result) {
-				if(isset($route_data['google_id'])) {
-					$json_data = $this->json->encode_json($app, '1_201');
-				} else {
-					$json_data = $this->json->encode_json($app, '1_202');
-				}
-				//加密後回傳出去
-				$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-				return $this->json->encode_json('vale', $encode_data);
-			} else {
-				//確認是否有該會員存在
-				$sql_select = $this->sql->select(array('id'), '');
-				$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
-				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-				$sql_result = $this->sql->result($sql_query, 'num_rows');
-
-				if($sql_result) {
-					//查詢會員編號
-					$sql_select = $this->sql->select(array('id'), '');
-					$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
-					$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-					$sql_result = $this->sql->result($sql_query, 'row_array');
-
-					//回傳給APP的資料
-					$id_key['id'] = $sql_result['id'];
-					
-					//檢查該會員狀態 1為未認證狀態,3為刪除帳號狀態
-					switch($state) {
-						case 1:
-						case 3:
-							$id_key['public_key'] = $key['public_key'];
-							//初始化會員資料,正常為六個一組
-							array_push(Sql::$table, 'action_member');
-							array_push(Sql::$select, $this->sql->field(array('last_name', 'first_name', 'mobile_phone', 'mobile_phone_id', 'state', 'update_user', 'update_time'), array('', '', '', $route_data['mobile_phone_id'], 1, $sql_result['id'], $this->sql->get_time(1))));
-							array_push(Sql::$where, $this->sql->where(array('where', 'where'), array('id', 'email'), array($sql_result['id'], $route_data['email']), array('')));
-							array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將會員基本資料初始化', $this->sql->get_time(1))));
-							array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將會員基本資料初始化', $this->sql->get_time(1), '')));
-							array_push(Sql::$kind, 2);
-							
-							//初始化金鑰資料,正常為六個一組
-							array_push(Sql::$table, 'key');
-							array_push(Sql::$select, $this->sql->field(array('private_key', 'public_key', 'update_user', 'update_time'), array($key['private_key'], $key['public_key'], $sql_result['id'], $this->sql->get_time(1))));
-							array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($sql_result['id']), array('')));
-							array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將金鑰資料初始化', $this->sql->get_time(1))));
-							array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將金鑰資料初始化', $this->sql->get_time(1), '')));
-							array_push(Sql::$kind, 2);
-							break;
-						default:
-							//更新會員資料,增加google或fb帳戶
-							array_push(Sql::$table, 'action_member');
-							if(isset($route_data['google_id'])) {
-								array_push(Sql::$select, $this->sql->field(array('google_id', 'update_user', 'update_time'), array($route_data['google_id'], $sql_result['id'], $this->sql->get_time(1))));
-								array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新google帳戶', $this->sql->get_time(1))));
-								array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新google帳戶', $this->sql->get_time(1), '')));
-								$id_key['1_203'] = '1_203';
-							} else {
-								array_push(Sql::$select, $this->sql->field(array('fb_id', 'update_user', 'update_time'), array($route_data['fb_id'], $sql_result['id'], $this->sql->get_time(1))));
-								array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新fb帳戶', $this->sql->get_time(1))));
-								array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '該會員已存在,更新fb帳戶', $this->sql->get_time(1), '')));
-								$id_key['1_204'] = '1_204';
-							}		
-							array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($sql_result['id']), array('')));
-							array_push(Sql::$kind, 2);
-							
-							//查詢該會員公鑰
-							$sql_select = $this->sql->select(array('public_key'), '');
-							$sql_where = $this->sql->where(array('where'), array('id'), array($sql_result['id']), array(''));
-							$sql_query = $this->query_model->query($sql_select, 'key', '', $sql_where, '');
-							$sql_result = $this->sql->result($sql_query, 'row_array');
-							
-							$id_key['public_key'] = $sql_result['public_key'];
-							break;
-					}
-					
-					//丟到回傳格式
-					array_push($outer_array, $id_key);		
-// --------------用第三方申請會員		
-				} else {
-					//沒有則是用第三方新增一個會員
-					//查詢最大編號
-					$sql_select = $this->sql->select(array('id'), 'max');
-					$sql_where = '';
-					$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-					$sql_result = $this->sql->result($sql_query, 'row_array');
-						
-					//產生會員編號
-					$id = $this->create->id('AC', $sql_result['max']);
-					$id_key['id'] 			= $id;
-					$id_key['public_key'] 	= $key['public_key'];
-					//丟到回傳格式
-					array_push($outer_array, $id_key);	
-
-					//新增會員資料
-					array_push(Sql::$table, 'action_member');
-					array_push(Sql::$select, $this->sql->field(array('id', 'email', 'last_name', 'first_name', 'mobile_phone', 'mobile_phone_id', 'state', 'fb_id', 'google_id', 'create_user', 'create_time', 'update_user', 'update_time'), array($id, $route_data['email'], '', '', '', $route_data['mobile_phone_id'], 1, $fb_id, $google_id, $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))));
-					array_push(Sql::$where, '');
-					array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $id, 'action_member', '使用第三方新增會員資料', $this->sql->get_time(1))));
-					array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $id, 'action_member', '使用第三方新增會員資料', $this->sql->get_time(1), '')));
-					array_push(Sql::$kind, 1);
-					//新增金鑰資料
-					array_push(Sql::$table, 'key');
-					array_push(Sql::$select, $this->sql->field(array('id', 'private_key', 'public_key', 'create_user', 'create_time', 'update_user', 'update_time'), array($id, $key['private_key'], $key['public_key'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))));
-					array_push(Sql::$where, '');
-					array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $id, 'key', '使用第三方新增金鑰資料', $this->sql->get_time(1))));
-					array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $id, 'key', '使用第三方新增金鑰資料', $this->sql->get_time(1), '')));
-					array_push(Sql::$kind, 1);
-				}	
-			}
-// ---------------------------沒有第三方參數
-		} else {
-			//檢查一般帳號資料, 確認是否有該會員存在
-			$sql_select = $this->sql->select(array('id'), '');
-			$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-			$sql_result = $this->sql->result($sql_query, 'num_rows');
-			
-			if($sql_result) {
-				//查詢會員編號及第三方
-				$sql_select = $this->sql->select(array('id', 'google_id', 'fb_id'), '');
-				$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
-				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-				$sql_result = $this->sql->result($sql_query, 'row_array');
-				
-				//回傳給APP的資料
-				$id_key['id'] = $sql_result['id'];
-				
-				switch($state) {
-					case 1:
-					case 3:
-						$id_key['public_key'] = $key['public_key'];
-						//初始化會員資料,正常為六個一組
-						array_push(Sql::$table, 'action_member');
-						array_push(Sql::$select, $this->sql->field(array('last_name', 'first_name', 'mobile_phone', 'mobile_phone_id', 'state', 'update_user', 'update_time'), array('', '', '', $route_data['mobile_phone_id'], 1, $sql_result['id'], $this->sql->get_time(1))));
-						array_push(Sql::$where, $this->sql->where(array('where', 'where'), array('id', 'email'), array($sql_result['id'], $route_data['email']), array('')));
-						array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將會員基本資料初始化', $this->sql->get_time(1))));
-						array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將會員基本資料初始化', $this->sql->get_time(1), '')));
-						array_push(Sql::$kind, 2);
-						
-						//初始化金鑰資料,正常為六個一組
-						array_push(Sql::$table, 'key');
-						array_push(Sql::$select, $this->sql->field(array('private_key', 'public_key', 'update_user', 'update_time'), array($key['private_key'], $key['public_key'], $sql_result['id'], $this->sql->get_time(1))));
-						array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($sql_result['id']), array('')));
-						array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將金鑰資料初始化', $this->sql->get_time(1))));
-						array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $sql_result['id'], 'action_member', '因會員重複申請帳號,所以將金鑰資料初始化', $this->sql->get_time(1), '')));
-						array_push(Sql::$kind, 2);
-						break;	
-					default:
-						if($sql_result['google_id'] == '' && $sql_result['fb_id'] == '') {
-							//一般帳號重複
-							$json_data = $this->json->encode_json($app, '1_205');
-
-							//加密後回傳出去
-							$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-							return $this->json->encode_json('vale', $encode_data);
-						} else {
-							$id_key['public_key'] = $key['public_key'];
-						}
-						break;
-				}
-				
-				//丟到回傳格式
-				array_push($outer_array, $id_key);
-			} else {
-// -----一般帳號新增
-				//查詢最大編號
-				$sql_select = $this->sql->select(array('id'), 'max');
-				$sql_where = '';
-				$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-				$sql_result = $this->sql->result($sql_query, 'row_array');
-
-				//產生會員編號
-				$id = $this->create->id('AC', $sql_result['max']);
-				$id_key['id'] 			= $id;
-				$id_key['public_key'] 	= $key['public_key'];
-				//丟到回傳格式
-				array_push($outer_array, $id_key);
-				
-				//新增會員資料
-				array_push(Sql::$table, 'action_member');
-				array_push(Sql::$select, $this->sql->field(array('id', 'email', 'last_name', 'first_name', 'mobile_phone', 'mobile_phone_id', 'state', 'create_user', 'create_time', 'update_user', 'update_time'), array($id, $route_data['email'], '', '', '', $route_data['mobile_phone_id'], 1, $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))));
-				array_push(Sql::$where, '');
-				array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $id, 'action_member', '使用一般新增會員資料', $this->sql->get_time(1))));
-				array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $id, 'action_member', '使用一般新增會員資料', $this->sql->get_time(1), '')));
-				array_push(Sql::$kind, 1);
-				//新增金鑰資料
-				array_push(Sql::$table, 'key');
-				array_push(Sql::$select, $this->sql->field(array('id', 'private_key', 'public_key', 'create_user', 'create_time', 'update_user', 'update_time'), array($id, $key['private_key'], $key['public_key'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))));
-				array_push(Sql::$where, '');
-				array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $id, 'key', '使用一般新增金鑰資料', $this->sql->get_time(1))));
-				array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $id, 'key', '使用一般新增金鑰資料', $this->sql->get_time(1), '')));
-				array_push(Sql::$kind, 1);
-			}
-		}
-		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind) === FALSE) {
-			$json_data = $this->json->encode_json($app, '1_206');
-		} else {
-			$json_data = $this->json->encode_json($app, $outer_array);
-		}
-
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->check_state($key, $route_data, $third_id)), $route_data['private_key'], ''));
 	}
 	
 	/*
