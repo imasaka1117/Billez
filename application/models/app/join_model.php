@@ -87,10 +87,30 @@ class Join_model extends CI_Model {
 		$json_array = array();
 		//組合回傳資料
 		$temp_array['id'] = $id;
-		$temp_array['public_key'] = $key['public_key'];
+		$temp_array['public_key'] = $public_key;
 		array_push($json_array, $temp_array);
 		
 		return $json_array;
+	}
+	
+	/*
+	 * 組合select 第三方類型
+	 * $third_party	包含第三方參數
+	 */
+	public function select_third_party($third_party, $id) {
+		if($third_party['google_id'] != '') {
+			$field = Field_1::$google_id;
+			$value = $third_party['google_id'];
+		}
+		if($third_party['fb_id'] != '') {
+			$field = Field_1::$fb_id;
+			$value = $third_party['fb_id'];
+		}
+		
+		$select['field'] = array($field, Field_1::$update_user, Field_1::$update_time);
+		$select['value'] = array($value, $id, $this->sql->get_time(1), $id, $this->sql->get_time(1));
+		
+		return $select;
 	}
 	
 	/*
@@ -155,34 +175,23 @@ class Join_model extends CI_Model {
 					return $route_data['sub_param'] . '02';
 				}
 			} else {
-				//查詢是否電子郵件有重複
-				$email_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+				//查詢該第三方碼是否有重複
+				$third_party_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																				 'from' => Table_1::$action_member,
 																				 'join'=> '',
-																				 'where' => $this->sql->where(array('where'), array(Field_1::$femail), array($route_data['email']), array('')),
+																				 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_id['third_party'], $third_id['third_party']), array('')),
 																				 'other' => '')), 'num_rows');
-				//查詢該第三方碼fb是否有重複
-				$fb_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
-																				 'from' => Table_1::$action_member,
-																				 'join'=> '',
-																				 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_id['fb_id'], $third_id['fb_id']), array('')),
-																				 'other' => '')), 'num_rows');
-				//查詢該第三方碼google是否有重複
-				$goole_repeat = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
-																				 'from' => Table_1::$action_member,
-																				 'join'=> '',
-																				 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_id['google_id'], $third_id['google_id']), array('')),
-																				 'other' => '')), 'num_rows');
-
-				if($email_repeat || $fb_repeat || $goole_repeat) {
+				if($third_party_repeat) {
 					//代表第三方申請重複
 					//回傳錯誤代碼1_201
 					return $route_data['sub_param'] . '01';
 				}
 				
+				$select = $this->select_third_party($third_id, $id);
+				
 				//將一般帳號更新第三方資料
 				$this->sql->add_static(array('table'=> Table_1::$action_member,
-											 'select'=> $this->sql->field(array(Field_1::$fb_id, Field_1::$google_id, Field_1::$update_user, Field_1::$update_time), array($third_id['fb_id'], $third_id['google_id'], $id, $this->sql->get_time(1), $id, $this->sql->get_time(1))),
+											 'select'=> $this->sql->field($select['field'], $select['value']),
 											 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
 											 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1))),
 											 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $id, Table_1::$action_member, '加入會員_已有一般會員用第三方加入', $this->sql->get_time(1), '')),
@@ -212,6 +221,7 @@ class Join_model extends CI_Model {
 		//第三方參數
 		$google_id = '';
 		$fb_id = '';
+		$third_party = '';
 		
 		if(isset($route_data['google_id'])) {
 			$google_id = $route_data['google_id'];
@@ -224,6 +234,7 @@ class Join_model extends CI_Model {
 		
 		$third_id['google_id'] = $google_id;
 		$third_id['fb_id'] = $fb_id;
+		$third_id['third_party'] = $third_party;
 		
 		return $third_id;
 	}
@@ -266,7 +277,7 @@ class Join_model extends CI_Model {
 			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																			 'from' => Table_1::$action_member,
 																			 'join'=> '',
-																			 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_party, $third_party), array('')),
+																			 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_id['third_party'], $third_id['third_party']), array('')),
 																			 'other' => '')), 'num_rows');
 			if(!$sql_result && !$exist) {
 				//不存在則新增第三方會員
