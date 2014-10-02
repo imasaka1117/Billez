@@ -79,6 +79,21 @@ class Join_model extends CI_Model {
 	}
 	
 	/*
+	 * 整理回傳資料
+	 * $id	會員編號
+	 * $public_key	會員公鑰
+	 */
+	public function return_data($id, $public_key) {
+		$json_array = array();
+		//組合回傳資料
+		$temp_array['id'] = $id;
+		$temp_array['public_key'] = $key['public_key'];
+		array_push($json_array, $temp_array);
+		
+		return $json_array;
+	}
+	
+	/*
 	 * 檢查帳號狀態及初始化或重複申請判斷
 	 * 被check_accountg使用
 	 * $kind		判斷新增一般或第三方會員
@@ -93,9 +108,7 @@ class Join_model extends CI_Model {
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$email), array($route_data['email']), array('')),
 																		 'other' => '')), 'row_array');
 		$id = $sql_result['id'];
-		$state = $sql_result['state'];
-		$json_array = array();
-		$temp_array['id'] = $id;
+		$state = $sql_result['state'];		
 		
 		//檢查該帳號狀態
 		if($state == 1 || $state == 3) {
@@ -122,10 +135,8 @@ class Join_model extends CI_Model {
 										 'kind'=> 2));
 			//執行更新
 			if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
-				//組合回傳資料	
-				$temp_array['public_key'] = $key['public_key'];
-				array_push($json_array, $temp_array);
-				return $json_array;
+				//組合回傳資料
+				return $this->return_data($id, $key['public_key']);
 			} else {
 				//回傳錯誤代碼1_203
 				return $route_data['sub_param'] . '03';
@@ -189,10 +200,32 @@ class Join_model extends CI_Model {
 																			 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($id), array('')),
 																			 'other' => '')), 'row_array');
 			//組合回傳資料
-			$temp_array['public_key'] = $sql_result['public_key'];
-			array_push($json_array, $temp_array);
-			return $json_array;
+			return $this->return_data($id, $sql_result['public_key']);
 		}
+	}
+	
+	/*
+	 * 處理第三方參數
+	 * $route_data 所需參數資料
+	 */
+	public function third_party($route_data) {
+		//第三方參數
+		$google_id = '';
+		$fb_id = '';
+		
+		if(isset($route_data['google_id'])) {
+			$google_id = $route_data['google_id'];
+			$third_party = $route_data['google_id'];
+		}
+		if(isset($route_data['fb_id'])) {
+			$fb_id = $route_data['fb_id'];
+			$third_party = $route_data['fb_id'];
+		}
+		
+		$third_id['google_id'] = $google_id;
+		$third_id['fb_id'] = $fb_id;
+		
+		return $third_id;
 	}
 	
 	/*
@@ -218,32 +251,15 @@ class Join_model extends CI_Model {
 	public function check_account($route_data) {
 		//產生金鑰組
 		$key = $this->key->create_key();
+		$third_id = $this->third_party($route_data);
 		
-		//第三方參數
-		$google_id = '';
-		$fb_id = '';
-
-		if(isset($route_data['google_id'])) {
-			$google_id = $route_data['google_id'];
-			$third_party = $route_data['google_id'];
-		}
-		if(isset($route_data['fb_id'])) {
-			$fb_id = $route_data['fb_id'];
-			$third_party = $route_data['fb_id'];
-		}
-		
-		$third_id['google_id'] = $google_id;
-		$third_id['fb_id'] = $fb_id;
 		
 		//檢查電子郵件是否已經存在
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+		$exist = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																		 'from' => Table_1::$action_member,
 																		 'join'=> '',
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$email), array($route_data['email']), array('')),
-																		 'other' => '')), 'num_rows');
-		//存放該電子郵件是否存在
-		$exist = $sql_result;	
-		
+																		 'other' => '')), 'num_rows');	
 		//檢查是否有第三方參數
 		if(isset($route_data['google_id']) || isset($route_data['fb_id'])) {
 			//檢查該第三方資料是否存在
@@ -252,10 +268,9 @@ class Join_model extends CI_Model {
 																			 'join'=> '',
 																			 'where' => $this->sql->where(array('where', 'or_where'), array(Field_1::$fb_id, Field_1::$google_id), array($third_party, $third_party), array('')),
 																			 'other' => '')), 'num_rows');
-			
-			if(!$sql_result) {
+			if(!$sql_result && !$exist) {
 				//不存在則新增第三方會員
-				if(!$exist) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->insert_member($key, $route_data, $third_id)), $route_data['private_key'], ''));
+				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->insert_member($key, $route_data, $third_id)), $route_data['private_key'], ''));
 			}
 		} else {
 			//沒有第三方參數
