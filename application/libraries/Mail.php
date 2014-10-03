@@ -1,6 +1,27 @@
 <?php	if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
-class Email {
+class Mail {
+	
+	public function fff() {
+// 		$this->load->library('email');
+		$config['smtp_host'] = 'msa.hinet.net';
+		$config['smtp_port'] = '25';
+		$config['protocol'] = 'smtp';
+		$config['mailtype'] = 'html';
+		$config['smtp_user'] = '';
+		$config['smtp_pass'] = '';
+		
+		// 		$config[''] = '';
+		// 		$config[''] = '';
+		
+		$this->email->initialize($config);
+		$this->email->from('yue@yahoo.com.tw', '長佑科技');
+		$this->email->to('imasaka1117@yahoo.com.tw');
+		$this->email->subject('Email Test');
+		$this->email->message('Testing the email class.');
+		
+		echo $this->email->send();exit();
+	}
 	/*
 	 * 寄送電子郵件函式
 	 * $kind	寄送的種類	1為忘記密碼, 2為電子帳單, 3為印刷業者, 4為問題回報

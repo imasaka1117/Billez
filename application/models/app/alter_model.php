@@ -3,12 +3,12 @@
 class Alter_model extends CI_Model {
 	/*
 	 * 修改會員資料起點函式
-	* $route_data從APP來的參數
-	*/
+	 * $route_data從APP來的參數
+	 */
 	public function index($route_data) {
 		switch($route_data['sub_param']) {
 			case '3_1':
-				return $this->alter_data($route_data);
+				return $this->check_mobile_phone($route_data);
 				break;
 			case '3_2':
 				return $this->send_again($route_data);
@@ -20,6 +20,55 @@ class Alter_model extends CI_Model {
 	}
 	
 	/*
+	 * 修改資料處理
+	 * $route_data	所需參數資料
+	 * $action_member_info	目前的會員基本資料
+	 */
+	public function alter_data($route_data, $action_member_info) {
+		//查詢最大修改次數
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$frequency . ') AS max'), 'function'),
+																		 'from' => Table_1::$action_member_alter_log,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
+		$frequency = $sql_result['max'] + 1;
+/////////////////////////////////////
+		//新增修改記錄資料,把目前的資料移到修改記錄
+		array_push(Sql::$table, 'action_member_alter_log');
+		array_push(Sql::$select, $this->sql->field(array('frequency', 'id', 'email', 'password', 'last_name', 'first_name', 'mobile_phone', 'create_user', 'create_time', 'update_user', 'update_time'), array($frequency, $route_data['id'], $now_action_member_info['email'], $now_password, $now_action_member_info['last_name'], $now_action_member_info['first_name'], $now_action_member_info['mobile_phone'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
+		array_push(Sql::$where, '');
+		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $route_data['id'], 'action_member_alter_log', '修改資料新增修改記錄', $this->sql->get_time(1))));
+		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'action_member_alter_log', '修改資料新增修改記錄', $this->sql->get_time(1), '')));
+		array_push(Sql::$kind, 1);
+			
+		//更新行動會員基本資料
+		array_push(Sql::$table, 'action_member');
+		array_push(Sql::$select, $this->sql->field(array('email', 'last_name', 'first_name', 'mobile_phone', 'update_user', 'update_time'), array($route_data['new_email'], $route_data['last_name'], $route_data['first_name'], $route_data['mobile_phone'], $route_data['id'], $this->sql->get_time(1))));
+		array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
+		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member', '修改資料更新會員基本資料', $this->sql->get_time(1))));
+		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member', '修改資料更新會員基本資料', $this->sql->get_time(1), '')));
+		array_push(Sql::$kind, 2);
+			
+		//更新會員密碼
+		array_push(Sql::$table, 'password');
+		array_push(Sql::$select, $this->sql->field(array('password', 'update_user', 'update_time'), array($route_data['password'], $route_data['id'], $this->sql->get_time(1))));
+		array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
+		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'password', '修改資料更新會員密碼', $this->sql->get_time(1))));
+		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'password', '修改資料更新會員密碼', $this->sql->get_time(1), '')));
+		array_push(Sql::$kind, 2);
+			
+		//執行更新
+		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
+			$json_data = $this->json->encode_json($app, '3_102');
+		} else {
+			$json_data = $this->json->encode_json($app, '3_103');
+		}
+		echo $json_data;exit();
+		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
+		return $this->json->encode_json('vale', $encode_data);
+	}
+	
+	/*
 	 * 修改資料
 	 * 若是有改變手機號碼
 	 * 則要使用簡訊認證碼認證
@@ -27,85 +76,30 @@ class Alter_model extends CI_Model {
 	 * 則直接更改
 	 * $route_data 所需參數資料
 	 */
-	public function alter_data($route_data) {
-		$app = '3_1';
-		
-		//查詢會員電子郵件
-		$sql_select = $this->sql->select(array('email'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		$email = $sql_result['email'];
-		
+	public function check_mobile_phone($route_data) {
 		//查詢會員基本資料
-		$sql_select = $this->sql->select(array('email', 'last_name', 'first_name', 'mobile_phone', 'state'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		$now_action_member_info = $sql_result;
-		
-		//查詢會員密碼
-		$sql_select = $this->sql->select(array('password'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		$now_password = $sql_result['password'];
-		
-		//查詢要更改的電子郵件是否已經有人使用
-		$sql_select = $this->sql->select(array('email'), '');
-		$sql_where = $this->sql->where(array('where', 'where'), array('id !=', 'email'), array($route_data['id'], $route_data['new_email']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'num_rows');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email, Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
+		$action_member_info = $sql_result;
 
+		//查詢要更改的電子郵件是否已經有人使用
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$id . ' !=', Field_1::$email), array($route_data['id'], $route_data['new_email']), array('')),
+																		 'other' => '')), 'num_rows');
 		if($sql_result) {
-			$json_data = $this->json->encode_json($app, '3_101');
-			echo $json_data;exit();
-			$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-			return $this->json->encode_json('vale', $encode_data);
+			//若存在則代表已經有人申請該更換電子郵件
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 		}
 		
 		//若是手機號碼沒改,就直接更新資料
-		if($route_data['mobile_phone'] == $now_action_member_info['mobile_phone']) {
-			//查詢最大修改次數
-			$sql_select = $this->sql->select(array('frequency'), 'max');
-			$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'action_member_alter_log', '', $sql_where, '');
-			$sql_result = $this->sql->result($sql_query, 'row_array');
-			$frequency = $sql_result['max'] + 1;
+		if($route_data['mobile_phone'] == $action_member_info['mobile_phone']) {
+			$this->alter_data($route_data, $action_member_info);
 			
-			//新增修改記錄資料,把目前的資料移到修改記錄
-			array_push(Sql::$table, 'action_member_alter_log');
-			array_push(Sql::$select, $this->sql->field(array('frequency', 'id', 'email', 'password', 'last_name', 'first_name', 'mobile_phone', 'create_user', 'create_time', 'update_user', 'update_time'), array($frequency, $route_data['id'], $now_action_member_info['email'], $now_password, $now_action_member_info['last_name'], $now_action_member_info['first_name'], $now_action_member_info['mobile_phone'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, '');
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $route_data['id'], 'action_member_alter_log', '修改資料新增修改記錄', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'action_member_alter_log', '修改資料新增修改記錄', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 1);
-			
-			//更新行動會員基本資料
-			array_push(Sql::$table, 'action_member');
-			array_push(Sql::$select, $this->sql->field(array('email', 'last_name', 'first_name', 'mobile_phone', 'update_user', 'update_time'), array($route_data['new_email'], $route_data['last_name'], $route_data['first_name'], $route_data['mobile_phone'], $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member', '修改資料更新會員基本資料', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member', '修改資料更新會員基本資料', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
-			
-			//更新會員密碼
-			array_push(Sql::$table, 'password');
-			array_push(Sql::$select, $this->sql->field(array('password', 'update_user', 'update_time'), array($route_data['password'], $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'password', '修改資料更新會員密碼', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'password', '修改資料更新會員密碼', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
-			
-			//執行更新
-			if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-				$json_data = $this->json->encode_json($app, '3_102');
-			} else {
-				$json_data = $this->json->encode_json($app, '3_103');
-			}
-			echo $json_data;exit();
-			$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-			return $this->json->encode_json('vale', $encode_data);
 		}
 		
 		//將每一筆的修改資料紀錄的第一筆作為暫存資料,待驗證後使用這筆資料轉移到基本資料

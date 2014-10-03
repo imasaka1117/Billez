@@ -8,33 +8,30 @@ class Push {
 	 * $moblie_phone_id	要推播的會員手機ID
 	 * $billez_code		要推播的帳單編號(用來記錄推播狀態的,某些情況推播用不到就傳入空白'')
 	 * $result			推播後的結果1是成功, 2是失敗
-	 * $gcm				推播後gcm給的訊息,可由此知道失敗原因
+	 * $message			推播後給的訊息,可由此知道失敗原因
 	 */
 	static public $id = array();
 	static public $moblie_phone = array();
 	static public $moblie_phone_id = array();
 	static public $billez_code = array();
 	static public $result = array();
-	static public $gcm = array();
-	
+	static public $message = array();
+
 	/*
-	 * 在這邊做成功訊息的處理
-	 * google gcm 目前成功都會有一個:號
-	 * 所以以此為當成功
-	 * 因為他的成功筆數是整個的
-	 * 所以不知道有錯的是哪一筆
-	 * 未來加入apple可能會增加或改變
+	 * 將要推播的資料丟入推播靜態變數裡
+	 * 之後再一次推播
+	 * id				資料表
+	 * moblie_phone		要查詢欄位
+	 * moblie_phone_id	更新條件
+	 * billez_code		使用紀錄
 	 */
-	public function handle_push_results($push_gcm_results) {
-		foreach($push_gcm_results as $push_gcm_result) {
-			if(substr_count($push_gcm_result, ':') >= 1) {
-				$push_result = 1;
-			} else {
-				$push_result = 2;
-			}
-			array_push(Push::$result, $push_result);
-			array_push(Push::$gcm, $push_gcm_result);
-		}
+	public function add_static($push) {
+		array_push(Push::$id, $push['id']);
+		array_push(Push::$moblie_phone, $push['moblie_phone']);
+		array_push(Push::$moblie_phone_id, $push['moblie_phone_id']);
+		array_push(Push::$billez_code, $push['billez_code']);
+		array_push(Push::$result, $push['result']);
+		array_push(Push::$message, $push['message']);
 	}
 	
 	/*
@@ -48,25 +45,86 @@ class Push {
 		Push::$moblie_phone_id = array();
 		Push::$billez_code = array();
 		Push::$result = array();
-		Push::$gcm = array();
+		Push::$message = array();
 	}
 
+	/*
+	 * 單一推播整理推播設定資料
+	 * 將推播要用到的設定資料準備好
+	 * $message	要傳送的訊息
+	 */
+	public function setting_data($message) {
+		//將相同的token剔除
+		$uni_moblie_phone_id = array_values(array_unique(Push::$moblie_phone_id));
+		
+		//依照字符選擇要哪一種推播
+		foreach($uni_moblie_phone_id as $moblie_phone_id) {
+			if(substr($moblie_phone_id, 0, 2) == 'AP') $this->gcm_push($moblie_phone_id, $message); else $this->apn_push($moblie_phone_id, $message);
+		}
+	}
+	
+	/*
+	 * 將結果放入靜態變數裡
+	 * 注意有相同手機ID的也要放入相同結果
+	 * $message		gcm或apn傳的訊息訊息
+	 * $push_result	成功或失敗
+	 * $token		要比對的字符
+	 */
+	public function compare_token($message, $push_result, $token) {
+		$count = count(Push::$id);
+		
+		//找到相同的字符,然後加入相對應的結果和訊息
+		for($i = 0; $i < $count; $i++) {
+			if(Push::$moblie_phone_id[$i] == $token) {
+				Push::$result[$i] = $push_result;
+				Push::$message[$i] = $message;
+			}
+		}
+	}
+	
+	/*
+	 * 處理推播結果
+	 * 將有相同手機ID的會員也丟入相同的推播結果
+	 * $kind			apn或gcm
+	 * $result			推播後的結果
+	 * $moblie_phone_id	手機ID
+	 */
+	public function handle_result($kind, $result, $moblie_phone_id) {
+		if($kind == 'gcm') {
+			//把回傳的訊息各放在陣列裡
+			if(isset($result['results'][0]['error'])) $message = $result['results'][0]['error'];
+			if(isset($result['results'][0]['message_id'])) $message = $result['results'][0]['message_id'];
+
+			//判斷成功或失敗
+			if(substr_count($message, ':') >= 1) $push_result = 1; else $push_result = 2;
+		} else {
+			//apn
+		}
+		
+		$this->compare_token($message, $push_result, $moblie_phone_id);
+	}
+	
+	/*
+	 * 
+	 */
+	public function apn_push($token, $message) {
+		
+	}
+	
 	/*
 	 * 執行推播函式
 	 * 未來可能增加apple的推播
 	 * $message 要傳送給手機的訊息
 	 */
-	public function send_push($message) {
-		//api key
+	public function gcm_push($token, $message) {
+		//google api key
+		$google_api_key = 'AIzaSyBYJOblFP9_L96Ws8WumtMdqOcT3y7gkqY';
 		
 		//傳送欄位,資料內容和要push的手機ID
-		$fields = array(
-				'registration_ids' => array_values(array_unique(Push::$moblie_phone_id)),
-				'data'             => array( 'message' => $message)
-		);
-		//表頭設定 
+		$fields = array('registration_ids' => array($token), 'data' => array( 'message' => $message));
 		
-		$headers = array('Authorization: key=AIzaSyBYJOblFP9_L96Ws8WumtMdqOcT3y7gkqY', 'Content-Type: application/json');
+		//表頭設定
+		$headers = array('Authorization: key=' . $google_api_key, 'Content-Type: application/json');
 	
 		//開啟連結
 		$ch = curl_init();
@@ -91,24 +149,8 @@ class Push {
 		//關閉連結
 		curl_close($ch);
 	
-		//將push回傳的json做解析
-		$gcm_result = json_decode($gcm_result);
-	
-		$push_results = array();
-	
-		$push_count = count($gcm_ids);
-	
-		//把回傳的訊息各放在陣列裡
-		for($i = 0;$i < $push_count;$i++) {
-			if(isset($gcm_result->results[$i]->error)) {
-				array_push($push_results, $gcm_result->results[$i]->error);
-			}
-			if(isset($gcm_result->results[$i]->message_id)) {
-				array_push($push_results, $gcm_result->results[$i]->message_id);
-			}
-		}
-	
-		$this->handle_push_results($push_results);
+		//將push回傳的json做解析,並傳入訊息處理
+		$this->handle_result('gcm', json_decode($gcm_result, true), $token);
 	}
 	
 	/*

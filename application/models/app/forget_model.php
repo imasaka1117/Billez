@@ -7,9 +7,6 @@ class Forget_model extends CI_Model {
 	 */
 	public function index($route_data) {
 		switch($route_data['sub_param']) {
-			case '2_1':
-				return $this->create_key($route_data);
-				break;
 			case '2_2':
 				return $this->send_password($route_data);
 				break;
@@ -17,53 +14,46 @@ class Forget_model extends CI_Model {
 	}
 	
 	/*
-	 * 產生金鑰組並回傳加密公鑰
-	 * 因為怕被駭客攔截
-	 * 所以使用APP產生的公鑰去加密要給APP的公鑰
-	 * $route_data 所需參數
+	 * 寄送電子郵件
+	 * $route_data	所需參數資料
+	 * $email_form	設定的寄發格式
 	 */
-	public function create_key($route_data) {
-		$app = '2_1';
-		$key = $this->key->create_key();				
-		
-		//用意是要符合json格式
-		$public_key['public_key'] = $key['public_key'];				
-		$outer_array = array();						
-		array_push($outer_array, $public_key);		
+	public function send_email($route_data, $email_form) {
+		$config['smtp_host'] = $email_form['server_name'];
+		$config['smtp_port'] = $email_form['server_port'];
+		$config['smtp_user'] = $email_form['account'];
+		$config['smtp_pass'] = $email_form['password'];
+		$config['protocol'] = 'smtp';
+		$config['mailtype'] = 'html';
 
-		//查詢手機ID是否存在,若存在則更新金鑰組,不存在則新增一個手機ID及金鑰組
-		$sql_select = $this->sql->select(array('mobile_phone_id'), '');
-		$sql_where = $this->sql->where(array('where'), array('mobile_phone_id'), array($route_data['mobile_phone_id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'moblie_phone_id_and_key', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'num_rows');
+		$this->email->initialize($config);
+		$this->email->from($email_form['send_email'], $email_form['send_name']);
+		$this->email->to($route_data['email']);
+		$this->email->subject($email_form['subject']);
+		$this->email->message(str_replace('$password', $route_data['password'], $email_form['body']));
+		$result = $this->email->send();
 		
-		if($sql_result) {
-			//更新金鑰組
-			array_push(Sql::$table, 'moblie_phone_id_and_key');
-			array_push(Sql::$select, $this->sql->field(array('private_key', 'public_key', 'update_time'), array($key['private_key'], $key['public_key'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where'), array('mobile_phone_id'), array($route_data['mobile_phone_id']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, 1, 'moblie_phone_id_and_key', '該手機ID存在,更新金鑰組', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, 1, 'moblie_phone_id_and_key', '該手機ID存在,更新金鑰組', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);	
+		if($result == 1) {
+			$code = '02';
 		} else {
-			//新增一個手機ID及金鑰組
-			array_push(Sql::$table, 'moblie_phone_id_and_key');
-			array_push(Sql::$select, $this->sql->field(array('mobile_phone_id', 'private_key', 'public_key', 'create_time', 'update_time'), array($route_data['mobile_phone_id'], $key['private_key'], $key['public_key'], $this->sql->get_time(1), $this->sql->get_time(1))));
-			array_push(Sql::$where, '');
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, 1, 'moblie_phone_id_and_key', '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, 1, 'moblie_phone_id_and_key', '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 1);
+			$code = '03';
+			$result == 2;
 		}
 		
-		//執行新增/更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind) === FALSE) {
-			$json_data = $this->json->encode_json($app, '2_101');
-		} else {
-			$json_data = $this->json->encode_json($app, $outer_array);
-		}
-
-		$encode_data = $this->key->encode_app_public($json_data, $route_data['public_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		//清空靜態變數
+		$this->sql->clear_static();
+		
+		//新增電子郵件紀錄
+		$this->sql->add_static(array('table'=> Table_1::$email_log,
+									 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$email, Field_2::$event, Field_2::$result, Field_1::$create_time), array($route_data['id'], $route_data['email'], 1, $result, $this->sql->get_time(1))),
+									 'where'=> '',
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$email_log, '忘記密碼_新增寄發電子郵件紀錄', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$email_log, '忘記密碼_新增寄發電子郵件紀錄', $this->sql->get_time(1), '')),
+									 'kind'=> 1));
+		//執行
+		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));
+		
+		return $route_data['sub_param'] . $code;
 	}
 	
 	/*
@@ -71,58 +61,46 @@ class Forget_model extends CI_Model {
 	 * $route_data	所需參數資料
 	 */
 	public function send_password($route_data) {
-		$app = '2_2';
-		
-		//查詢會員編號
-		$sql_select = $this->sql->select(array('id'), '');
-		$sql_where = $this->sql->where(array('where'), array('email'), array($route_data['email']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		$id = $sql_result['id'];
-
-		if($id == '') {
-			$json_data = $this->json->encode_json($app, '2_201');
-		} else {
-			//查詢該會員密碼
-			$sql_select = $this->sql->select(array('password'), '');
-			$sql_where = $this->sql->where(array('where'), array('id'), array($id), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'password', '', $sql_where, '');
-			$sql_result = $this->sql->result($sql_query, 'row_array');
-			$password = $sql_result['password'];
-
-			//查詢忘記密碼目前使用電子郵件版本
-			$sql_select = $this->sql->select(array('server_name', 'server_port', 'account', 'password', 'send_email', 'send_name', 'subject', 'body'), '');
-			$sql_where = $this->sql->where(array('where', 'where'), array('form_kind', 'state'), array(1, 'y'), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'email_form', '', $sql_where, '');
-			$sql_result = $this->sql->result($sql_query, 'row_array');
+		//查詢該會員是否存在
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$email), array($route_data['email']), array('')),
+																		 'other' => '')), 'num_rows');
+		if($sql_result) {
+			//查詢該會員編號
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$email), array($route_data['email']), array('')),
+																		 'other' => '')), 'row_array');
+			$route_data['id'] = $sql_result['id'];
+			$route_data['password'] = $this->create->authentication();
 			
-			//寄發電子郵件
-			$send_result = $this->email->send_email(1, $route_data['email'], $sql_result, $password);
-			$send_result = 1;
-			if($send_result == 1) {
-				$send_result = '';
-				$result = 1;
-				$json_data = $this->json->encode_json($app, '2_202');
+			//更新新的密碼
+			$this->sql->add_static(array('table'=> Table_1::$password,
+										 'select'=> $this->sql->field(array(Field_1::$password, Field_1::$update_user, Field_1::$update_time), array(md5($route_data['password']), $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$password, '忘記密碼_更新新的密碼', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$password, '忘記密碼_更新新的密碼', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+			//執行
+			if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+				//查詢忘記密碼目前使用的電子郵件版本
+				$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$server_name, Field_2::$server_port, Field_2::$account, Field_1::$password, Field_2::$send_email, Field_2::$send_name, Field_2::$subject, Field_2::$body), ''),
+																				 'from' => Table_1::$email_form,
+																				 'join'=> '',
+																				 'where' => $this->sql->where(array('where'), array(Field_2::$form_kind, Field_1::$state), array(1, 'y'), array('')),
+																				 'other' => '')), 'row_array');
+				//回傳傳送結果
+				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->send_email($route_data, $sql_result)), $route_data['private_key'], ''));
 			} else {
-				$result = 2;
-				$json_data = $this->json->encode_json($app, '2_203');
+				//回傳查無此帳號
+				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '04'), $route_data['private_key'], ''));
 			}
-			
-			//新增電子郵件紀錄
-			array_push(Sql::$table, 'email_log');
-			array_push(Sql::$select, $this->sql->field(array('id', 'email', 'event', 'result', 'file_name', 'error_message', 'create_time'), array($id, $route_data['email'], 1, $result, '', $send_result, $this->sql->get_time(1))));
-			array_push(Sql::$where, '');
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $id, 'email_log', '忘記密碼電子郵件紀錄', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $id, 'email_log', '忘記密碼電子郵件紀錄', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 1);
-			
-			//執行更新
-			if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind) === FALSE) {
-				$json_data = $this->json->encode_json($app, '2_204');
-			}
+		} else {
+			//回傳查無此帳號
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 		}
-
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
 	}
-}
+}// class end

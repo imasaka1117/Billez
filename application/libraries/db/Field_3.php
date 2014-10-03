@@ -33,7 +33,6 @@ class Field_3 {
 	static public $reply_time = 'reply_time';
 	static public $image = 'image';
 	static public $star = 'star';
-	static public $gcm_message = 'gcm_message';
 	static public $receive_read = 'receive_read';
 	static public $read_time = 'read_time';
 	static public $recommender = 'recommender';

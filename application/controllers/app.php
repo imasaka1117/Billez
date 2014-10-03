@@ -19,6 +19,7 @@ class App extends CI_Controller {
 		$this->load->library('key');
 		$this->load->library('json');
 		$this->load->library('sql');
+		
 	}
 
 	/*
@@ -27,32 +28,24 @@ class App extends CI_Controller {
 	 * 最後再載入view輸出結果給APP
 	 */
 	public function index() {
+//測試區
+		$route_data['control_param'] = 2;
+		$route_data['sub_param'] = '2_2';
+		$route_data['email'] = 'imasaka1117@yahoo.com.tw';
+		$route_data['mobile_phone_id'] = 'APA91bFyjJttdBkbZMBu1QHy2a9Z9Fux81A33JDeF60kbEIsiOBNCyGMI7LFe32PZ1zhQJ-mOnQXKvrZkK7xt4hOq_JOujYM6XED5o4rT_IroogXpcBt0C0JshJAaRpK29BTjcv46eZA4RavNnEwvc6k7b9EG3mfHg';
+		$route_data['private_key'] = 'private_key';
+// 		$route_data['fb_id'] = 'fb_id_2';
+// 		$route_data['password'] = 'password';
+// 		$route_data['id'] = 'ACAA00001';
+// 		$route_data['last_name'] = 'last_name_11';
+// 		$route_data['first_name'] = 'first_name_1';
+// 		$route_data['mobile_phone'] = 'mobile_phone_1';
+// 		$route_data['authentication_code'] = '111111';
+
+		/////////////////////////////////////////////
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
 // 		$route_data = $this->route_model->index($this->input->post());
-		
-		
-		
-		
-		//測試區
-// 		$route_data = array();
-// 		$route_data['id'] = 'ACAA00002';
-// 		$route_data['mobile_phone_id'] = 'APA91bH8_TT8u8BX45SCecJ9BzDYy7QLeiDkP21MymZ6dv6-9dmywQODeTzQShc7XQw99w6JCLnG_JsX4E65eD5zt9qPSPl_TuUjwdeumuhDSFat7Q1hnxVaVvIzDUNQJ72MszX76mCh-KJNNFbvzFuWCCctxg5x2A';
-// 		$route_data['control_param'] = '4';
-// 		$route_data['sub_param'] = '4_2';
 
-// 		$route_data['new_email'] = 'imasaka1112@yahoo.com.tw111';
-// 		$route_data['password'] = 'dddd111';
-// 		$route_data['email'] = 'imasaka111222@yahoo.com.tw111';
-// 		$route_data['authentication_code'] = '111111';
-// 		$route_data['fb_id'] = 'fb1';
-// 		$route_data['mobile_phone'] = '0988301481';
-// 		$route_data['last_name'] = '王';
-// 		$route_data['first_name'] = '家';
-
-		$route_data['control_param'] = 1;
-		
-		
-		
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
 			case '0':
@@ -66,6 +59,7 @@ class App extends CI_Controller {
 				$data['response'] = $this->join_model->index($route_data);
 				break;
 			case '2':
+				$this->load->library('create');
 				$this->load->library('email');
 				$this->load->model('app/forget_model');
 				$data['response'] = $this->forget_model->index($route_data);
@@ -116,7 +110,7 @@ class App extends CI_Controller {
 				$data['response'] = '未授權進入';
 				break;
 		}
-		
+		echo $data['response'];exit();
 		//將要回應給APP的結果載入view輸出
 		$this->load->view('app/response.php', $data);
 	}

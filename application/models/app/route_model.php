@@ -25,7 +25,7 @@ class Route_model extends CI_Model {
 			}
 		} elseif($this->input->post('public_key')) {
 			//第一次請求,合成APP傳來的公鑰並產生引導資料
-			$route_data = $this->merge($post['public_key'], $post['mobile_phone_id'], $post['first']);
+			$route_data = $this->key->route_data('', array('control_param', 'data'), array('0', $this->merge($post['public_key'], $post['mobile_phone_id'], $post['first'])));
 		} elseif($this->input->post('id')) {
 			//非第一次請求,檢查手機ID是否變更及產生引導資料
 			$route_data = $this->check_mobile_phone_id($post['id'], $post['mobile_phone_id'], $post['encode']);	
@@ -33,7 +33,7 @@ class Route_model extends CI_Model {
 			//非第一次請求之前,解密及產生引導資料
 			$route_data = $this->decode_tempdata($post['encode'], $post['mobile_phone_id']);
 		}
-		
+
 		return $route_data;
 	}
 	
@@ -46,8 +46,6 @@ class Route_model extends CI_Model {
 	 * $first			引導碼
 	 */
 	public function merge($public_key, $mobile_phone_id, $first) {
-		$app = $first . '_1';
-		
 		//新增一對金鑰組
 		$key = $this->key->create_key();
 		
@@ -85,9 +83,9 @@ class Route_model extends CI_Model {
 		
 		//執行新增/更新,並回傳APP公鑰加密資料
 		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
-			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $json_array), $app_public_key, 'public'));
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($first . '_1', $json_array), $app_public_key, 'public'));
 		} else {
-			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($app, $first . '_101'), $app_public_key, 'public'));
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($first . '_1', $first . '_101'), $app_public_key, 'public'));
 		}
 	}
 	

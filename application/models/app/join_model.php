@@ -223,11 +223,11 @@ class Join_model extends CI_Model {
 		$fb_id = '';
 		$third_party = '';
 		
-		if(isset($route_data['google_id'])) {
+		if($route_data['google_id'] != '') {
 			$google_id = $route_data['google_id'];
 			$third_party = $route_data['google_id'];
 		}
-		if(isset($route_data['fb_id'])) {
+		if($route_data['fb_id'] != '') {
 			$fb_id = $route_data['fb_id'];
 			$third_party = $route_data['fb_id'];
 		}
@@ -260,7 +260,6 @@ class Join_model extends CI_Model {
 		$key = $this->key->create_key();
 		$third_id = $this->third_party($route_data);
 		
-		
 		//檢查電子郵件是否已經存在
 		$exist = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																		 'from' => Table_1::$action_member,
@@ -268,7 +267,7 @@ class Join_model extends CI_Model {
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$email), array($route_data['email']), array('')),
 																		 'other' => '')), 'num_rows');	
 		//檢查是否有第三方參數
-		if(isset($route_data['google_id']) || isset($route_data['fb_id'])) {
+		if($route_data['google_id'] != '' || $route_data['fb_id'] != '') {
 			//檢查該第三方資料是否存在
 			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																			 'from' => Table_1::$action_member,
@@ -336,6 +335,13 @@ class Join_model extends CI_Model {
 																		 'join'=> '',
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
 																		 'other' => '')), 'num_rows');
+		//更新行動會員基本資料
+		$this->sql->add_static(array('table'=> Table_1::$action_member,
+									 'select'=> $this->sql->field(array(Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone, Field_1::$update_user, Field_1::$update_time), array($route_data['last_name'], $route_data['first_name'], $route_data['mobile_phone'], $route_data['id'], $this->sql->get_time(1))),
+									 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member, '加入會員_更新行動會員基本資料', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member, '加入會員_更新行動會員基本資料', $this->sql->get_time(1), '')),
+									 'kind'=> 2));
 		//若有資料存在則初始化
 		if($sql_result) {
 			//初始化行動會員修改紀錄
@@ -508,9 +514,101 @@ class Join_model extends CI_Model {
 		}
 	}
 	
+	/*
+	 * 推播分享帳單通知
+	 * $route_data	所需參數資料
+	 * $mobile_info	手機相關資料
+	 */
+	public function share_push($route_data, $mobile_info) {
+		//將要推播的訊息丟進推播變數
+		$this->push->add_static(array('id' => $route_data['id'], 
+									  'moblie_phone' => $mobile_info['mobile_phone'], 
+									  'moblie_phone_id' => $mobile_info['mobile_phone_id'], 
+									  'billez_code' => '', 
+									  'result' => '',
+									  'message' => ''));
+		//清除之前加入的SQL靜態變數
+		$this->sql->clear_static();
+		
+		//執行推播
+		$this->push->setting_data('gcm_1');
+
+		//新增推播紀錄
+		$count = count(Push::$id);
+		for($i = 0; $i < $count; $i++) {
+			$this->sql->add_static(array('table'=> Table_1::$push_log,
+					'select'=> $this->sql->field(array(Field_1::$id, Field_1::$mobile_phone, Field_1::$mobile_phone_id, Field_2::$event, Field_2::$time, Field_2::$result, Field_1::$message), array(Push::$id[$i], Push::$moblie_phone[$i], Push::$moblie_phone_id[$i], 1, $this->sql->get_time(1), Push::$result[$i], Push::$message[$i])),
+					'where'=> '',
+					'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$push_log, '加入會員_分享帳單推播通知', $this->sql->get_time(1))),
+					'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$push_log, '加入會員_分享帳單推播通知', $this->sql->get_time(1), '')),
+					'kind'=> 1));
+				
+		}
+		
+		//執行
+		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));
+		
+		return $route_data['sub_param'] . '01';
+	}
 	
-	
-	
-	
-	
-}
+	/*
+	 * 確認認證碼是否正確
+	 * 以及正式加入會員
+	 * $route_data 所需參數
+	 */
+	public function check_authentication($route_data) {
+		//查詢認證碼是否正確
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
+																		 'from' => Table_1::$sms_state,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'or_where', 'or_where', 'where'), array(Field_3::$authentication_code, Field_3::$authentication_code2, Field_3::$authentication_code3, Field_1::$id), array($route_data['authentication_code'], $route_data['authentication_code'], $route_data['authentication_code'], $route_data['id']), array('')),
+																		 'other' => '')), 'num_rows');
+		//正確則更改狀態及檢查是否有分享帳單
+		if($sql_result) {
+			//更新會員狀態
+			$this->sql->add_static(array('table'=> Table_1::$action_member,
+										 'select'=> $this->sql->field(array(Field_1::$state, Field_1::$update_user, Field_1::$update_time), array(2, $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member, '加入會員_修改行動會員狀態', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member, '加入會員_修改行動會員狀態', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+			//清空簡訊認證碼及次數
+			$this->sql->add_static(array('table'=> Table_1::$sms_state,
+										 'select'=> $this->sql->field(array(Field_3::$sms_frequency, Field_3::$authentication_code, Field_3::$authentication_code2, Field_3::$authentication_code3, Field_1::$update_user, Field_1::$update_time), array(0, '', '', '', $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$sms_state, '加入會員_初始化認證碼和傳送次數', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$sms_state, '加入會員_初始化認證碼和傳送次數', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+			//執行
+			if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+				//開始檢查是否有分享帳單資料
+				//查詢手機ID和手機號碼
+				$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone, Field_1::$mobile_phone_id), ''),
+																				 'from' => Table_1::$action_member,
+																				 'join'=> '',
+																				 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																				 'other' => '')), 'row_array');
+				$mobile_info = $sql_result;
+				//查詢是否有分享帳單
+				$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$billez_code), ''),
+																				 'from' => Table_1::$bill_share_log,
+																				 'join'=> '',
+																				 'where' => $this->sql->where(array('where'), array(Field_1::$mobile_phone, Field_1::$read), array($mobile_info['mobile_phone'], 'n'), array('')),
+																				 'other' => '')), 'num_rows');
+				//若是有則做推播
+				if($sql_result) {
+					return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->share_push($route_data, $mobile_info)), $route_data['private_key'], ''));
+				} else {
+					//返回成功訊息
+					return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
+				}
+			} else {
+				//更新失敗
+				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));
+			} 
+		} else {
+			//認證碼驗證失敗
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '03'), $route_data['private_key'], ''));
+		}
+	}
+}//class end

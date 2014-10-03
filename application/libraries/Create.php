@@ -45,7 +45,7 @@ class Create {
 	}
 	
 	/*
-	 * 產生傳送簡訊認證碼的功能
+	 * 產生傳送亂數編碼的功能
 	 */
 	public function authentication() {
 		$authentication_code = "111111";				//認證碼變數
