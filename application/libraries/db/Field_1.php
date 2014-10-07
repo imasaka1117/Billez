@@ -9,6 +9,7 @@ class Field_1 {
 	static public $id = 'id';
 	static public $email = 'email';
 	static public $password = 'password';
+	static public $temp_password = 'temp_password';
 	static public $last_name = 'last_name';
 	static public $first_name = 'first_name';
 	static public $mobile_phone = 'mobile_phone';

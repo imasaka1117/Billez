@@ -21,48 +21,47 @@ class Memorandum_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function insert_data($route_data) {
-		$app = '9_1';
-		
 		//將額外資料組成一個字串
 		$data = $route_data['bill_kind'] . ',' . $route_data['trader_name'] . ',' . $route_data['data'];
 		
 		//查詢行動會員額外資料
-		$sql_select = $this->sql->select(array('*'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member_data', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
+																		 'from' => Table_1::$action_member_data,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
 		$action_member_data = $sql_result;
-		
-		if(isset($action_member_data['data' . $action_member_data['data_number'] + 1])) {
+		$number = $action_member_data['data_number'] + 1;
+
+		if(isset($action_member_data['data' . $number])) {
 			//更新額外資料在已經存在的欄位
-			array_push(Sql::$table, 'action_member_data');
-			array_push(Sql::$select, $this->sql->field(array('data' . $action_member_data['data_number'] + 1, 'data_number', 'update_user', 'update_time'), array($data, $action_member_data['data_number'] + 1, $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member_data', '帳單備忘錄新增會員已有欄位額外資料', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member_data', '帳單備忘錄新增會員已有欄位額外資料', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
+			$this->sql->add_static(array('table'=> Table_1::$action_member_data,
+										 'select'=> $this->sql->field(array('data' . $number, Field_1::$data_number, Field_1::$update_user, Field_1::$update_time), array($data, $number, $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member_data, '帳單備忘錄_更新備忘錄資料在已存在欄位', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member_data, '帳單備忘錄_更新備忘錄資料在已存在欄位', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
 		} else {
 			//修改資料表,動態增加欄位數
-			$this->db->query('ALTER TABLE `action_member_data` ADD `data' . $action_member_data['data_number'] + 1 . '` varchar(255) COLLATE utf8_bin DEFAULT NULL');
+			$this->db->query('ALTER TABLE `action_member_data` ADD `data' . $number . '` varchar(255) COLLATE utf8_bin DEFAULT NULL');
 				
 			//更新額外資料在剛新增好的欄位
-			array_push(Sql::$table, 'action_member_data');
-			array_push(Sql::$select, $this->sql->field(array('data' . $action_member_data['data_number'] + 1, 'data_number', 'update_user', 'update_time'), array($data, $action_member_data['data_number'] + 1, $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member_data', '帳單備忘錄新增會員新欄位額外資料', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member_data', '帳單備忘錄新增會員新欄位額外資料', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
+			$this->sql->add_static(array('table'=> Table_1::$action_member_data,
+										 'select'=> $this->sql->field(array('data' . $number, Field_1::$data_number, Field_1::$update_user, Field_1::$update_time), array($data, $number, $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member_data, '帳單備忘錄_更新備忘錄資料在新創造的欄位', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member_data, '帳單備忘錄_更新備忘錄資料在新創造的欄位', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
 		}
 		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, '9_101');
-		} else {
-			$json_data = $this->json->encode_json($app, '9_102');
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳狀態碼
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
+				
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));
 	}
 	
 	/*
@@ -72,25 +71,23 @@ class Memorandum_model extends CI_Model {
 	 * $route_data
 	 */
 	public function alter_data($route_data) {
-		$app = '9_2';
-		
 		//查詢修改記錄備忘錄資料
-		$sql_select = $this->sql->select(array('bill_memo'), '');
-		$sql_where = $this->sql->where(array('where', 'where'), array('id', 'frequency'), array($route_data['id'], 1), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member_alter_log', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$bill_memo), ''),
+																		 'from' => Table_1::$action_member_alter_log,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id, Field_1::$frequency), array($route_data['id'], 1), array('')),
+																		 'other' => '')), 'row_array');
 		//組合成新的修改記錄
 		$alter_log = $sql_result['bill_memo'] . ',' . $route_data['old_data'];
 		$old_data = $route_data['bill_kind'] . ',' . $route_data['old_trader_name'] . ',' . $route_data['old_data'];
 		$new_data = $route_data['bill_kind'] . ',' . $route_data['trader_name'] . ',' . $route_data['data'];
 		
 		//查詢需要修改的欄位資料,用舊資料去查詢
-		$sql_select = $this->sql->select(array('mobile_phone'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
+																		 'from' => Table_1::$action_member_data,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');		
 		foreach($sql_result as $item => $value) {
 			if($value == $old_data) {
 				$col = $item;
@@ -99,29 +96,25 @@ class Memorandum_model extends CI_Model {
 		}
 		
 		//更新帳單備忘錄修改記錄
-		array_push(Sql::$table, 'action_member_alter_log');
-		array_push(Sql::$select, $this->sql->field(array('bill_memo', 'update_user', 'update_time'), array($alter_log, $route_data['id'], $this->sql->get_time(1))));
-		array_push(Sql::$where, $this->sql->where(array('where', 'where'), array('id', 'frequency'), array($route_data['id'], 1), array('')));
-		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member_alter_log', '帳單備忘錄更新修改記錄資料', $this->sql->get_time(1))));
-		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member_alter_log', '帳單備忘錄更新修改記錄資料', $this->sql->get_time(1), '')));
-		array_push(Sql::$kind, 2);
-		
+		$this->sql->add_static(array('table'=> Table_1::$action_member_alter_log,
+									 'select'=> $this->sql->field(array(Field_1::$bill_memo, Field_1::$update_user, Field_1::$update_time), array($alter_log, $route_data['id'], $this->sql->get_time(1))),
+									 'where'=> $this->sql->where(array('where', 'where'), array(Field_1::$id, Field_1::$frequency), array($route_data['id'], 1), array('')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member_alter_log, '帳單備忘錄_新增行動會員修改備忘錄記錄', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member_alter_log, '帳單備忘錄_新增行動會員修改備忘錄記錄', $this->sql->get_time(1), '')),
+									 'kind'=> 2));
 		//更新備忘錄額外資料
-		array_push(Sql::$table, 'action_member_data');
-		array_push(Sql::$select, $this->sql->field(array($col, 'update_user', 'update_time'), array($new_data, $route_data['id'], $this->sql->get_time(1))));
-		array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member_data', '帳單備忘錄更新備忘錄資料', $this->sql->get_time(1))));
-		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member_data', '帳單備忘錄更新備忘錄資料', $this->sql->get_time(1), '')));
-		array_push(Sql::$kind, 2);
-		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, '9_201');
-		} else {
-			$json_data = $this->json->encode_json($app, '9_202');
+		$this->sql->add_static(array('table'=> Table_1::$action_member_data,
+									 'select'=> $this->sql->field(array($col, Field_1::$update_user, Field_1::$update_time), array($new_data, $route_data['id'], $this->sql->get_time(1))),
+									 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member_data, '帳單備忘錄_更新備忘錄資料', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member_data, '帳單備忘錄_更新備忘錄資料', $this->sql->get_time(1), '')),
+									 'kind'=> 2));
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳狀態碼
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);		
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));	
 	}
 }//end

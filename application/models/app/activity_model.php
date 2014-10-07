@@ -24,8 +24,7 @@ class Activity_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function recommend_friend($route_data) {
-		$app = '10_1';
-		$post = array('special' => 1, 'mobile_phone_list' => $datas['mobile_phone_list'], 'id' => $datas['id']);
+		$post = array('special' => 1, 'mobile_phone_list' => $route_data['mobile_phone_list'], 'id' => $route_data['id']);
 		
 		$ch = curl_init();
 			
@@ -44,10 +43,7 @@ class Activity_model extends CI_Model {
 		curl_exec($ch);
 		curl_close($ch);
 		
-		$json_data = $this->json->encode_json($app, '10_01');
-
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 	}
 	
 	/*
@@ -58,7 +54,7 @@ class Activity_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function send_sms($route_data) {
-		$mobile_phone_list 	   = array_unique(split(",", $route_data['mobile_phone_list']));
+		$mobile_phone_list = array_unique(split(',', $route_data['mobile_phone_list']));
 		//符合規格的
 		$mobile_phone_list_1st = array();
 		//非行動會員的
@@ -79,32 +75,31 @@ class Activity_model extends CI_Model {
 		}
 		
 		//剔除已經是行動會員的手機號碼
-		$sql_select = $this->sql->select(array('mobile_phone'), '');
-		$sql_where = $this->sql->where(array('where_in'), array('mobile_phone'), array($mobile_phone_list_1st), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
-		$mobile_phone_list_2nd = array();
-		
-		foreach($sql_result as $data) {
-			array_push($mobile_phone_list_2nd, $data['mobile_phone']);
+		foreach($mobile_phone_list_1st as $mobile_phone_1) {
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone), ''),
+																			 'from' => Table_1::$action_member,
+																			 'join'=> '',
+																			 'where' => $this->sql->where(array('where'), array(Field_1::$mobile_phone), array($mobile_phone_1), array('')),
+																			 'other' => '')), 'num_rows');
+			if(!$sql_result) array_push($mobile_phone_list_2nd, $mobile_phone_1);
 		}
-		
+
 		//剔除已經推薦過的手機號碼
-		$sql_select = $this->sql->select(array('mobile_phone'), '');
-		$sql_where = $this->sql->where(array('where_in'), array('mobile_phone'), array($mobile_phone_list_2nd), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'recommend_list', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
-		$mobile_phone_list_3rd = array();
-		
-		foreach($sql_result as $data) {
-			array_push($mobile_phone_list_3rd, $data['mobile_phone']);
+		foreach($mobile_phone_list_2nd as $mobile_phone_2) {
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone), ''),
+																			 'from' => Table_1::$recommend_list,
+																			 'join'=> '',
+																			 'where' => $this->sql->where(array('where'), array(Field_1::$mobile_phone), array($mobile_phone_2), array('')),
+																			 'other' => '')), 'num_rows');
+			if(!$sql_result) array_push($mobile_phone_list_3rd, $mobile_phone_2);
 		}
-		
+
 		//查詢推薦人名稱
-		$sql_select = $this->sql->select(array('last_name', 'first_name'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$last_name, Field_1::$first_name), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
 		$name = $sql_result['last_name'] . $sql_result['first_name'];
 		
 		//寄發推薦簡訊
@@ -112,8 +107,8 @@ class Activity_model extends CI_Model {
 			/*
 			 * 這裡待加入簡訊內容規格
 			 */
-				
-			$sms_result = $this->sms->send_sms(3, $mobile_phone, '', $name);
+			$sms_form = array();
+			$sms_result = $this->sms->send_sms(3, $mobile_phone, $sms_form, $name);
 				
 			if($sms_result == 1) {
 				$result = 1;
@@ -122,24 +117,23 @@ class Activity_model extends CI_Model {
 				$result = 2;
 			}
 				
-			$this->sql->clear_static();
 			//新增簡訊記錄
-			array_push(Sql::$table, 'sms_log');
-			array_push(Sql::$select, $this->sql->field(array('id', 'mobile_phone', 'event', 'result', 'error_message', 'create_time'), array($route_data['id'], $route_data['mobile_phone'], 1, $result, $sms_result, $this->sql->get_time(1))));
-			array_push(Sql::$where, '');
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $route_data['id'], 'sms_log', '會員活動新增推薦名單簡訊記錄', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'sms_log', '會員活動新增推薦名單簡訊記錄', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 1);
-				
+			$this->sql->add_static(array('table'=> Table_1::$sms_log,
+										 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$mobile_phone, Field_2::$event, Field_2::$result, Field_2::$error_message, Field_1::$create_time), array($route_data['id'], $mobile_phone, 6, $result, $sms_result, $this->sql->get_time(1))),
+										 'where'=> '',
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$sms_log, '會員活動_新增發送推薦好友簡訊記錄', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$sms_log, '會員活動_新增發送推薦好友簡訊記錄', $this->sql->get_time(1), '')),
+										 'kind'=> 1));
 			//新增推薦名單
-			array_push(Sql::$table, 'recommend_list');
-			array_push(Sql::$select, $this->sql->field(array('mobile_phone', 'recommender', 'create_user', 'create_time', 'update_user', 'update_time'), array($mobile_phone, $route_data['id'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, '');
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $route_data['id'], 'recommend_list', '會員活動新增推薦名單', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'recommend_list', '會員活動新增推薦名單', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 1);
+			$this->sql->add_static(array('table'=> Table_1::$recommend_list,
+										 'select'=> $this->sql->field(array(Field_1::$mobile_phone, Field_3::$recommender, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($mobile_phone, $route_data['id'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> '',
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$recommend_list, '會員活動_新增會員推薦記錄', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$recommend_list, '會員活動_新增會員推薦記錄', $this->sql->get_time(1), '')),
+										 'kind'=> 1));
 		}
 		
-		$this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind);
+		//執行
+		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));
 	}
 }//end

@@ -12,50 +12,7 @@ class Forget_model extends CI_Model {
 				break;
 		}
 	}
-	
-	/*
-	 * 寄送電子郵件
-	 * $route_data	所需參數資料
-	 * $email_form	設定的寄發格式
-	 */
-	public function send_email($route_data, $email_form) {
-		$config['smtp_host'] = $email_form['server_name'];
-		$config['smtp_port'] = $email_form['server_port'];
-		$config['smtp_user'] = $email_form['account'];
-		$config['smtp_pass'] = $email_form['password'];
-		$config['protocol'] = 'smtp';
-		$config['mailtype'] = 'html';
 
-		$this->email->initialize($config);
-		$this->email->from($email_form['send_email'], $email_form['send_name']);
-		$this->email->to($route_data['email']);
-		$this->email->subject($email_form['subject']);
-		$this->email->message(str_replace('$password', $route_data['password'], $email_form['body']));
-		$result = $this->email->send();
-		
-		if($result == 1) {
-			$code = '02';
-		} else {
-			$code = '03';
-			$result == 2;
-		}
-		
-		//清空靜態變數
-		$this->sql->clear_static();
-		
-		//新增電子郵件紀錄
-		$this->sql->add_static(array('table'=> Table_1::$email_log,
-									 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$email, Field_2::$event, Field_2::$result, Field_1::$create_time), array($route_data['id'], $route_data['email'], 1, $result, $this->sql->get_time(1))),
-									 'where'=> '',
-									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$email_log, '忘記密碼_新增寄發電子郵件紀錄', $this->sql->get_time(1))),
-									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$email_log, '忘記密碼_新增寄發電子郵件紀錄', $this->sql->get_time(1), '')),
-									 'kind'=> 1));
-		//執行
-		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));
-		
-		return $route_data['sub_param'] . $code;
-	}
-	
 	/*
 	 * 寄送密碼給該會員電子信箱
 	 * $route_data	所需參數資料
@@ -93,7 +50,7 @@ class Forget_model extends CI_Model {
 																				 'where' => $this->sql->where(array('where'), array(Field_2::$form_kind, Field_1::$state), array(1, 'y'), array('')),
 																				 'other' => '')), 'row_array');
 				//回傳傳送結果
-				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->send_email($route_data, $sql_result)), $route_data['private_key'], ''));
+				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->email_model->send_email($route_data, $sql_result, array('record' => '忘記密碼_新增寄發電子郵件紀錄', 'event' => 1, 'success' => '02', 'fail' => '03'))), $route_data['private_key'], ''));
 			} else {
 				//回傳查無此帳號
 				return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '04'), $route_data['private_key'], ''));

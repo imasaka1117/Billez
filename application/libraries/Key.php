@@ -44,25 +44,24 @@ class Key {
 	 * $kind		用公鑰加密或私鑰加密 若是公鑰則輸入public
 	 */
 	public function encode_app($data, $key, $kind) {
-// 		$outer_array = array();
-// 		$array = str_split($data, 100);
-// 		$array_count = count($array);
+		$outer_array = array();
+		$array = str_split($data, 100);
+		$array_count = count($array);
 
-// 		for($i = 0;$i < $array_count;$i++) {
-// 			if($kind == 'public') {
-// 				//openssl公鑰加密函式
-// 				openssl_public_encrypt($array[$i], $crypted, $key);				
-// 			} else {
-// 				//openssl私鑰加密函式
-// 				openssl_private_encrypt($array[$i], $crypted, $key);
-// 			}
+		for($i = 0;$i < $array_count;$i++) {
+			if($kind == 'public') {
+				//openssl公鑰加密函式
+				openssl_public_encrypt($array[$i], $crypted, $key);				
+			} else {
+				//openssl私鑰加密函式
+				openssl_private_encrypt($array[$i], $crypted, $key);
+			}
 			
-// 			$json_array['vale'] = base64_encode($crypted);
-// 			array_push($outer_array, $json_array);
-// 		}
+			$json_array['vale'] = base64_encode($crypted);
+			array_push($outer_array, $json_array);
+		}
 		
-// 		return $outer_array;
-		return $data;
+		return $outer_array;
 	}
 	
 	/*

@@ -104,7 +104,7 @@ class Sql {
 				$string = $fields[0];
 				break;
 		}
-		
+
 		return array('fields' => $string, 'condition' => $condition);
 	}
 	

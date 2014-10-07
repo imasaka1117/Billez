@@ -10,7 +10,7 @@ class Json {
 	public function encode_json($code, $data) {
 		switch($code) {
 			case 'vale':
-				$json = json_encode($data);
+				$json = json_encode($data, JSON_UNESCAPED_UNICODE);
 				break;
 			default:
 				$json = json_encode(array("action" => $code,"result" => $data), JSON_UNESCAPED_UNICODE);

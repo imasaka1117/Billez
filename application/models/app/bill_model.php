@@ -27,71 +27,42 @@ class Bill_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function normal_bill($route_data) {
-		$app = '7_1';
-		
 		//查詢上未讀取的帳單編號
-		$sql_select = $this->sql->select(array('billez_code'), '');
-		$sql_where = $this->sql->where(array('where', 'where'), array('id', 'read'), array($route_data['id'], 'n'), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'push_state', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
-		$billez_code_list = $sql_result;
-		$outer_array = array();
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$billez_code), ''),
+																		 'from' => Table_1::$push_state,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$id, Field_1::$read), array($route_data['id'], 'n'), array('')),
+																		 'other' => '')), 'result_array');
+		$billez_code_list = array();
+		foreach($sql_result as $data) array_push($billez_code_list, $data['billez_code']);
+		$json_array = array();
 		
-		foreach($billez_code_list as $data) {
+		foreach($billez_code_list as $billez_code) {
 			//查詢帳單資料
-			$sql_select = $this->sql->select(array('bill.billez_code', 
-												   'bill_owner',
-												   'publish_time',
-												   'due_time',
-												   'trader_code.name AS trader_name',
-												   'bill_kind_code.name AS bill_kind_name',
-												   'pay_place.pay_place AS pay_place',
-												   'pay_place.overdue_pay_place AS overdue_pay_place',
-												   "IFNULL(amount, 'blank') AS amount", 
-												   "IFNULL(lowest_pay_amount, 'blank') AS lowest_pay_amount",
-												   "IFNULL(post_charge, 'blank') AS post_charge",
-												   "IFNULL(bank_charge, 'blank') AS bank_charge",
-												   "IFNULL(cvs_charge, 'blank') AS cvs_charge",
-												   "IFNULL(cvs_barcode1, 'blank') AS cvs_barcode1",
-												   "IFNULL(cvs_barcode2, 'blank') AS cvs_barcode2",
-												   "IFNULL(cvs_barcode3, 'blank') AS cvs_barcode3", 
-												   "IFNULL(post_barcode1, 'blank') AS post_barcode1", 
-												   "IFNULL(post_barcode2, 'blank') AS post_barcode2", 
-												   "IFNULL(post_barcode3, 'blank') AS post_barcode3", 
-												   "IFNULL(bank_barcode1, 'blank') AS bank_barcode1",
-												   "IFNULL(bank_barcode2, 'blank') AS bank_barcode2",
-												   "IFNULL(bank_barcode3, 'blank') AS bank_barcode3", 
-												   "IFNULL(trader_bill.bill_ad_url, 'blank') AS ad_id",
-												   'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data) AS subscribe_code',
-												   "CONCAT(IFNULL(CONCAT(data1, ','), ''), IFNULL(CONCAT(data2, ','), ''), IFNULL(CONCAT(data3, ','), ''), IFNULL(CONCAT(data4, ','), ''), IFNULL(CONCAT(data5, ','), '')) AS remark"
-													  ), 'function');
-			$sql_join = $this->sql->join(array('trader_code', 'bill_kind_code', 'pay_place', 'trader_bill'), array('trader_code = trader_code.code', 'bill_kind_code = bill_kind_code.code', 'bill.billez_code = pay_place.billez_code', 'bill.trader_code = trader_bill.trader_code'), array('', '', '', ''));
-			$sql_where = $this->sql->where(array('where'), array('bill.billez_code'), array($data['billez_code']), array(''));
-			$sql_other = $this->sql->other(array('distinct'), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'bill', $sql_join, $sql_where, $sql_other);
-			$sql_result = $this->sql->result($sql_query, 'row_array');
-			
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->normal_bill(), 'function'),
+																			 'from' => Table_1::$bill,
+																			 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$pay_place, Table_1::$trader_bill), array(Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$billez_code . '=' . Table_1::$pay_place . '.' . Field_1::$billez_code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_bill . '.' . Field_1::$trader_code), array('', '', '', '')),
+																			 'where' => $this->sql->where(array('where'), array(Table_1::$bill . '.' . Field_1::$billez_code), array($billez_code), array('')),
+																			 'other' => '')), 'row_array');
 			//將帳單資料放入傳回的格式裡
-			array_push($outer_array, $sql_result);
+			array_push($json_array, $sql_result);
 			
 			//更新帳單已讀取狀態
-			array_push(Sql::$table, 'push_state');
-			array_push(Sql::$select, $this->sql->field(array('read', 'read_time', 'update_user', 'update_time'), array('y', $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where', 'where'), array('id', 'billez_code'), array($route_data['id'], $data['billez_code']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'push_state', '帳單請求更新帳單已讀取狀態', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'push_state', '帳單請求更新帳單已讀取狀態', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
+			$this->sql->add_static(array('table'=> Table_1::$push_state,
+										 'select'=> $this->sql->field(array(Field_1::$read, Field_3::$read_time, Field_1::$update_user, Field_1::$update_time), array('y', $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where', 'where'), array(Field_1::$id, Field_1::$billez_code), array($route_data['id'], $billez_code), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$push_state, '帳單請求_更新帳單已讀取', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$push_state, '帳單請求_更新帳單已讀取', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
 		}
 		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, $outer_array);
-		} else {
-			$json_data = $this->json->encode_json($app, '7_101');
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳帳單資料
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $json_array), $route_data['private_key'], ''));	
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 	}
 	
 	/*
@@ -100,34 +71,31 @@ class Bill_model extends CI_Model {
 	 * $route_data  所需參數資料
 	 */
 	public function receive_bill($route_data) {
-		$app = '7_2';
-		
 		//查詢上未讀取入帳帳單的帳單編號
-		$sql_select = $this->sql->select(array('billez_code'), '');
-		$sql_where = $this->sql->where(array('where', 'where'), array('id', 'receive_read'), array($route_data['id'], 'n'), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'push_state', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$billez_code), ''),
+																		 'from' => Table_1::$push_state,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id, Field_3::$receive_read), array($route_data['id'], 'n'), array('')),
+																		 'other' => '')), 'result_array');
 		$billez_code_list = $sql_result;
 		
 		foreach($billez_code_list as $data) {
-			//更新帳單已讀取狀態
-			array_push(Sql::$table, 'push_state');
-			array_push(Sql::$select, $this->sql->field(array('receive_read', 'read_time', 'update_user', 'update_time'), array('y', $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where', 'where'), array('id', 'billez_code'), array($route_data['id'], $data['billez_code']), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'push_state', '帳單請求更新入帳帳單已讀取狀態', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'push_state', '帳單請求更新入帳帳單已讀取狀態', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
+			//更新入帳帳單已讀取狀態
+			$this->sql->add_static(array('table'=> Table_1::$push_state,
+										 'select'=> $this->sql->field(array(Field_3::$receive_read, Field_3::$read_time, Field_1::$update_user, Field_1::$update_time), array('y', $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where', 'where'), array(Field_1::$id, Field_1::$billez_code), array($route_data['id'], $data['billez_code']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$push_state, '帳單請求_更新入帳帳單已讀取', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$push_state, '帳單請求_更新入帳帳單已讀取', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
 		}
 		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, $billez_code_list);
-		} else {
-			$json_data = $this->json->encode_json($app, '7_201');
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳有已更新的帳單編號
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $billez_code_list), $route_data['private_key'], ''));	
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 	}
 	
 	/*
@@ -136,116 +104,87 @@ class Bill_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function share_bill($route_data) {
-		$app = '7_3';
-		
 		//查詢會員手機
-		$sql_select = $this->sql->select(array('mobile_phone'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
 		$mobile_phone = $sql_result['mobile_phone'];
-		
-		//查詢被分享的帳單編號
-		$sql_select = $this->sql->select(array('id', 'billez_code', "IF(message IS NULL OR message = '', 'blank', message) as message"), 'function');
-		$sql_where = $this->sql->where(array('where', 'where'), array('mobile_phone', 'read'), array($mobile_phone, 'n'), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'bill_share_log', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
+
+		//查詢被分享的資料
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id, Field_1::$billez_code, 'IF(' . Field_1::$message . ' IS NULL OR ' . Field_1::$message . " = '', 'blank', " . Field_1::$message . ') AS ' . Field_1::$message), 'function'),
+																		 'from' => Table_1::$bill_share_log,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$mobile_phone, Field_1::$read), array($mobile_phone, 'n'), array('')),
+																		 'other' => '')), 'result_array');
 		$share_data = $sql_result;
-		
-		//符合json格式
-		$outer_array = array();
+		$json_array = array();
 		
 		foreach($share_data as $data) {
 			//查詢分享人資料
-			$sql_select = $this->sql->select(array('email', 'last_name', 'first_name', 'mobile_phone'), '');
-			$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-			$sql_result = $this->sql->result($sql_query, 'row_array');
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email, Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone), ''),
+																			 'from' => Table_1::$action_member,
+																			 'join'=> '',
+																			 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($data['id']), array('')),
+																			 'other' => '')), 'row_array');
 			$action_member_info = $sql_result;
-			
-			//查詢該筆帳單資料
-			$sql_select = $this->sql->select(array('bill.billez_code',
-													'bill_owner',
-													'publish_time',
-													'due_time',
-													'trader_code.name AS trader_name',
-													'bill_kind_code.name AS bill_kind_name',
-													'pay_place.pay_place AS pay_place',
-													'pay_place.overdue_pay_place AS overdue_pay_place',
-													"IFNULL(amount, 'blank') AS amount",
-													"IFNULL(lowest_pay_amount, 'blank') AS lowest_pay_amount",
-													"IFNULL(post_charge, 'blank') AS post_charge",
-													"IFNULL(bank_charge, 'blank') AS bank_charge",
-													"IFNULL(cvs_charge, 'blank') AS cvs_charge",
-													"IFNULL(cvs_barcode1, 'blank') AS cvs_barcode1",
-													"IFNULL(cvs_barcode2, 'blank') AS cvs_barcode2",
-													"IFNULL(cvs_barcode3, 'blank') AS cvs_barcode3",
-													"IFNULL(post_barcode1, 'blank') AS post_barcode1",
-													"IFNULL(post_barcode2, 'blank') AS post_barcode2",
-													"IFNULL(post_barcode3, 'blank') AS post_barcode3",
-													"IFNULL(bank_barcode1, 'blank') AS bank_barcode1",
-													"IFNULL(bank_barcode2, 'blank') AS bank_barcode2",
-													"IFNULL(bank_barcode3, 'blank') AS bank_barcode3",
-													"IFNULL(trader_bill.bill_ad_url, 'blank') AS ad_id",
-													'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data) AS subscribe_code',
-													"CONCAT(IFNULL(CONCAT(data1, ','), ''), IFNULL(CONCAT(data2, ','), ''), IFNULL(CONCAT(data3, ','), ''), IFNULL(CONCAT(data4, ','), ''), IFNULL(CONCAT(data5, ','), '')) AS remark"
-													), 'function');
-			$sql_join = $this->sql->join(array('trader_code', 'bill_kind_code', 'pay_place', 'trader_bill'), array('trader_code = trader_code.code', 'bill_kind_code = bill_kind_code.code', 'bill.billez_code = pay_place.billez_code', 'bill.trader_code = trader_bill.trader_code'), array('', '', '', ''));
-			$sql_where = $this->sql->where(array('where'), array('bill.billez_code'), array($data['billez_code']), array(''));
-			$sql_other = $this->sql->other(array('distinct'), array(''));
-			$sql_query = $this->query_model->query($sql_select, 'bill', $sql_join, $sql_where, $sql_other);
-			$sql_result = $this->sql->result($sql_query, 'row_array');
+		
+			//查詢帳單資料
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->normal_bill(), 'function'),
+																			 'from' => Table_1::$bill,
+																			 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$pay_place, Table_1::$trader_bill), array(Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$billez_code . '=' . Table_1::$pay_place . '.' . Field_1::$billez_code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_bill . '.' . Field_1::$trader_code), array('', '', '', '')),
+																			 'where' => $this->sql->where(array('where'), array(Table_1::$bill . '.' . Field_1::$billez_code), array($data['billez_code']), array('')),
+																			 'other' => '')), 'row_array');
 			$sql_result['email'] = $action_member_info['email'];
 			$sql_result['last_name'] = $action_member_info['last_name'];
 			$sql_result['first_name'] = $action_member_info['first_name'];
 			$sql_result['mobile_phone'] = $action_member_info['mobile_phone'];
 			
-			array_push($outer_array, $sql_result);
+			array_push($json_array, $sql_result);
 			
 			//更新分享帳單讀取紀錄
-			array_push(Sql::$table, 'bill_share_log');
-			array_push(Sql::$select, $this->sql->field(array('read', 'update_user', 'update_time'), array('y', $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
-			array_push(Sql::$where, $this->sql->where(array('where', 'where', 'where'), array('id', 'billez_code', 'mobile_phone'), array($data['id'], $data['billez_code'], $mobile_phone), array('')));
-			array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'bill_share_log', '帳單請求更新分享帳單已讀取狀態', $this->sql->get_time(1))));
-			array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'bill_share_log', '帳單請求更新分享帳單已讀取狀態', $this->sql->get_time(1), '')));
-			array_push(Sql::$kind, 2);
+			$this->sql->add_static(array('table'=> Table_1::$bill_share_log,
+										 'select'=> $this->sql->field(array(Field_1::$read, Field_1::$update_user, Field_1::$update_time), array('y', $route_data['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where', 'where', 'where'), array(Field_1::$id, Field_1::$billez_code, Field_1::$mobile_phone), array($data['id'], $data['billez_code'], $mobile_phone), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$bill_share_log, '帳單請求_更新已讀取分享帳單', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$bill_share_log, '帳單請求_更新已讀取分享帳單', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
 		}
 		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, $outer_array);
-		} else {
-			$json_data = $this->json->encode_json($app, '7_301');
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳帳單資料
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $json_array), $route_data['private_key'], ''));
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 	}
 	
 	/*
-	 * 查詢可能帳單資料
-	 * 並傳回
+	 * 查詢會員所有資料
 	 * $route_data 所需參數資料
 	 */
-	public function possible_bill($route_data) {
-		$app = '7_4';
-		
-		//查詢會員修改資料紀錄
-		$sql_select = $this->sql->select(array('email', 'CONCAT(last_name, first_name) AS name', 'mobile_phone', 'bill_memo', 'subscribe_fail'), 'function');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member_alter_log', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
-		
+	public function search_data($route_data) {
 		//存放各種需要比對的資料
 		$possible_data = array();
 		
+		//查詢會員修改資料紀錄
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email, 'CONCAT(' . Field_1::$last_name . ',' . Field_1::$first_name . ') AS name', Field_1::$mobile_phone, Field_1::$bill_memo, Field_1::$subscribe_fail), 'function'),
+																		 'from' => Table_1::$action_member_alter_log,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'result_array');
+		//將有用的資料取出來
 		foreach($sql_result as $result) {
 			foreach($result as $item => $value) {
 				if($item == 'bill_memo' || $item == 'subscribe_fail') {
-					$datas = split(",", $value);
+					if($value != '') {
+						$datas = split(',', $value);
 						
-					foreach($datas as $data) {
-						if($data != '') array_push($possible_data, $data);
+						foreach($datas as $data) {
+							if($data != '') array_push($possible_data, $data);
+						}
 					}
 				} else {
 					array_push($possible_data, $value);
@@ -254,59 +193,60 @@ class Bill_model extends CI_Model {
 		}
 		
 		//查詢會員備忘錄資料
-		$sql_select = $this->sql->select(array('*'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member_data', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
+																		 'from' => Table_1::$action_member_data,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
+		//將有用的資料取出來
+		for($i = 0; $i < 6; $i++) array_shift($sql_result);
 		
-		for($i = 0; $i < 5; $i++) array_shift($sql_result);		
-		
-		foreach($sql_result as $result) {		
-			if($result != '') {
-				$datas = split(',', $result);
-				array_push($possible_data,$datas[2]);
+		if(count($sql_result) != 0) {
+			foreach($sql_result as $result) {
+				if($result != '') {
+					$datas = split(',', $result);
+					array_push($possible_data,$datas[2]);
+				}
 			}
 		}
 		
-		//查詢會員手機號碼
-		$sql_select = $this->sql->select(array('mobile_phone'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'action_member', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
+		//查詢會員手機資料
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
 		array_push($possible_data,$sql_result['mobile_phone']);
+
+		return $possible_data;
+	}
+	
+	/*
+	 * 查詢可能帳單資料
+	 * 並傳回
+	 * $route_data 所需參數資料
+	 */
+	public function possible_bill($route_data) {
+		//存放各種需要比對的資料
+		$possible_data = $this->search_data($route_data);
 		
 		//查詢該會員有訂閱帳單的訂閱碼
-		$sql_select = $this->sql->select(array('subscribe_code'), '');
-		$sql_where = $this->sql->where(array('where'), array('id'), array($route_data['id']), array(''));
-		$sql_query = $this->query_model->query($sql_select, 'subscribe', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_3::$subscribe_code), ''),
+																		 'from' => Table_1::$subscribe,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'result_array');
 		$subscribe_code_list = array();
 		foreach($sql_result as $result) array_push($subscribe_code_list, $result['subscribe_code']);	
-
-		//查詢可能帳單
-		$sql_select = $this->sql->select(array('data1',
-											   'data2', 
-											   'data3', 
-											   'data4', 
-											   'data5',  
-											   'bill_owner', 
-											   'identify_data',
-											   'trader_code.name AS trader_name', 
-											   'bill_kind_code.name AS bill_kind_name', 
-											   'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data) AS subscribe_code', 
-											   "IFNULL(trader_contract.send_condition_times, 'blank') AS send_condition_times"
-												), 'function');
-		$sql_where = $this->sql->where(array('where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'where', 'where', 'where_not_in'), 
-									   array('identify_data', 'bill_owner', 'data1', 'data2', 'data3', 'data4', 'data5', 'YEAR(NOW()) - YEAR(publish_time) =', 'MONTH(NOW()) - MONTH(publish_time) =', 'CONCAT(bill.trader_code, bill.bill_kind_code, identify_data)'), 
-									   array($possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, 0, 0, $subscribe_code_list), 
-									   array(''));
-		$sql_join = $this->sql->join(array('trader_code', 'bill_kind_code', 'trader_contract'), 
-									 array('bill.trader_code = trader_code.code', 'bill.bill_kind_code = bill_kind_code.code', 'bill.trader_code = trader_contract.trader_code AND bill.bill_kind_code = trader_contract.bill_kind_code'), 
-									 array('', '', ''));
-		$sql_query = $this->query_model->query($sql_select, 'bill', $sql_join, $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'result_array');
-		$possible_bill_list = array();
 		
+		//查詢可能帳單
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->possible_bill(), 'function'),
+																		 'from' => Table_1::$bill,
+																		 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$trader_contract), array(Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_contract . '.' . Field_1::$trader_code . ' AND ' . Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code), array('', '', '')),
+																		 'where' => $this->sql->where(array('where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'where', 'where', 'where_not_in'), array(Field_1::$identify_data, Field_1::$bill_owner, Field_1::$data1, Field_1::$data2, Field_1::$data3, Field_1::$data4, Field_1::$data5, 'YEAR(NOW()) - YEAR(' . Field_2::$publish_time . ') =', 'MONTH(NOW()) - MONTH(' . Field_2::$publish_time . ') =', 'CONCAT(' . Table_1::$bill . '.' . Field_1::$trader_code . ',' . Table_1::$bill . '.' . Field_1::$bill_kind_code . ',' . Field_1::$identify_data . ')'), array($possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, 0, 0, $subscribe_code_list), array('')),
+																		 'other' => '')), 'result_array');
+		$possible_bill_list = array();
+
 		//比對必須要有兩筆以上相同才列為可能帳單
 		foreach($sql_result as $result) {
 			$i = 0;
@@ -336,9 +276,6 @@ class Bill_model extends CI_Model {
 			}
 		}
 			
-		$json_data = $this->json->encode_json($app, $possible_bill_list);
-		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $possible_bill_list), $route_data['private_key'], ''));
 	}
 }//end

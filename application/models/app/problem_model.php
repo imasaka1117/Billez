@@ -19,8 +19,6 @@ class Problem_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function storage_problem($route_data) {
-		$app = '8_1';
-		
 		//先將該暫存圖片打開,然後讀取該圖片
 		if(isset($_FILES['image']['error'])) {
 			if($_FILES['image']['error'] == 0){
@@ -30,30 +28,27 @@ class Problem_model extends CI_Model {
 		}
 		
 		//查詢最大問題編號
-		$sql_select = $this->sql->select(array('id'), 'max');
-		$sql_where = '';
-		$sql_query = $this->query_model->query($sql_select, 'problem_log', '', $sql_where, '');
-		$sql_result = $this->sql->result($sql_query, 'row_array');
-		
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$id . ') AS max'), 'function'),
+																		 'from' => Table_1::$problem_log,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'row_array');
 		//產生問題編號
 		$id = $this->create->id('PR', $sql_result['max']);
 		
 		//新增問題
-		array_push(Sql::$table, 'problem_log');
-		array_push(Sql::$select, $this->sql->field(array('id', 'problem', 'asker', 'scope', 'state', 'answer', 'response', 'ask_time', 'image', 'star', 'create_user', 'create_time', 'update_user', 'update_time'), array($id, $route_data['problem'], $route_data['id'], 1, 'n', '', '', $this->sql->get_time(1), $image, $route_data['star'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))));
-		array_push(Sql::$where, '');
-		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(1, $route_data['id'], 'problem_log', '問題記錄新增行動會員問題', $this->sql->get_time(1))));
-		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(1, $route_data['id'], 'problem_log', '問題記錄新增行動會員問題', $this->sql->get_time(1), '')));
-		array_push(Sql::$kind, 1);
-		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, '8_101');
-		} else {
-			$json_data = $this->json->encode_json($app, '8_102');
+		$this->sql->add_static(array('table'=> Table_1::$problem_log,
+									 'select'=> $this->sql->field(array(Field_1::$id, Field_3::$problem, Field_3::$asker, Field_3::$scope, Field_1::$state, Field_3::$ask_time, Field_3::$image, Field_3::$star, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($id, $route_data['problem'], $route_data['id'], 1, 'n', $this->sql->get_time(1), $image, $route_data['star'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),
+									 'where'=> '',
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$problem_log, '問題回報_新增問題記錄', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$problem_log, '問題回報_新增問題記錄', $this->sql->get_time(1), '')),
+									 'kind'=> 1));
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳狀態碼
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));		
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));
 	}
 }//end

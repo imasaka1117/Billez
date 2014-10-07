@@ -8,7 +8,7 @@ class App extends CI_Controller {
 		parent::__construct();
 		
 		//為openssl的檔案在linux平台需要這個檔案放在同一目錄下才會啟用,windows就不須這行
-// 		$_SERVER['OPENSSL_CONF'] = 'openssl.cnf';
+		$_SERVER['OPENSSL_CONF'] = 'openssl.cnf';
 		$this->load->model('app/route_model');
 		$this->load->model('db/query_model');
 		$this->load->library('db/field_1');
@@ -19,7 +19,7 @@ class App extends CI_Controller {
 		$this->load->library('key');
 		$this->load->library('json');
 		$this->load->library('sql');
-		
+
 	}
 
 	/*
@@ -28,23 +28,8 @@ class App extends CI_Controller {
 	 * 最後再載入view輸出結果給APP
 	 */
 	public function index() {
-//測試區
-		$route_data['control_param'] = 2;
-		$route_data['sub_param'] = '2_2';
-		$route_data['email'] = 'imasaka1117@yahoo.com.tw';
-		$route_data['mobile_phone_id'] = 'APA91bFyjJttdBkbZMBu1QHy2a9Z9Fux81A33JDeF60kbEIsiOBNCyGMI7LFe32PZ1zhQJ-mOnQXKvrZkK7xt4hOq_JOujYM6XED5o4rT_IroogXpcBt0C0JshJAaRpK29BTjcv46eZA4RavNnEwvc6k7b9EG3mfHg';
-		$route_data['private_key'] = 'private_key';
-// 		$route_data['fb_id'] = 'fb_id_2';
-// 		$route_data['password'] = 'password';
-// 		$route_data['id'] = 'ACAA00001';
-// 		$route_data['last_name'] = 'last_name_11';
-// 		$route_data['first_name'] = 'first_name_1';
-// 		$route_data['mobile_phone'] = 'mobile_phone_1';
-// 		$route_data['authentication_code'] = '111111';
-
-		/////////////////////////////////////////////
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
-// 		$route_data = $this->route_model->index($this->input->post());
+		$route_data = $this->route_model->index($this->input->post());
 
 		//依照APP傳來的資料做功能區分,再載入相對應的頁面
 		switch($route_data['control_param']) {
@@ -52,31 +37,40 @@ class App extends CI_Controller {
 				$data['response'] = $route_data['data'];
 				break;
 			case '1':
+				
 				$this->load->library('create');
 				$this->load->library('push');
 				$this->load->library('sms');
+				$this->load->model('send/push_model');
+				$this->load->model('send/sms_model');
 				$this->load->model('app/join_model');
 				$data['response'] = $this->join_model->index($route_data);
 				break;
 			case '2':
 				$this->load->library('create');
 				$this->load->library('email');
+				$this->load->model('send/email_model');
 				$this->load->model('app/forget_model');
 				$data['response'] = $this->forget_model->index($route_data);
 				break;
 			case '3':
 				$this->load->library('create');
 				$this->load->library('sms');
+				$this->load->model('send/sms_model');
 				$this->load->model('app/alter_model');
 				$data['response'] = $this->alter_model->index($route_data);
 				break;
 			case '4':
+				$this->load->model('other/format_model');
 				$this->load->model('app/login_model');
 				$data['response'] = $this->login_model->index($route_data);
 				break;
 			case '5':
 				$this->load->library('push');
 				$this->load->library('sms');
+				$this->load->library('transform');
+				$this->load->model('send/push_model');
+				$this->load->model('send/sms_model');
 				$this->load->model('app/subscribe_model');
 				$data['response'] = $this->subscribe_model->index($route_data);
 				break;
@@ -85,6 +79,7 @@ class App extends CI_Controller {
 				$data['response'] = $this->delete_model->index($route_data);
 				break;
 			case '7':
+				$this->load->model('other/format_model');
 				$this->load->model('app/bill_model');
 				$data['response'] = $this->bill_model->index($route_data);
 				break;

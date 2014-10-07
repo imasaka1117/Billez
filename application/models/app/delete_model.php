@@ -21,24 +21,19 @@ class Delete_model extends CI_Model {
 	 * $route_data	所需參數資料
 	 */
 	public function delete_member($route_data) {
-		$app = '6_1';
-		
 		//修改該會員狀態為刪除狀態
-		array_push(Sql::$table, 'action_member');
-		array_push(Sql::$select, $this->sql->field(array('state', 'update_user', 'update_time'), array(3, $route_data['id'], $this->sql->get_time(1))));
-		array_push(Sql::$where, $this->sql->where(array('where'), array('id'), array($route_data['id']), array('')));
-		array_push(Sql::$log, $this->sql->field(Sql::$user_log, array(2, $route_data['id'], 'action_member', '刪除帳號修改狀態為刪除狀態', $this->sql->get_time(1))));
-		array_push(Sql::$error, $this->sql->field(Sql::$system_log, array(2, $route_data['id'], 'action_member', '刪除帳號修改狀態為刪除狀態', $this->sql->get_time(1), '')));
-		array_push(Sql::$kind, 2);
-		
-		//執行更新
-		if($this->insert_update_model->execute_sql(Sql::$table, Sql::$select, Sql::$where, Sql::$log, Sql::$error, Sql::$kind)) {
-			$json_data = $this->json->encode_json($app, '6_101');
-		} else {
-			$json_data = $this->json->encode_json($app, '6_102');
+		$this->sql->add_static(array('table'=> Table_1::$action_member,
+									 'select'=> $this->sql->field(array(Field_1::$state, Field_1::$update_user, Field_1::$update_time), array(3, $route_data['id'], $this->sql->get_time(1))),
+									 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$action_member, '刪除帳號_將帳號狀態更改為刪除狀態', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$action_member, '刪除帳號_將帳號狀態更改為刪除狀態', $this->sql->get_time(1), '')),
+									 'kind'=> 2));
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			//成功回傳狀態碼
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
 		}
 		
-		$encode_data = $this->key->encode_app($json_data, $route_data['private_key']);
-		return $this->json->encode_json('vale', $encode_data);
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));
 	}
 }//end
