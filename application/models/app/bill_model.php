@@ -161,6 +161,38 @@ class Bill_model extends CI_Model {
 	}
 	
 	/*
+	 * 查詢備忘錄資料
+	 * 
+	 */
+	public function search_memo($route_data, $possible_data) {
+		//查詢會員備忘錄資料
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
+																		 'from' => Table_1::$action_member_data,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
+		//將有用的資料取出來
+		for($i = 0; $i < 6; $i++) array_shift($sql_result);
+		
+		foreach($sql_result as $result) {
+			if($result != '') {
+				$datas = split(',', $result);
+				array_push($possible_data,$datas[2]);
+			}
+		}
+		
+		//查詢會員手機資料
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone), ''),
+																		 'from' => Table_1::$action_member,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'row_array');
+		array_push($possible_data,$sql_result['mobile_phone']);
+		
+		return $possible_data;
+	}
+	
+	/*
 	 * 查詢會員所有資料
 	 * $route_data 所需參數資料
 	 */
@@ -189,31 +221,7 @@ class Bill_model extends CI_Model {
 			}
 		}
 		
-		//查詢會員備忘錄資料
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
-																		 'from' => Table_1::$action_member_data,
-																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
-																		 'other' => '')), 'row_array');
-		//將有用的資料取出來
-		for($i = 0; $i < 6; $i++) array_shift($sql_result);
-
-		foreach($sql_result as $result) {
-			if($result != '') {
-				$datas = split(',', $result);
-				array_push($possible_data,$datas[2]);
-			}
-		}
-		
-		//查詢會員手機資料
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone), ''),
-																		 'from' => Table_1::$action_member,
-																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
-																		 'other' => '')), 'row_array');
-		array_push($possible_data,$sql_result['mobile_phone']);
-
-		return $possible_data;
+		return $this->search_memo($route_data, $possible_data);
 	}
 	
 	/*
