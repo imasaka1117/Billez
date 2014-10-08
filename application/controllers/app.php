@@ -28,8 +28,11 @@ class App extends CI_Controller {
 	 */
 	public function index() {
 		//每次請求都必須做的檢查,檢查手機ID是否改變,並且整理引導資料
-		$route_data = $this->route_model->index($this->input->post());
-	
+// 		$route_data = $this->route_model->index($this->input->post());
+
+		$a = '';
+		echo split(',', $a);exit();
+		
 		//依照數字選擇處理
 		$function = array('', 'join_model', 'forget_model', 'alter_model', 'login_model', 'subscribe_model', 'delete_model', 'bill_model', 'problem_model', 'memorandum_model', 'activity_model', 'change_model');
 

@@ -118,10 +118,9 @@ class Bill_model extends CI_Model {
 																		 'join'=> '',
 																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$mobile_phone, Field_1::$read), array($mobile_phone, 'n'), array('')),
 																		 'other' => '')), 'result_array');
-		$share_data = $sql_result;
 		$json_array = array();
 		
-		foreach($share_data as $data) {
+		foreach($sql_result as $data) {
 			//查詢分享人資料
 			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email, Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone), ''),
 																			 'from' => Table_1::$action_member,
@@ -179,12 +178,10 @@ class Bill_model extends CI_Model {
 		foreach($sql_result as $result) {
 			foreach($result as $item => $value) {
 				if($item == 'bill_memo' || $item == 'subscribe_fail') {
-					if($value != '') {
-						$datas = split(',', $value);
-						
-						foreach($datas as $data) {
-							if($data != '') array_push($possible_data, $data);
-						}
+					$datas = split(',', $value);
+					
+					foreach($datas as $data) {
+						if($data != '') array_push($possible_data, $data);
 					}
 				} else {
 					array_push($possible_data, $value);
@@ -200,13 +197,11 @@ class Bill_model extends CI_Model {
 																		 'other' => '')), 'row_array');
 		//將有用的資料取出來
 		for($i = 0; $i < 6; $i++) array_shift($sql_result);
-		
-		if(count($sql_result) != 0) {
-			foreach($sql_result as $result) {
-				if($result != '') {
-					$datas = split(',', $result);
-					array_push($possible_data,$datas[2]);
-				}
+
+		foreach($sql_result as $result) {
+			if($result != '') {
+				$datas = split(',', $result);
+				array_push($possible_data,$datas[2]);
 			}
 		}
 		
