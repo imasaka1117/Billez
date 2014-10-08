@@ -217,35 +217,16 @@ class Bill_model extends CI_Model {
 	}
 	
 	/*
-	 * 查詢可能帳單資料
-	 * 並傳回
-	 * $route_data 所需參數資料
+	 * 篩選可以用的可能帳單
+	 * $search_result	可能帳單查詢結果
 	 */
-	public function possible_bill($route_data) {
-		//存放各種需要比對的資料
-		$possible_data = $this->search_data($route_data);
-		
-		//查詢該會員有訂閱帳單的訂閱碼
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_3::$subscribe_code), ''),
-																		 'from' => Table_1::$subscribe,
-																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
-																		 'other' => '')), 'result_array');
-		$subscribe_code_list = array();
-		foreach($sql_result as $result) array_push($subscribe_code_list, $result['subscribe_code']);	
-		
-		//查詢可能帳單
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->possible_bill(), 'function'),
-																		 'from' => Table_1::$bill,
-																		 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$trader_contract), array(Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_contract . '.' . Field_1::$trader_code . ' AND ' . Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code), array('', '', '')),
-																		 'where' => $this->sql->where(array('where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'where', 'where', 'where_not_in'), array(Field_1::$identify_data, Field_1::$bill_owner, Field_1::$data1, Field_1::$data2, Field_1::$data3, Field_1::$data4, Field_1::$data5, 'YEAR(NOW()) - YEAR(' . Field_2::$publish_time . ') =', 'MONTH(NOW()) - MONTH(' . Field_2::$publish_time . ') =', 'CONCAT(' . Table_1::$bill . '.' . Field_1::$trader_code . ',' . Table_1::$bill . '.' . Field_1::$bill_kind_code . ',' . Field_1::$identify_data . ')'), array($possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, 0, 0, $subscribe_code_list), array('')),
-																		 'other' => '')), 'result_array');
+	public function filter_possible($search_result) {
 		$possible_bill_list = array();
-
+		
 		//比對必須要有兩筆以上相同才列為可能帳單
-		foreach($sql_result as $result) {
+		foreach($search_result as $result) {
 			$i = 0;
-			
+				
 			foreach($result as $item => $data) {
 				switch ($item) {
 					case 'subscribe_code':
@@ -270,7 +251,35 @@ class Bill_model extends CI_Model {
 				}
 			}
 		}
-			
-		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $possible_bill_list), $route_data['private_key'], ''));
+		
+		return $possible_bill_list;
+	}
+	
+	/*
+	 * 查詢可能帳單資料
+	 * 並傳回
+	 * $route_data 所需參數資料
+	 */
+	public function possible_bill($route_data) {
+		//存放各種需要比對的資料
+		$possible_data = $this->search_data($route_data);
+		
+		//查詢該會員有訂閱帳單的訂閱碼
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_3::$subscribe_code), ''),
+																		 'from' => Table_1::$subscribe,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
+																		 'other' => '')), 'result_array');
+		$subscribe_code_list = array();
+		foreach($sql_result as $result) array_push($subscribe_code_list, $result['subscribe_code']);	
+		
+		//查詢可能帳單
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->possible_bill(), 'function'),
+																		 'from' => Table_1::$bill,
+																		 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$trader_contract), array(Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_contract . '.' . Field_1::$trader_code . ' AND ' . Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code), array('', '', '')),
+																		 'where' => $this->sql->where(array('where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'where', 'where', 'where_not_in'), array(Field_1::$identify_data, Field_1::$bill_owner, Field_1::$data1, Field_1::$data2, Field_1::$data3, Field_1::$data4, Field_1::$data5, 'YEAR(NOW()) - YEAR(' . Field_2::$publish_time . ') =', 'MONTH(NOW()) - MONTH(' . Field_2::$publish_time . ') =', 'CONCAT(' . Table_1::$bill . '.' . Field_1::$trader_code . ',' . Table_1::$bill . '.' . Field_1::$bill_kind_code . ',' . Field_1::$identify_data . ')'), array($possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, 0, 0, $subscribe_code_list), array('')),
+																		 'other' => '')), 'result_array');
+		
+		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->filter_possible($sql_result)), $route_data['private_key'], ''));
 	}
 }//end
