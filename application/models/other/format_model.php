@@ -9,9 +9,21 @@ class Format_model extends CI_Model {
 	}
 	
 	/*
+	 * 補充資料回傳
+	 */
+	public function remark() {
+		$data1 = 'IFNULL(CONCAT(IFNULL(CONCAT(' . Field_1::$data1 . ", ','), NULL), IFNULL(CONCAT(";
+		$data2 = Field_1::$data2 . ", ','), NULL), IFNULL(CONCAT(" . Field_1::$data3 . ", ','), NULL), IFNULL(CONCAT(";
+		$data3 = Field_1::$data4 . ", ','), NULL), IFNULL(CONCAT(";
+		$data4 = Field_1::$data5 . ", ','), NULL)), 'blank') AS " . Field_3::$remark;
+
+		return $data1 . $data2 . $data3 . $data4;
+	}
+	
+	/*
 	 * 一般帳單格式
 	 */
-	public function normal_bill($subscribe_code) {
+	public function normal_bill($subscribe_code, $remark) {
 		return array(Table_1::$bill . '.' . Field_1::$billez_code,
 					 Field_1::$bill_owner,
 					 Field_2::$publish_time,
@@ -36,7 +48,7 @@ class Format_model extends CI_Model {
 					 'IFNULL(' . Field_2::$bank_barcode3 . ", 'blank') AS " . Field_2::$bank_barcode3,
 					 'IFNULL(' . Table_1::$trader_bill . '.' . Field_4::$bill_ad_url . ", 'blank') AS ad_id",
 					 $subscribe_code,
-					 'IFNULL(CONCAT(IFNULL(CONCAT(' . Field_1::$data1 . ", ','), NULL), IFNULL(CONCAT(" . Field_1::$data2 . ", ','), NULL), IFNULL(CONCAT(" . Field_1::$data3 . ", ','), NULL), IFNULL(CONCAT(" . Field_1::$data4 . ", ','), NULL), IFNULL(CONCAT(" . Field_1::$data5 . ", ','), NULL)), 'blank') AS " . Field_3::$remark);
+					 $remark);
 	}
 	
 	/*
