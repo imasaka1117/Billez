@@ -19,6 +19,8 @@ class Subscribe_model extends CI_Model {
 			case '5_4':
 				return $this->share_bill($route_data);
 				break;
+			default:
+				break;
 		}
 	}
 	
