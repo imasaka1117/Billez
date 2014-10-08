@@ -156,7 +156,7 @@ class Login_model extends CI_Model {
 
 		//查詢各筆帳單資料
 		foreach($billez_code_list as $billez_code) {
-			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->normal_bill(), 'function'),
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select($this->format_model->normal_bill($this->format_model->subscribe_code()), 'function'),
 																			 'from' => Table_1::$bill,
 																			 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$pay_place, Table_1::$trader_bill), array(Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$billez_code . '=' . Table_1::$pay_place . '.' . Field_1::$billez_code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_bill . '.' . Field_1::$trader_code), array('', '', '', '')),
 																			 'where' => $this->sql->where(array('where'), array(Table_1::$bill . '.' . Field_1::$billez_code), array($billez_code), array('')),
