@@ -52,4 +52,5 @@ class Field_4 {
 	static public $overdue_pay_place1 = 'overdue_pay_place1';
 	static public $overdue_pay_place2 = 'overdue_pay_place2';
 	static public $purpose = 'purpose';
+	static public $page = 'page';
 }

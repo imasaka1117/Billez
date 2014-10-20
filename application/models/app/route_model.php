@@ -7,31 +7,31 @@ class Route_model extends CI_Model {
 	 * 若不是檢查手機ID及產生引導資料
 	 * $post	所有的POST資料
 	 */
-	public function index($post) {
-		if(!($this->input->post('encode') || $this->input->post('public_key'))) {
-			if($this->input->post('special')) {
+	public function index() {
+		if(!(isset($_REQUEST['encode']) || isset($_REQUEST['public_key']))) {
+			if(isset($_REQUEST['special'])) {
 				/*
 				 * 用於特殊情形,例如需要重啟頁面
 				 * 推薦好友 : 1
 				 */
-				switch ($post['special']) {
+				switch ($_REQUEST['special']) {
 					case 1:
-						$route_data = $this->key->route_data('', array('control_param', 'sub_param', 'mobile_phone_list', 'id'), array('10', '10_2', $post['mobile_phone_list'], $post['id']));
+						$route_data = $this->key->route_data('', array('control_param', 'sub_param', 'mobile_phone_list', 'id'), array('10', '10_2', $_REQUEST['mobile_phone_list'], $_REQUEST['id']));
 						break;
 				}
 			} else {
 				//若請求中沒有這兩個post參數,則回傳錯誤訊息
 				$route_data = $this->key->route_data('', array('control_param', 'data'), array('0', '0_000'));
 			}
-		} elseif($this->input->post('public_key')) {
+		} elseif(isset($_REQUEST['public_key'])) {
 			//第一次請求,合成APP傳來的公鑰並產生引導資料
-			$route_data = $this->key->route_data('', array('control_param', 'data'), array('0', $this->merge($post['public_key'], $post['mobile_phone_id'], $post['first'])));
-		} elseif($this->input->post('id')) {
+			$route_data = $this->key->route_data('', array('control_param', 'data'), array('0', $this->merge($_REQUEST['public_key'], $_REQUEST['mobile_phone_id'], $_REQUEST['first'])));
+		} elseif(isset($_REQUEST['id'])) {
 			//非第一次請求,檢查手機ID是否變更及產生引導資料
-			$route_data = $this->check_mobile_phone_id($post['id'], $post['mobile_phone_id'], $post['encode']);	
+			$route_data = $this->check_mobile_phone_id($_REQUEST['id'], $_REQUEST['mobile_phone_id'], $_REQUEST['encode']);	
 		}  else {
 			//非第一次請求之前,解密及產生引導資料
-			$route_data = $this->decode_tempdata($post['encode'], $post['mobile_phone_id']);
+			$route_data = $this->decode_tempdata($_REQUEST['encode'], $_REQUEST['mobile_phone_id']);
 		}
 
 		return $route_data;
@@ -80,7 +80,7 @@ class Route_model extends CI_Model {
 										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, 1, Table_1::$moblie_phone_id_and_key, '該手機ID不存在,新增該手機ID及金鑰組', $this->sql->get_time(1), '')),
 										 'kind'=> 1));
 		}
-		
+
 		//執行新增/更新,並回傳APP公鑰加密資料
 		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($first . '_1', $json_array), $app_public_key, 'public'));
@@ -151,7 +151,7 @@ class Route_model extends CI_Model {
 				return $this->key->route_data('', array('control_param', 'data'), array('0', $this->json->encode_json('app', $this->key->encode_app($this->json->encode_json('0_1', '0_101'), $private_key, ''))));
 			}
 		}
-		
+
 		//若手機ID相同,產生引導資料
 		return $this->key->route_data($this->json->decode_json(1, $this->key->decode_app($this->json->decode_json(1, $encode), $private_key)), array('mobile_phone_id', 'id', 'private_key'), array($mobile_phone_id, $id, $private_key));
 	}

@@ -19,14 +19,6 @@ class Problem_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function storage_problem($route_data) {
-		//先將該暫存圖片打開,然後讀取該圖片
-		if(isset($_FILES['image']['error'])) {
-			if($_FILES['image']['error'] == 0){
-				$instr 	= fopen($_FILES['image']['tmp_name'], 'rb');
-				$image 	= addslashes(fread($instr, filesize($_FILES['image']['tmp_name'])));
-			}
-		}
-		
 		//查詢最大問題編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$id . ') AS max'), 'function'),
 																		 'from' => Table_1::$problem_log,
@@ -38,7 +30,7 @@ class Problem_model extends CI_Model {
 		
 		//新增問題
 		$this->sql->add_static(array('table'=> Table_1::$problem_log,
-									 'select'=> $this->sql->field(array(Field_1::$id, Field_3::$problem, Field_3::$asker, Field_3::$scope, Field_1::$state, Field_3::$ask_time, Field_3::$image, Field_3::$star, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($id, $route_data['problem'], $route_data['id'], 1, 'n', $this->sql->get_time(1), $image, $route_data['star'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),
+									 'select'=> $this->sql->field(array(Field_1::$id, Field_3::$problem, Field_3::$asker, Field_3::$scope, Field_1::$state, Field_3::$ask_time, Field_3::$star, Field_4::$page, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($id, $route_data['problem'], $route_data['id'], 1, 'n', $this->sql->get_time(1), $route_data['star'], $route_data['page'], $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),
 									 'where'=> '',
 									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $route_data['id'], Table_1::$problem_log, '問題回報_新增問題記錄', $this->sql->get_time(1))),
 									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $route_data['id'], Table_1::$problem_log, '問題回報_新增問題記錄', $this->sql->get_time(1), '')),

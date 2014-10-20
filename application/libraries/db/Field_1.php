@@ -46,4 +46,6 @@ class Field_1 {
 	static public $data3 = 'data3';
 	static public $data4 = 'data4';
 	static public $data5 = 'data5';
+	static public $city = 'city';
+	static public $district = 'district';
 }

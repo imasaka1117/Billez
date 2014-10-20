@@ -25,13 +25,11 @@ class Key {
 	 */
 	public function route_data($source, $item, $data) {
 		$item_count = count($item);
+		$array = array();
 		
-		if($source == '') {
-			for($i = 0; $i < $item_count; $i++) $array[$item[$i]] = $data[$i];
-		} else {
-			for($i = 0; $i < $item_count; $i++) $source[$item[$i]] = $data[$i];
-			$array = $source;
-		}
+		if($source != '') $array = $source;
+	
+		for($i = 0; $i < $item_count; $i++) $array[$item[$i]] = $data[$i];
 
 		return $array;
 	}
@@ -63,7 +61,7 @@ class Key {
 		
 		return $outer_array;
 	}
-	
+
 	/*
 	 * 將APP傳來的資料做解密,並結合
 	 * $encode_data	加密資料
@@ -79,7 +77,7 @@ class Key {
 			openssl_private_decrypt($encode_data[$i]['vale'], $decrypted, $private_key);
 			$string = $string . $decrypted;
 		}
-	
+
 		return $string;		
 	}
 	

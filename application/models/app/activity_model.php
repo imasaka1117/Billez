@@ -29,7 +29,7 @@ class Activity_model extends CI_Model {
 		$ch = curl_init();
 			
 		$options = array(
-				CURLOPT_URL => base_url() . 'app',
+				CURLOPT_URL => base_url() . 'index.php/app',
 				CURLOPT_HEADER => false,
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_TIMEOUT=>1,

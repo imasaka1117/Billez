@@ -21,6 +21,8 @@ class Memorandum_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function insert_data($route_data) {
+		if($route_data['trader_name'] == '') $route_data['trader_name'] = 'blank';
+		
 		//將額外資料組成一個字串
 		$data = $route_data['bill_kind'] . ',' . $route_data['trader_name'] . ',' . $route_data['data'];
 		
@@ -71,6 +73,8 @@ class Memorandum_model extends CI_Model {
 	 * $route_data
 	 */
 	public function alter_data($route_data) {
+		if($route_data['trader_name'] == '') $route_data['trader_name'] = 'blank';
+		
 		//查詢修改記錄備忘錄資料
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$bill_memo), ''),
 																		 'from' => Table_1::$action_member_alter_log,

@@ -61,9 +61,9 @@ class Format_model extends CI_Model {
 				     Field_1::$data4,
 				     Field_1::$data5,
 				     Field_1::$bill_owner,
-				     Field_1::$identify_data,
-				     Table_1::$trader_code . '.' . Field_1::$name . ' AS trader_name',
-				     Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind_name',
+					 Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind_name',
+				     Field_1::$identify_data,					 
+				     Table_1::$trader_code . '.' . Field_1::$name . ' AS trader_name',     
 				     $subscribe_code,
 				     'IFNULL(' . Table_1::$trader_contract . '.' . Field_4::$send_condition_times . ", 'blank') AS " . Field_4::$send_condition_times);
 	}

@@ -31,7 +31,6 @@ class Field_3 {
 	static public $response = 'response';
 	static public $ask_time = 'ask_time';
 	static public $reply_time = 'reply_time';
-	static public $image = 'image';
 	static public $star = 'star';
 	static public $receive_read = 'receive_read';
 	static public $read_time = 'read_time';

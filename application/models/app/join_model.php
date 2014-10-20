@@ -302,10 +302,9 @@ class Join_model extends CI_Model {
 		$this->sql->add_static(array('table'=> Table_1::$password,
 									 'select'=> $this->sql->field(array(Field_1::$password, Field_1::$update_user, Field_1::$update_time), array($route_data['password'], $route_data['id'], $this->sql->get_time(1))),
 									 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
-									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$password, '', $this->sql->get_time(1))),
-									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$password, '', $this->sql->get_time(1), '')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$password, '加入會員_更新密碼', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$password, '加入會員_更新密碼', $this->sql->get_time(1), '')),
 									 'kind'=> 2));
-		
 		//執行
 		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));		
@@ -319,6 +318,8 @@ class Join_model extends CI_Model {
 	 * $route_data 所需參數資料
 	 */
 	public function more_data($route_data) {
+		if($route_data['mobile_phone'] == '') return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '01'), $route_data['private_key'], ''));
+		
 		//查詢電子郵件
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$email), ''),
 																		 'from' => Table_1::$action_member,

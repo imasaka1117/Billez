@@ -66,4 +66,50 @@ class Create {
 	
 		return $authentication_code;
 	}
+	
+	/*
+	 * 代碼進位判斷
+	 * $code	單一代碼
+	 * $flag	判斷是否進位
+	 */
+	public function carry($code, $flag) {
+		if($flag) {
+			if(ord($code) >= 122) {
+				$code = chr(97); 
+			} else {
+				$code = chr(ord($code) + 1);
+			}
+		}
+		
+		return $code;
+	}
+	
+	/*
+	 * 產生代碼
+	 * $digit	代碼位數
+	 * $code	代碼
+	 */
+	public function code($digit, $code) {
+		if($code == '') {
+			$init_code = 'a';
+			for($i = 0; $i < $digit; $i++) $code = $code . $init_code;
+
+			return $code;
+		}
+	
+		$part = array();
+		$flag = true;
+		$new_code = '';
+	
+		for($i = 0; $i < $digit; $i++) $part[$i] = substr($code, $i, 1);
+		
+		for($i = count($part) - 1; $i >= 0; $i--) {
+			$part[$i] = $this->carry($part[$i], $flag);
+			if($part[$i] != 'a') $flag = false;
+		}
+
+		for($i = 0; $i < $digit; $i++) $new_code = $new_code . $part[$i];
+			
+		return $new_code;
+	}
 }

@@ -62,7 +62,7 @@ class Login_model extends CI_Model {
 			foreach($action_member_data as $item => $value) {
 				if($value != '') {
 					$other_datas = split(',', $value);
-					$action_member_info[$other_datas[0]] = $other_datas[1];
+					$action_member_info[$other_datas[0]] = $other_datas[1] . ',' . $other_datas[2];
 				}
 			}
 		}
@@ -89,16 +89,18 @@ class Login_model extends CI_Model {
 		}
 		
 		$route_data['id'] = $sql_result['id'];
-		
+
 		//查詢該會員密碼
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$password), ''),
 																		 'from' => Table_1::$password,
 																		 'join'=> '',
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
 																		 'other' => '')), 'row_array');
+		if($sql_result['password'] == '') return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->member_data($route_data)), $route_data['private_key'], ''));
+		
 		//檢查密碼是否正確,若不正確回傳錯誤碼
-		if($sql_result['password'] != md5($route_data['password'])) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));
-
+		if($sql_result['password'] != md5($route_data['password'])) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $route_data['sub_param'] . '02'), $route_data['private_key'], ''));		
+		
 		//查詢會員資料
 		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->member_data($route_data)), $route_data['private_key'], ''));
 	}

@@ -1,7 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No dirct script access allowed');
 
 class Json {
-	
 	/*
 	 * 轉換為json格式
 	 * $code	回傳給APP的狀態碼或判別碼, 值為vale為將加密資料轉成json格式[{"vale":"加密文"},{"vale":"加密文"}]

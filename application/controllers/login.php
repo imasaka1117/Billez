@@ -4,31 +4,28 @@ class Login extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
+		$this->load->library('web/param');
 	}
 
 	/*
 	 * login畫面起點
 	 */
 	public function index() {
-		$this->load->library('web/param');
-		
-		$data['title'] = 'Billez 管理系統';
-		$data['css_path'] = Param::$css_path;
-		$data['login_css'] = Param::$login_css;
-		$data['js_path'] = Param::$js_path;
-		$data['jquery_js'] = Param::$jquery_js;
-		$data['function_js'] = Param::$function_js;
-		$data['login_js'] = Param::$login_js;
-		$data['index_url'] = Param::$index_url;
-		$this->load->view('web/login/login.php', $data);
+		$this->load->view('web/login/login', $this->param->resources(array('validate_js'=>Param::$validate_js, 'login_css'=>Param::$login_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url)));
 	}
 
 	/*
 	 * login驗證登入資料
 	 */
 	public function check_login() {
-		
+		$this->load->model('web/login_model');
+		$this->load->model('db/query_model');
+		$this->load->library('db/field_1');
+		$this->load->library('db/field_2');
+		$this->load->library('db/table_1');
+		$this->load->library('sql');
+		$this->load->library('transform');
+		$data['ajax'] = $this->login_model->login($this->input->post());
+		$this->load->view('web/ajax', $data);
 	}
-	
-	
 }//end

@@ -48,4 +48,5 @@ class Table_1 {
 	static public $trader = 'trader';
 	static public $user_list = 'user_list';
 	static public $user_log = 'user_log';
+	static public $pay_kind_list = 'pay_kind_list';
 }
