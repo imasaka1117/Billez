@@ -8,11 +8,6 @@ class Create {
 	 * $max_id	該種類的最大編號
 	 */
 	public function id($prefix, $max_id) {
-		$id = '';
-		$first_word = '';
-		$second_word = '';
-		$number = '';
-	
 		//如果還沒有編號,就是AA00001為開始
 		if($max_id == '') {
 			$id = $prefix . 'AA00001';
