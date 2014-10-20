@@ -97,21 +97,20 @@ class Create {
 			return $code;
 		}
 
-		return $this->handle($code, $digit);
+		for($i = 0; $i < $digit; $i++) $part[$i] = substr($code, $i, 1);
+		
+		return $this->handle($part, $digit);
 	}
 	
 	/*
 	 * 處理代碼
-	 * $code 目前代碼
+	 * $part 	代碼轉換陣列
 	 * $digit	代碼位數
 	 */
-	public function handle($code, $digit) {
+	public function handle($part, $digit) {
 		$new_code = '';
 		$flag = true;
-		$part = array();
-		
-		for($i = 0; $i < $digit; $i++) $part[$i] = substr($code, $i, 1);
-		
+
 		for($i = count($part) - 1; $i >= 0; $i--) {
 			$part[$i] = $this->carry($part[$i], $flag);
 			if($part[$i] != 'a') $flag = false;
