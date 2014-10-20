@@ -9,34 +9,39 @@ class Create {
 	 */
 	public function id($prefix, $max_id) {
 		//如果還沒有編號,就是AA00001為開始
-		if($max_id == '') {
-			$id = $prefix . 'AA00001';
-		} else {
-			//分析$max_id並組合出最大代號+1
-			$first_word = substr($max_id, 2, 1);
-			$second_word = substr($max_id, 3, 1);
-			$number = (int) substr($max_id, 4);
+		if($max_id == '') return $prefix . 'AA00001';
+		
+		//分析$max_id並組合出最大代號+1
+		$first_word = substr($max_id, 2, 1);
+		$second_word = substr($max_id, 3, 1);
+		$number = (int) substr($max_id, 4);
+
+		return $prefix . $this->id_carry($first_word, $second_word, $number);
+	}
 	
-			if($number == 99999) {
-				$number = 0;
-				if(ord($second_word) == 90) {
-					$first_word = ord($first_word) + 1;
-					$second_word = 65;
-				} else {
-					$first_word = ord($first_word);
-					$second_word = ord($second_word) + 1;
-				}
+	/*
+	 * ID進位處理
+	 * $first_word	第一字符
+	 * $second_word	第二字符
+	 * $number		數字排序
+	 */
+	public function id_carry($first_word, $second_word, $number) {
+		if($number == 99999) {
+			$number = 0;
+			if(ord($second_word) == 90) {
+				$first_word = ord($first_word) + 1;
+				$second_word = 65;
 			} else {
-				$number++;
 				$first_word = ord($first_word);
-				$second_word = ord($second_word);
+				$second_word = ord($second_word) + 1;
 			}
-	
-			//組合編號
-			$id = $prefix . chr($first_word) . chr($second_word) . str_pad($number, 5, 0,STR_PAD_LEFT);
+		} else {
+			$number++;
+			$first_word = ord($first_word);
+			$second_word = ord($second_word);
 		}
-	
-		return $id;
+		
+		return chr($first_word) . chr($second_word) . str_pad($number, 5, 0,STR_PAD_LEFT);
 	}
 	
 	/*
