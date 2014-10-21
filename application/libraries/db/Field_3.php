@@ -8,7 +8,6 @@ class Field_3 {
 	static public $pay_day = 'pay_day';
 	static public $pay_week = 'pay_week';
 	static public $pay_month = 'pay_month';
-	static public $pay_season_month = 'pay_season_month';
 	static public $ad_url = 'ad_url';
 	static public $remark = 'remark';
 	static public $address = 'address';

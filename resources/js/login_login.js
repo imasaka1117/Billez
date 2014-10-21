@@ -3,16 +3,9 @@
  */
 $(document).ready(function() {
 	init_login();
-	
-//	$("input").click(function() { 
-//		validate(); 
-//	});
-	
+		
 	$("#login_btn").click(function() { 
-		alert(validate());
-//		if(validate()) {
-//			alert('ddd');
-//		}
+		if(validate()) check_login();
 	});
 });
 
@@ -24,5 +17,5 @@ function check_login() {
 
 //初始化函式
 function init_login() {
-	$.ajaxSetup({ async: false });
+
 }

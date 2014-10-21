@@ -13,11 +13,11 @@
 <body>
 	<div id="content_div">
 		<h2>Billez Server 後台管理系統</h2>
-		<h2>管理者帳號 : root 密碼 : root</h2>
+		<h2>管理者帳號 : root@root 密碼 : root</h2>
 		<table cellpadding="10">
 			<tr>
 				<th>*帳號(電子郵件) : </th>
-				<td><input id="login_email" type="text" class="required,mobile" /></td>
+				<td><input id="login_email" type="text" class="required,email" /></td>
 			</tr>
 			<tr>
 				<th>*密碼 : </th>

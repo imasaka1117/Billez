@@ -1,6 +1,10 @@
 /**
  * 	通用函式
  */
+/*
+ * 使用ajax同步處理
+ */
+$.ajaxSetup({ async: false });
 
 /*
  *  ajax 參數配置
@@ -14,6 +18,8 @@ function set_ajax(element_id) {
 		} else {
 			obj[element_id[post_name]] = $("#" + element_id[post_name] + "").val();
 		}
+		
+		if($("#" + element_id[post_name] + "").val() == undefined) obj[element_id[post_name]] = '';
 	}
 	return obj;
 }
@@ -55,5 +61,41 @@ function select_ajax(controllers, id, value) {
 	});
 }
 
+/*
+ * search ajax資料傳入
+ * 查詢使用傳入查詢結果
+ * 		controllers 是傳送位置
+ *  	params 		查詢條件ID
+ *  	id			要傳入表格的
+ *  	page		要查詢的頁數
+ */
+function search_ajax(controllers, params, id, page) {
+	var post_vars = set_ajax(params);
+	post_vars['page'] = page;
+	$.post(controllers, $.param(post_vars), function(ajax_return) {
+		alert(ajax_return);
+			
+		$('#' + id).empty().append(ajax_return);
+	});
+}
 
+/*
+ * 查詢已有資料
+ * 		controllers 是傳送位置
+ *  	params 		查詢所需要的條件資料
+ */
+function update_ajax(controllers, params) {
+	var post_vars = new Object();
+	post_vars['id'] = params;
+	var data = new Object();
+	$.post(controllers, $.param(post_vars), function(ajax_return) {
+		alert(ajax_return);
+			
+		data = JSON.parse(ajax_return);
+		
+		return data;
+	});
+	
+	return data;
+}
 

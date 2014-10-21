@@ -157,6 +157,22 @@ class Sql {
 	}
 	
 	/*
+	 * 產生查詢的可能條件處理
+	 * $field	要使用like尋找的欄位
+	 * $value	比對的值
+	 */
+	public function where_search($field, $value) {
+		$count = count($field);
+		$array = array();
+		
+		for($i = 0; $i < $count; $i++) {
+			if($value[$i] != '') array_push($array, array('command' => 'like', 'field' => $field[$i], 'value' => $value[$i], 'control' => 'both'));
+		}
+		
+		return $array;
+	}
+	
+	/*
 	 * 產生查詢所需的額外條件資料
 	 * 詳細請看query_model的query方法
 	 * $command		條件語法 ex: array('distinct', 'having')

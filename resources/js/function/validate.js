@@ -41,6 +41,11 @@
  * P.S. 
  * 步驟一不可將新驗證方式方在空白驗證後面,空白驗證一定要放在最後面
  * 步驟三必須使用正規表達式,否則會出錯
+ * 
+ * 使用方式 當按鈕按下時 呼叫 若是沒問題 再呼叫送出資料函式
+ * $("#insert_btn").click(function() {
+		if(validate()) insert();
+	});
  */
 
 /**
@@ -72,19 +77,19 @@ function validate() {
 }
 
 /**
+ * 
+ */
+
+/**
  * 判斷是否停止或開始送資料給伺服器
  * @param id 所有元素ID
  */
 function condition(id) {
-	var flag = false;
+	var flag = true;
 	for(i in id) {
 		if($('#' + id[i] + '').attr("class") != undefined) {
 			if($('#' + id[i] + '1').val() == '') {
-				if($('#' + id[i] + '1').text() == '') {
-					flag = true;
-				} else {
-					flag = false;
-				}
+				if($('#' + id[i] + '1').text() != '') flag = false;
 			}
 		}
 	}
@@ -182,7 +187,7 @@ function validate_url(id, message) {
  */
 function validate_check(id, message, reg) {
 	for(j in id) {
-		if($('#' + id[j] + '1').attr('id') == undefined) $('#' + id[j] + '').after('<br /><span id="' + id[j] + '1" style="color:red"></span>');
+		if($('#' + id[j] + '1').attr('id') == undefined) $('#' + id[j] + '').after('<span id="' + id[j] + '1" style="color:red"></span>');
 
 		if(reg.test($('#' + id[j] + '').val()) == false) {
 			$('#' + id[j] + '1').text(message);
@@ -244,7 +249,7 @@ function collect_id() {
 	var id = new Array();
 	
 	$("*").each(function() {                
-		if($(this).attr("id") != undefined) id.push($(this).attr("id"));	          
+		if($(this).attr("id") != undefined) id.push($(this).attr("id"));
 	});
 	
 	return id;

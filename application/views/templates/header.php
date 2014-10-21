@@ -10,10 +10,11 @@
 			<li><a href="#">業者</a>
 				<ul>
 					<li><a href="<?=$index_url ?>trader/insert_web">新增業者</a></li>
-					<li><a href="<?=$index_url ?>">查詢業者</a></li>
-					<li><a href="<?=$index_url ?>">匯出業者</a></li>
-					<li><a href="<?=$index_url ?>">查詢業者合約</a></li>
-					<li><a href="<?=$index_url ?>">匯出報表</a></li>
+					<li><a href="<?=$index_url ?>trader/insert_contract_web">新增業者合約</a></li>
+					<li><a href="<?=$index_url ?>trader/search_web"">查詢業者</a></li>
+					<li><a href="<?=$index_url ?>trader/search_contract_web">查詢業者合約</a></li>
+					<li><a href="<?=$index_url ?>trader/">匯出業者</a></li>
+					<li><a href="<?=$index_url ?>trader/">匯出報表</a></li>
 				</ul>
 			</li>
 			<li><a href="#">代收機構</a>
