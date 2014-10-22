@@ -51,7 +51,7 @@ class Option {
 	 * $page		要查詢頁數
 	 * $js_function	函式名稱
 	 */
-	public function page($page_count, $page, $js_function) {
+	public function page($page_count, $page) {
 		$html_string		= "";
 		$post_page_count 	= ceil($page / 10);
 		$show_page_up 		= $post_page_count * 10;
@@ -71,15 +71,15 @@ class Option {
 		if ($page_count == 0) {
 			$html_string = $html_string . "<p>查無相關記錄!!</p>";
 		} else {
-			$html_string= $html_string . "<a href='javascript: void(0)' onclick='$js_function(1)'>第一頁</a>&nbsp;&nbsp; ";
+			$html_string= $html_string . "<a href='javascript: void(0)' onclick='search_page_num(1)'>第一頁</a>&nbsp;&nbsp; ";
 	
-			if($pre_flag) $html_string= $html_string . "<a href='javascript: void(0)' onclick='$js_function($pre_page)'>上十頁</a>&nbsp;&nbsp; ";
+			if($pre_flag) $html_string= $html_string . "<a href='javascript: void(0)' onclick='search_page_num($pre_page)'>上十頁</a>&nbsp;&nbsp; ";
 	
-			for ($i = $show_page_down; $i <= $show_page_up; $i++) $html_string= $html_string . "<a href='javascript: void(0)' onclick='$js_function($i)'>$i</a>&nbsp;&nbsp; ";
+			for ($i = $show_page_down; $i <= $show_page_up; $i++) $html_string= $html_string . "<a href='javascript: void(0)' onclick='search_page_num($i)'>$i</a>&nbsp;&nbsp; ";
 	
-			if($next_flag) $html_string= $html_string . "<a href='javascript: void(0)' onclick='$js_function($next_page)'>下十頁</a>&nbsp;&nbsp; ";
+			if($next_flag) $html_string= $html_string . "<a href='javascript: void(0)' onclick='search_page_num($next_page)'>下十頁</a>&nbsp;&nbsp; ";
 	
-			$html_string= $html_string . "<a href='javascript: void(0)' onclick='$js_function($page_count)'>最後頁</a>&nbsp;&nbsp; ";
+			$html_string= $html_string . "<a href='javascript: void(0)' onclick='search_page_num($page_count)'>最後頁</a>&nbsp;&nbsp; ";
 		}
 	
 		return $html_string;

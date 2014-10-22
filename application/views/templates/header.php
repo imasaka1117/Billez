@@ -11,7 +11,7 @@
 				<ul>
 					<li><a href="<?=$index_url ?>trader/insert_web">新增業者</a></li>
 					<li><a href="<?=$index_url ?>trader/insert_contract_web">新增業者合約</a></li>
-					<li><a href="<?=$index_url ?>trader/search_web"">查詢業者</a></li>
+					<li><a href="<?=$index_url ?>trader/search_web">查詢業者</a></li>
 					<li><a href="<?=$index_url ?>trader/search_contract_web">查詢業者合約</a></li>
 					<li><a href="<?=$index_url ?>trader/">匯出業者</a></li>
 					<li><a href="<?=$index_url ?>trader/">匯出報表</a></li>
@@ -19,11 +19,12 @@
 			</li>
 			<li><a href="#">代收機構</a>
 				<ul>
-					<li><a href="<?=$index_url ?>">新增代收機構</a></li>
-					<li><a href="<?=$index_url ?>">查詢代收機構</a></li>
-					<li><a href="<?=$index_url ?>">查詢代收機構合約</a></li>
-					<li><a href="<?=$index_url ?>">匯出代收機構</a></li>
-					<li><a href="<?=$index_url ?>">匯出報表</a></li>
+					<li><a href="<?=$index_url ?>machinery/insert_web">新增代收機構</a></li>
+					<li><a href="<?=$index_url ?>machinery/insert_contract_web">新增代收機構合約</a></li>
+					<li><a href="<?=$index_url ?>machinery/search_web">查詢代收機構</a></li>
+					<li><a href="<?=$index_url ?>machinery/search_contract_web">查詢代收機構合約</a></li>
+					<li><a href="<?=$index_url ?>machinery/">匯出代收機構</a></li>
+					<li><a href="<?=$index_url ?>machinery/">匯出報表</a></li>
 				</ul>
 			</li>
 			<li><a href="#">帳單</a>

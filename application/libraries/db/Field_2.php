@@ -53,8 +53,7 @@ class Field_2 {
 	static public $begin = 'begin';
 	static public $end = 'end';
 	static public $bill_cost_kind = 'bill_cost_kind';
-	static public $month_rent = 'month_rent';
 	static public $entity_price = 'entity_price';
 	static public $action_price = 'action_price';
-	static public $pay_kind = 'pay_kind';
+	static public $pay = 'pay';
 }

@@ -106,7 +106,8 @@ class Query_model extends CI_Model {
 	
 		if($query['where'] != '') $this->condition_where($query['where']);
 		if($query['other'] != '') $this->condition_other($query['other']);
-	
+// 		$this->db->get();
+// 		echo $this->db->_error_message();
 		return $this->db->get();
 	}
 	

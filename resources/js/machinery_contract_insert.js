@@ -1,5 +1,5 @@
 /**
- * 新增業者合約使用
+ * 新增代收機構合約使用
  */
 $(document).ready(function() {
 	init();
@@ -10,27 +10,15 @@ $(document).ready(function() {
 	
 	$("select").change(function() {
 		switch ($(this).attr('id')) {
-			case 'publish':
-			case 'enter':
-			case 'collection':
-			case 'email_publish':
+			case 'pay':
 				date_kind($(this).attr('id'), $(this).val());
-				break;
-			case 'send_email':
-				email($(this).val());
 				break;
 			case 'begin_month':
 			case 'end_month':
 				days(this);
 				break;
-			case 'bill_price':
+			case 'bill_cost':
 				price($(this).attr('id'), $(this).val());
-				break;
-			case 'send_condition':
-				times($(this).attr('id'), $(this).val());
-				break;
-			case 'machinery':
-				machinery($(this).val());
 				break;
 		}
 	});
@@ -38,33 +26,10 @@ $(document).ready(function() {
 
 //新增業者合約
 function insert() {
-	var path = check_ajax(ajax_path + 'trader/insert_contract',
-						  new Array('trader', 'contract_name', 'ad_url', 'bill_kind', 'bill_basis', 'machinery', 'machinery_contract', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'publish', 'publish_week', 'publish_month', 'publish_day', 'enter', 'enter_week', 'enter_month', 'enter_day', 'bill_price', 'month_rent_price', 'entity_price', 'action_price', 'collection', 'collection_week', 'collection_month', 'collection_day', 'send_condition', 'send_condition_times', 'send_email', 'email_publish', 'email_publish_week', 'email_publish_month', 'email_publish_day', 'ftp_ip', 'ftp_account', 'ftp_password', 'ftp_path', 'ftp_receive_path', 'contract_remark'),
-						  new Array('新增成功', '該業者帳單合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
+	var path = check_ajax(ajax_path + 'machinery/insert_contract',
+						  new Array('machinery', 'contract_name', 'ad_url', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'pay', 'pay_week', 'pay_month', 'pay_day', 'bill_cost', 'month_rent_price', 'entity_price', 'action_price', 'contract_remark'),
+						  new Array('新增成功', '該代收機構合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path != '') location.reload(); 
-}
-
-//代收機構合約
-function machinery(value) {
-	select_ajax(ajax_path + 'trader/init_machinery_contract', 'machinery_contract', value);
-	
-	if(value == '') {
-		$('#machinery_contract').removeAttr("class");
-	} else {
-		$('#machinery_contract').attr("class","required");
-	}
-}
-
-//帳單寄送種類
-function times(id, value) {
-	if($('#send_condition_times').attr('id') != undefined) $('#send_condition_times').remove();
-	
-	switch (value) {
-		case '2':
-			$('#' + id + '').after('<select id="send_condition_times" class="required"></select>');
-			$('#send_condition_times').append(option_ages(20));
-			break;
-	}
 }
 
 //帳單價格處理
@@ -90,24 +55,6 @@ function price(id, value) {
 			break;
 		case '2':
 			$('#' + id + '').after('<span id="entity_price21">實體 : </span><input type="text" id="entity_price" class="required,digits" size="6" /> <span id="action_price21">行動 : </span> <input type="text" id="action_price" class="required,digits" size="6" />');
-			break;
-	}
-}
-
-//控制電子郵件帳單處理
-function email(value) {
-	switch(value) {
-		case '1':
-			$('#email_publish').attr("disabled",false);
-			$('#email_publish').attr("class","required");
-			break;
-		default:
-			$('#email_publish_week').remove();
-			$('#email_publish_month').remove();
-			$('#email_publish_day').remove();
-			$('#email_publish').val('');
-			$('#email_publish').removeAttr("class");
-			$('#email_publish').attr("disabled",true);
 			break;
 	}
 }
@@ -142,24 +89,13 @@ function date_kind(id, value) {
 
 //初始化
 function init() {
-	//先將電子郵件不能點選
-	$('#email_publish').attr("disabled",true);
 	$('#contract_age').empty().append(option_ages(20));
 	$('#begin_year').empty().append(option_years());
 	$('#end_year').empty().append(option_years());
 	$('#begin_month').empty().append(option_months());
 	$('#end_month').empty().append(option_months());
-	
-	//將業者名稱初始化
-	select_ajax(ajax_path + 'trader/init_trader', 'trader', '');
-	
+
 	//將代收業者名稱初始化
-	select_ajax(ajax_path + 'trader/init_machinery', 'machinery', '');
-	
-	//將帳單種類初始化
-	select_ajax(ajax_path + 'trader/init_bill_kind', 'bill_kind', '');
-	
-	//將帳單依據初始化
-	select_ajax(ajax_path + 'trader/init_bill_basis', 'bill_basis', '');
+	select_ajax(ajax_path + 'machinery/init_machinery', 'machinery', '');
 }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title><?=$title ?></title>
+<title>Billez 更改業者合約</title>
 <meta http-equiv="Content-Type" content="application/html; charset=utf-8" />
 <link type="text/css" rel="stylesheet" href="<?=$base_css ?>" />
 <script type="text/javascript" src="<?=$jquery_js ?>"></script>
@@ -9,19 +9,23 @@
 <script type="text/javascript" src="<?=$function_js ?>"></script>
 <script type="text/javascript" src="<?=$date_js ?>"></script>
 <script type="text/javascript" src="<?=$js_path ?><?=$now_use ?>"></script>
-<script type="text/javascript">var ajax_path = '<?=$index_url ?>';</script>
+<script type="text/javascript">
+var ajax_path = '<?=$index_url ?>';
+var id = '<?=$id ?>';
+</script>
 </head>
 <body>
 	<div id="content_div">
-		<p class="title_p">新增業者合約</p>
+		<p class="title_p">更改業者合約</p>
 		<h4 id="tip_h4" style="color:red">* 號為必填</h4>
 		<table cellpadding="10">
 			<tr>
-				<th>業者合約</th>
+				<td>業者合約編號 : </td>
+				<td><span id="id" style="color: red"><?=$id ?></span></td>
 			</tr>
 			<tr>
-				<td>*業者名稱 :</td>
-				<td><select id="trader" class="required"></select></td>	
+				<td>業者名稱 :</td>
+				<td><input type="text" id="trader" disabled="disabled" /></td>	
 			</tr>
 			<tr>
 				<td>*合約名稱 :</td>
@@ -33,11 +37,11 @@
 			</tr>
 			<tr>
 				<td>*帳單種類 :</td>
-				<td><select id="bill_kind" class="required"></select></td>
+				<td><input type="text" id="bill_kind" disabled="disabled" /></td>
 			</tr>
 			<tr>
 				<td>*帳單依據 :</td>
-				<td><select id="bill_basis" class="required"></select></td>
+				<td><input type="text" id="bill_basis" disabled="disabled" /></td>
 			</tr>
 			<tr>
 				<td>代收機構 :</td>

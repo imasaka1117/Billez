@@ -5,7 +5,7 @@ $(document).ready(function() {
 	init();
 
 	$("#search_btn").click(function() {
-		search_trader_num(1);
+		search_page_num(1);
 	});
 });
 
@@ -16,6 +16,6 @@ function init() {
 }
 
 //查詢其他頁面
-function search_trader_num(page) {
+function search_page_num(page) {
 	search_ajax(ajax_path + 'trader/search', new Array("id", "name", "vat_number", "telephone", "level_code", "main_contact_name"), 'query_div', page)
 }
