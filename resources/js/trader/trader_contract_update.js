@@ -161,6 +161,8 @@ function week(id) {
 	$('#' + id + '_week').append(option_weeks());
 }
 function day(id) {
+	//暫存
+	var contract = '';
 	$('#' + id + '').after('<select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_day').append(option_days());
 }

@@ -61,6 +61,9 @@ function machinery(value) {
 
 //帳單寄送種類
 function times(id, value) {
+	//暫存
+	var contract = '';
+	
 	if($('#send_condition_times').attr('id') != undefined) $('#send_condition_times').remove();
 	
 	switch (value) {
