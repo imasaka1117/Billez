@@ -57,7 +57,7 @@ function machinery(value) {
 
 //帳單寄送種類
 function times(id, value) {
-	if($('#send_condition_times').attr('id') != undefined) $('#send_condition_times').remove();
+	if($('#send_condition_times').attr('id') !== undefined) $('#send_condition_times').remove();
 	
 	switch (value) {
 		case '2':
@@ -79,19 +79,19 @@ function price(id, value) {
 }
 
 function month_rent_price() {
-	if($('#month_rent_price').attr('id') != undefined) {
+	if($('#month_rent_price').attr('id') !== undefined) {
 		$('#month_rent_price').remove();
 		$('#month_rent_price21').remove();
 	}
 }
 function entity_price() {
-	if($('#entity_price').attr('id') != undefined) {
+	if($('#entity_price').attr('id') !== undefined) {
 		$('#entity_price').remove();
 		$('#entity_price21').remove();
 	}
 }
 function action_price() {
-	if($('#action_price').attr('id') != undefined) {
+	if($('#action_price').attr('id') !== undefined) {
 		$('#action_price').remove();
 		$('#action_price21').remove();
 	}
@@ -134,9 +134,9 @@ function days(month) {
 
 //將時間種類做顯示
 function date_kind(id, value) {
-	if($('#' + id + '_week').attr('id') != undefined) $('#' + id + '_week').remove();
-	if($('#' + id + '_month').attr('id') != undefined) $('#' + id + '_month').remove();
-	if($('#' + id + '_day').attr('id') != undefined) $('#' + id + '_day').remove();
+	if($('#' + id + '_week').attr('id') !== undefined) $('#' + id + '_week').remove();
+	if($('#' + id + '_month').attr('id') !== undefined) $('#' + id + '_month').remove();
+	if($('#' + id + '_day').attr('id') !== undefined) $('#' + id + '_day').remove();
 	
 	date_kind_new(id, value);
 }
@@ -206,7 +206,7 @@ function init() {
 			case 'enter_month':
 			case 'collection_month':
 			case 'email_publish_month':
-				if(data[i] == '') continue;
+				if(data[i] === '') continue;
 				$("#" + i).val(data[i]);
 				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
 				break;

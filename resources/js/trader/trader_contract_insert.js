@@ -45,7 +45,7 @@ function insert() {
 	var path = check_ajax(ajax_path + 'trader/insert_contract',
 						  new Array('trader', 'contract_name', 'ad_url', 'bill_kind', 'bill_basis', 'machinery', 'machinery_contract', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'publish', 'publish_week', 'publish_month', 'publish_day', 'enter', 'enter_week', 'enter_month', 'enter_day', 'bill_price', 'month_rent_price', 'entity_price', 'action_price', 'collection', 'collection_week', 'collection_month', 'collection_day', 'send_condition', 'send_condition_times', 'send_email', 'email_publish', 'email_publish_week', 'email_publish_month', 'email_publish_day', 'ftp_ip', 'ftp_account', 'ftp_password', 'ftp_path', 'ftp_receive_path', 'contract_remark'),
 						  new Array('新增成功', '該業者帳單合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
-	if(path != '') location.reload(); 
+	if(path !== '') location.reload(); 
 }
 
 //代收機構合約
@@ -57,7 +57,7 @@ function machinery(value) {
 	
 	select_ajax(ajax_path + 'trader/init_machinery_contract', 'machinery_contract', value);
 	
-	if(value == '') {
+	if(value === '') {
 		$('#machinery_contract').removeAttr("class");
 	} else {
 		$('#machinery_contract').attr("class","required");
@@ -69,7 +69,7 @@ function times(id, value) {
 	//暫存
 	var contract = '';
 	
-	if($('#send_condition_times').attr('id') != undefined) $('#send_condition_times').remove();
+	if($('#send_condition_times').attr('id') !== undefined) $('#send_condition_times').remove();
 	
 	switch (value) {
 		case '2':
@@ -91,19 +91,19 @@ function price(id, value) {
 }
 
 function month_rent_price() {
-	if($('#month_rent_price').attr('id') != undefined) {
+	if($('#month_rent_price').attr('id') !== undefined) {
 		$('#month_rent_price').remove();
 		$('#month_rent_price21').remove();
 	}
 }
 function entity_price() {
-	if($('#entity_price').attr('id') != undefined) {
+	if($('#entity_price').attr('id') !== undefined) {
 		$('#entity_price').remove();
 		$('#entity_price21').remove();
 	}
 }
 function action_price() {
-	if($('#action_price').attr('id') != undefined) {
+	if($('#action_price').attr('id') !== undefined) {
 		$('#action_price').remove();
 		$('#action_price21').remove();
 	}
@@ -161,12 +161,12 @@ function days(month) {
 function date_kind(id, value) {
 	
 	
-	if($('#' + id + '_week').attr('id') != undefined) $('#' + id + '_week').remove();
+	if($('#' + id + '_week').attr('id') !== undefined) $('#' + id + '_week').remove();
 	
 	//暫存
 	var trader = '';
-	if($('#' + id + '_month').attr('id') != undefined) $('#' + id + '_month').remove();
-	if($('#' + id + '_day').attr('id') != undefined) $('#' + id + '_day').remove();
+	if($('#' + id + '_month').attr('id') !== undefined) $('#' + id + '_month').remove();
+	if($('#' + id + '_day').attr('id') !== undefined) $('#' + id + '_day').remove();
 	
 	date_kind_new(id, value);
 }
@@ -188,7 +188,9 @@ function date_kind_new(id, value) {
 
 function week(id) {
 	//暫存
-	var trader = '';
+	while(0) {
+		var trader = '';
+	}
 	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
 }
