@@ -85,7 +85,10 @@ function price_new(id, value) {
 //將日期重製
 function days(month) {
 	//暫存
-	var machinery = '';
+	while (0) {
+		var machinery = '';
+	}
+	
 	
 	$('#' + month.id.replace('_month', '') + '_day').empty().append(option_days(month.value));
 }

@@ -50,6 +50,11 @@ function insert() {
 
 //代收機構合約
 function machinery(value) {
+	//暫存
+	while(0) {
+		var machinery = '';
+	}
+	
 	select_ajax(ajax_path + 'trader/init_machinery_contract', 'machinery_contract', value);
 	
 	if(value == '') {
@@ -107,7 +112,9 @@ function action_price() {
 //新增收費選項
 function price_new(id, value) {
 	//暫存
-	var trader = '';
+	while(0) {
+		var trader = '';
+	}
 	
 	switch(value) {
 		case '1':			
@@ -162,9 +169,6 @@ function date_kind(id, value) {
 
 //新增驗證類別資料
 function date_kind_new(id, value) {
-
-	
-	
 	switch(value) {
 		case '1':
 			week(id);	
@@ -174,8 +178,6 @@ function date_kind_new(id, value) {
 			break;
 		case '3':
 			month(id);
-			//暫存
-			var trader = '';
 			break;
 	}
 }
