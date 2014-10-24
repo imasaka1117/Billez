@@ -32,7 +32,7 @@ function insert() {
 	var path = check_ajax(ajax_path + 'machinery/insert_contract',
 						  new Array('machinery', 'contract_name', 'ad_url', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'pay', 'pay_week', 'pay_month', 'pay_day', 'bill_cost', 'month_rent_price', 'entity_price', 'action_price', 'contract_remark'),
 						  new Array('新增成功', '該代收機構合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
-	if(path != '') location.reload(); 
+	if(path !== '') location.reload(); 
 }
 
 //帳單價格處理
@@ -50,19 +50,19 @@ function price(id, value) {
 }
 
 function month_rent_price() {
-	if($('#month_rent_price').attr('id') != undefined) {
+	if($('#month_rent_price').attr('id') !== undefined) {
 		$('#month_rent_price').remove();
 		$('#month_rent_price21').remove();
 	}
 }
 function entity_price() {
-	if($('#entity_price').attr('id') != undefined) {
+	if($('#entity_price').attr('id') !== undefined) {
 		$('#entity_price').remove();
 		$('#entity_price21').remove();
 	}
 }
 function action_price() {
-	if($('#action_price').attr('id') != undefined) {
+	if($('#action_price').attr('id') !== undefined) {
 		$('#action_price').remove();
 		$('#action_price21').remove();
 	}
@@ -85,7 +85,7 @@ function price_new(id, value) {
 //將日期重製
 function days(month) {
 	//暫存
-	$machinery = '';
+	var machinery = '';
 	
 	$('#' + month.id.replace('_month', '') + '_day').empty().append(option_days(month.value));
 }
@@ -95,9 +95,9 @@ function date_kind(id, value) {
 	//暫存
 	var machinery = '';
 	
-	if($('#' + id + '_week').attr('id') != undefined) $('#' + id + '_week').remove();
-	if($('#' + id + '_month').attr('id') != undefined) $('#' + id + '_month').remove();
-	if($('#' + id + '_day').attr('id') != undefined) $('#' + id + '_day').remove();
+	if($('#' + id + '_week').attr('id') !== undefined) $('#' + id + '_week').remove();
+	if($('#' + id + '_month').attr('id') !== undefined) $('#' + id + '_month').remove();
+	if($('#' + id + '_day').attr('id') !== undefined) $('#' + id + '_day').remove();
 	
 	date_kind_new(id, value);
 }
@@ -134,6 +134,9 @@ function day(id) {
 	$('#' + id + '_day').append(option_days());
 }
 function month(id) {
+	//暫存
+	var machinery = '';
+	
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
 	$('#' + id + '_day').append(option_days(''));
