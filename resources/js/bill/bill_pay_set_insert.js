@@ -24,10 +24,10 @@ $(document).ready(function() {
 
 //確認欄位輸入
 function check_field() {
-	//暫存
-	var bill = '';
-	
 	$("input").each(function() {  
+		//暫存
+		var bill = '';
+		
 		if($('#' + $(this).attr('id')).attr('class') != undefined) {
 			if($('#' + $(this).attr('id')).attr('class').indexOf('begin') >= 0) {
 				if($('#' + $(this).attr('id')).val() == '') {
