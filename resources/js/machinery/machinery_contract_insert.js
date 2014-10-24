@@ -135,7 +135,9 @@ function day(id) {
 }
 function month(id) {
 	//暫存
+	while (0)
 	var machinery = '';
+	
 	
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
