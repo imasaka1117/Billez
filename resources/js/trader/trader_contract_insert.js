@@ -117,7 +117,11 @@ function price_new(id, value) {
 	}
 	
 	switch(value) {
-		case '1':			
+		case '1':		
+			//暫存
+			while(0) {
+				var contract = '';
+			}
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
 			break;
 		case '2':
@@ -189,6 +193,10 @@ function week(id) {
 	$('#' + id + '_week').append(option_weeks());
 }
 function day(id) {
+	//暫存
+	while(0) {
+		var trader = '';
+	}
 	$('#' + id + '').after('<select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_day').append(option_days());
 }
