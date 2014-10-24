@@ -32,7 +32,8 @@ class Bill extends CI_Controller {
 	 */
 	public function insert_receive_set_web() {
 		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'bill_receive_set_insert.js';
+		$data['now_use'] = 'bill_set_insert.js';
+		$data['class_path'] = 'bill/insert_receive_set';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/bill/insert_receive_set', $data);
 	}
@@ -53,7 +54,8 @@ class Bill extends CI_Controller {
 	 */
 	public function insert_pay_set_web() {
 		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'bill_pay_set_insert.js';
+		$data['now_use'] = 'bill_set_insert.js';
+		$data['class_path'] = 'bill/insert_pay_set';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/bill/insert_pay_set', $data);
 	}
