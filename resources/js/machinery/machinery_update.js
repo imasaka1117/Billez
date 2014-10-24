@@ -42,6 +42,9 @@ function init() {
 	data = update_ajax(ajax_path + 'machinery/search_data', id);
 	
 	for(i in data) {
+		//暫存
+		var machinery = '';
+		
 		if(i === 'district') $("#district").empty().append(init_district($("#city").val()));
 		$('#' + i).val(data[i]);
 	}

@@ -49,4 +49,10 @@ class Field_4 {
 	static public $overdue_pay_place2 = 'overdue_pay_place2';
 	static public $purpose = 'purpose';
 	static public $page = 'page';
+	static public $temp1111 = '';
+	static public $temp2222 = '';
+	static public $temp3333 = '';
+	static public $temp4444 = '';
+	static public $temp5555 = '';
+	static public $temp6666 = '';
 }

@@ -70,6 +70,9 @@ function action_price() {
 
 //新增收費選項
 function price_new(id, value) {
+	//暫存
+	var machinery = '';
+	
 	switch(value) {
 		case '1':
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
@@ -116,6 +119,9 @@ function date_kind_new(id, value) {
 }
 
 function week(id) {
+	//暫存
+	var machinery = '';
+	
 	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
 }
@@ -124,6 +130,9 @@ function day(id) {
 	$('#' + id + '_day').append(option_days());
 }
 function month(id) {
+	//暫存
+	var machinery = '';
+	
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
 	$('#' + id + '_day').append(option_days(''));

@@ -2,6 +2,10 @@
  * 新增業者合約使用
  */
 $(document).ready(function() {
+	//暫存
+	var trader = '';
+	
+	
 	init();
 	
 	$("#insert_btn").click(function() {
@@ -111,6 +115,9 @@ function price_new(id, value) {
 
 //控制電子郵件帳單處理
 function email(value) {
+	//暫存
+	var trader = '';
+	
 	switch(value) {
 		case '1':
 			$('#email_publish').attr("disabled",false);
@@ -134,6 +141,9 @@ function days(month) {
 
 //將時間種類做顯示
 function date_kind(id, value) {
+	//暫存
+	var trader = '';
+	
 	if($('#' + id + '_week').attr('id') != undefined) $('#' + id + '_week').remove();
 	if($('#' + id + '_month').attr('id') != undefined) $('#' + id + '_month').remove();
 	if($('#' + id + '_day').attr('id') != undefined) $('#' + id + '_day').remove();
@@ -143,6 +153,10 @@ function date_kind(id, value) {
 
 //新增驗證類別資料
 function date_kind_new(id, value) {
+	//暫存
+	var trader = '';
+	
+	
 	switch(value) {
 		case '1':
 			week(id);	

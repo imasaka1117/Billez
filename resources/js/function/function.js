@@ -13,13 +13,13 @@ $.ajaxSetup({ async: false });
 function set_ajax(element_id) {
 	var obj = new Object();
 	for(var post_name in element_id) {
-		if($("#" + element_id[post_name] + "").val() == "" && $("#" + element_id[post_name] + "").text() != "") {
+		if($("#" + element_id[post_name] + "").val() === "" && $("#" + element_id[post_name] + "").text() !== "") {
 			obj[element_id[post_name]] = $("#" + element_id[post_name] + "").text();
 		} else {
 			obj[element_id[post_name]] = $("#" + element_id[post_name] + "").val();
 		}
 		
-		if($("#" + element_id[post_name] + "").val() == undefined) obj[element_id[post_name]] = '';
+		if($("#" + element_id[post_name] + "").val() === undefined) obj[element_id[post_name]] = '';
 	}
 	return obj;
 }

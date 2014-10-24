@@ -85,9 +85,9 @@ function validate() {
 function condition(id) {
 	var flag = true;
 	for(i in id) {
-		if($('#' + id[i] + '').attr("class") != undefined) {
-			if($('#' + id[i] + '1').val() == '') {
-				if($('#' + id[i] + '1').text() != '') flag = false;
+		if($('#' + id[i] + '').attr("class") !== undefined) {
+			if($('#' + id[i] + '1').val() === '') {
+				if($('#' + id[i] + '1').text() !== '') flag = false;
 			}
 		}
 	}
@@ -101,7 +101,7 @@ function condition(id) {
  */
 function handle(kind) {
 	for(i in kind) {
-		if(kind[i][1] == undefined) continue;
+		if(kind[i][1] === undefined) continue;
 
 		//先查詢錯誤碼
 		var message = get_message(kind[i][0]);
