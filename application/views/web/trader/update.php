@@ -12,11 +12,6 @@
 <script type="text/javascript">
 var ajax_path = '<?=$index_url ?>';
 var id = '<?=$id ?>';
-var class_path = '<?=$class_path ?>';
-var error_word = '<?=$error_word ?>';
-var level_init = '<?=$level_init ?>';
-var level_value = '<?=$level_value ?>';
-var search_path = '<?=$search_path ?>';
 </script>
 </head>
 <body>

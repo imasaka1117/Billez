@@ -1,5 +1,5 @@
 /**
- * 新增業者
+ * 新增代收機構
  */
 $(document).ready(function() {
 	init();
@@ -17,11 +17,11 @@ $(document).ready(function() {
 	});	
 });
 
-//新增業者
+//新增代收機構
 function insert() {
-	var path = check_ajax(ajax_path + class_path, 
+	var path = check_ajax(ajax_path + 'machinery/insert', 
 						  new Array('name', 'telephone', 'level_code', 'vat_number', 'city', 'district', 'address', 'main_contact_name', 'main_contact_phone', 'main_contact_email', 'second_contact_name', 'second_contact_phone', 'second_contact_email', 'remark'), 
-						  new Array('新增成功', error_word, '統一編號已存在！！', '伺服器忙碌中！！請在試一次'));
+						  new Array('新增成功', '代收機構名稱已存在！！', '統一編號已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path != '') location.reload(); 
 }
              
@@ -30,6 +30,6 @@ function init() {
 	//將縣市初始化
 	$("#city").empty().append(init_city());
 	
-	//將等級初始化 a 代表業者
-	select_ajax(ajax_path + level_init, 'level_code', level_value);
+	//將等級初始化 a 代表代收機構
+	select_ajax(ajax_path + 'machinery/init_level', 'level_code', 'b');
 }

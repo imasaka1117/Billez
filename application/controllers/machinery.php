@@ -74,7 +74,6 @@ class Machinery extends CI_Controller {
 		$this->load->model('web/machinery_model');
 		$data['ajax'] = $this->machinery_model->check_update_machinery($this->input->post(), $_SESSION['user']);
 		$this->load->view('web/ajax', $data);
-		
 	}
 	
 	/*
@@ -91,13 +90,8 @@ class Machinery extends CI_Controller {
 	 */
 	public function update_web() {
 		$data = $this->param->resources(array('address_js'=>Param::$address_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'trader_machinery_update.js';
+		$data['now_use'] = 'machinery_update.js';
 		$data['id'] = $this->input->get('id');
-		$data['class_path'] = 'trader_machinery_update.js';
-		$data['error_word'] = '代收機構名稱已存在!!';
-		$data['level_init'] = 'machinery/init_level';
-		$data['level_value'] = 'b';
-		$data['search_path'] = 'machinery/search_data';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/update', $data);
 	}
@@ -161,10 +155,6 @@ class Machinery extends CI_Controller {
 	public function insert_web() {
 		$data = $this->param->resources(array('address_js'=>Param::$address_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
 		$data['now_use'] = 'machinery_insert.js';
-		$data['class_path'] = 'trader_machinery_insert.js';
-		$data['error_word'] = '代收機構名稱已存在!!';
-		$data['level_init'] = 'machinery/init_level';
-		$data['level_value'] = 'b';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/insert', $data);
 	}

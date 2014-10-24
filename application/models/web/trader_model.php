@@ -23,7 +23,7 @@ class Trader_model extends CI_Model {
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者
 	 */
-	public function update_trader_contract($post, $user) {
+	private function update_trader_contract($post, $user) {
 		//查詢業者代碼和帳單種類代碼
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$trader_code, Field_1::$bill_kind_code), ''),
 																		 'from' => Table_1::$trader_contract,
@@ -131,7 +131,7 @@ class Trader_model extends CI_Model {
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者
 	 */
-	public function update_trader($post, $user) {
+	private function update_trader($post, $user) {
 		//查詢業者名稱
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$name), ''),
 																		 'from' => Table_1::$trader,
@@ -228,7 +228,7 @@ class Trader_model extends CI_Model {
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者
 	 */
-	public function insert_trader($post, $user) {
+	private function insert_trader($post, $user) {
 		//查詢業者最大編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$id . ') AS max'), 'function'),
 																		 'from' => Table_1::$trader,
@@ -292,7 +292,7 @@ class Trader_model extends CI_Model {
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者
 	 */
-	public function insert_trader_contract($post, $user) {
+	private function insert_trader_contract($post, $user) {
 		if(strlen($post['machinery']) == 2) {
 			//新增業者代收機構
 			$this->sql->add_static(array('table'=> Table_1::$trader_machinery,

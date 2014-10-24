@@ -23,7 +23,7 @@ class Machinery_model extends CI_Model {
 	* $post	web傳來的參數
 	* $user	當前使用該系統者
 	*/
-	public function update_machinery_contract($post, $user) {
+	private function update_machinery_contract($post, $user) {
 		//更新代收機構合約資料
 		$this->sql->add_static(array('table'=> Table_1::$machinery_contract,
 									 'select'=> $this->sql->field(array(Field_1::$name, Field_2::$age, Field_2::$begin, Field_2::$end, Field_2::$bill_cost_kind, Field_4::$month_rent_price, Field_2::$entity_price, Field_2::$action_price, Field_2::$pay, Field_3::$pay_week, Field_3::$pay_day, Field_3::$pay_month, Field_3::$remark, Field_1::$update_user, Field_1::$update_time),
@@ -59,6 +59,7 @@ class Machinery_model extends CI_Model {
 	* $post	web傳來的參數
 	*/
 	public function search_machinery_contract($post) {
+		//暫存
 		$machinery = '';
 		
 		if(strlen($post['machinery_code']) > 2) $post['machinery_code'] = '';
@@ -110,7 +111,7 @@ class Machinery_model extends CI_Model {
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者
 	 */
-	public function update_machinery($post, $user) {
+	private function update_machinery($post, $user) {
 		//查詢代收機構名稱
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$name), ''),
 																		 'from' => Table_1::$machinery,
@@ -206,7 +207,10 @@ class Machinery_model extends CI_Model {
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者
 	 */
-	public function insert_machinery($post, $user) {
+	private function insert_machinery($post, $user) {
+		//暫存
+		$machinery = '';
+		
 		//查詢代收機構最大編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$id . ') AS max'), 'function'),
 																		 'from' => Table_1::$machinery,
@@ -270,7 +274,7 @@ class Machinery_model extends CI_Model {
 	* $post	web傳來的參數
 	* $user	當前使用該系統者
 	*/
-	public function insert_machinery_contract($post, $user) {
+	private function insert_machinery_contract($post, $user) {
 		//查詢代收機構合約最大編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$id . ') AS max'), 'function'),
 																		 'from' => Table_1::$machinery_contract,
