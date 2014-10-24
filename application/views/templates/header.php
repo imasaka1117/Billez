@@ -29,10 +29,13 @@
 			</li>
 			<li><a href="#">帳單</a>
 				<ul>
-					<li><a href="<?=$index_url ?>">查詢帳單</a></li>
-					<li><a href="<?=$index_url ?>">匯入設定</a></li>
-					<li><a href="<?=$index_url ?>">匯入帳單</a></li>
-					<li><a href="<?=$index_url ?>">寄發帳單</a></li>
+					<li><a href="<?=$index_url ?>bill/insert_kind_web">新增帳單種類</a></li>
+					<li><a href="<?=$index_url ?>bill/insert_basis_web">新增帳單依據</a></li>
+					<li><a href="<?=$index_url ?>bill/search_web">查詢帳單</a></li>
+					<li><a href="<?=$index_url ?>bill/insert_pay_set_web">新增繳費帳單格式</a></li>
+					<li><a href="<?=$index_url ?>bill/insert_receive_set_web">新增入帳帳單格式</a></li>
+					<li><a href="<?=$index_url ?>bill/">匯入帳單</a></li>
+					<li><a href="<?=$index_url ?>bill/">寄發帳單</a></li>
 				</ul>
 			</li>
 			<li><a href="#">訂閱</a>

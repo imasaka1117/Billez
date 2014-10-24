@@ -56,8 +56,6 @@ function validate() {
 	kind.email = new Array('email');
 	kind.url = new Array('url');
 	kind.date = new Array('date');
-	kind.dateISO = new Array('dateISO');
-	kind.number = new Array('number');
 	kind.digits = new Array('digits');
 	kind.creditcard = new Array('creditcard');
 	kind.mobile = new Array('mobile');
