@@ -6,7 +6,7 @@
 <link type="text/css" rel="stylesheet" href="<?=$base_css ?>" />
 <script type="text/javascript" src="<?=$jquery_js ?>"></script>
 <script type="text/javascript" src="<?=$function_js ?>"></script>
-<script type="text/javascript" src="<?=$js_path ?>home_ma.js"></script>
+<script type="text/javascript" src="<?=$js_path ?><?=$now_use ?>"></script>
 <script type="text/javascript">
 var ajax_path = '<?=$index_url ?>';
 </script>

@@ -159,6 +159,9 @@ class Machinery_model extends CI_Model {
 	 * $post	web傳來的參數
 	 */
 	public function search_machinery($post) {
+		//暫存
+		$machinery = '';
+		
 		if(strlen($post['level_code']) > 1) $post['level_code'] = '';
 	
 		//查詢代收機構列表筆數

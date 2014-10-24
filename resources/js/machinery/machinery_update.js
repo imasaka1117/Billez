@@ -15,6 +15,9 @@ $(document).ready(function() {
 				break;
 		}
 	});	
+	
+	//暫存
+	var machinery = '';
 });
 
 //更改代收機構

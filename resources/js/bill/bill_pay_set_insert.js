@@ -53,7 +53,7 @@ function insert() {
 	ids.push('trader');
 	ids.push('bill_kind');
 	
-	var path = check_ajax(ajax_path + class_path, ids, new Array('新增成功', '該業者帳單設定已存在！！', '伺服器忙碌中！！請在試一次'));
+	var path = check_ajax(ajax_path + 'bill/insert_pay_set', ids, new Array('新增成功', '該業者帳單設定已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path != '') location.reload(); 
 }
 

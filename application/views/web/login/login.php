@@ -7,7 +7,7 @@
 <script type="text/javascript" src="<?=$jquery_js ?>"></script>
 <script type="text/javascript" src="<?=$validate_js ?>"></script>
 <script type="text/javascript" src="<?=$function_js ?>"></script>
-<script type="text/javascript" src="<?=$js_path ?>login_login.js"></script>
+<script type="text/javascript" src="<?=$js_path ?><?=$now_use ?>"></script>
 <script type="text/javascript">var ajax_path = '<?=$index_url ?>';</script>
 </head>
 <body>

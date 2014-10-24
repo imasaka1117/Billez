@@ -11,7 +11,9 @@ class Login extends CI_Controller {
 	 * login畫面起點
 	 */
 	public function index() {
-		$this->load->view('web/login/login', $this->param->resources(array('validate_js'=>Param::$validate_js, 'login_css'=>Param::$login_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url)));
+		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'login_css'=>Param::$login_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data['now_use'] = 'login/login_login.js';
+		$this->load->view('web/login/login', $data);
 	}
 
 	/*
