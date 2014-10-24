@@ -85,6 +85,9 @@ function price_new(id, value) {
 
 //將日期重製
 function days(month) {
+	//暫存
+	$machinery = '';
+	
 	$('#' + month.id.replace('_month', '') + '_day').empty().append(option_days(month.value));
 }
 
@@ -119,10 +122,11 @@ function date_kind_new(id, value) {
 }
 
 function week(id) {
+	
+	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	//暫存
 	var machinery = '';
 	
-	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
 }
 function day(id) {

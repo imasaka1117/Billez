@@ -7,7 +7,7 @@ function option_weeks() {
 	var option_string = "<option value=''>請選擇 星期</option>";
 
 	for(var i = 1; i <= 7; i++) {
-		if(i == 7) {
+		if(i === 7) {
 			option_string = option_string + "<option value='" + i + "'>日</option>";
 			continue;
 		}
@@ -21,7 +21,7 @@ function option_weeks() {
 function option_days(day) {
 	var option_string = option_string + "<option value=''>請選擇 日</option>"; 
 
-	if(day == '') return option_string;
+	if(day === '') return option_string;
 	
 	var days = 31;
 	

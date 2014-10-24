@@ -105,6 +105,8 @@ function action_price() {
 function price_new(id, value) {
 	switch(value) {
 		case '1':
+			//暫存
+			var trader = '';
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
 			break;
 		case '2':
@@ -115,11 +117,10 @@ function price_new(id, value) {
 
 //控制電子郵件帳單處理
 function email(value) {
-	//暫存
-	var trader = '';
-	
 	switch(value) {
 		case '1':
+			//暫存
+			var trader = '';
 			$('#email_publish').attr("disabled",false);
 			$('#email_publish').attr("class","required");
 			break;
@@ -136,15 +137,19 @@ function email(value) {
 
 //將日期重製
 function days(month) {
+	//暫存
+	var trader = '';
 	$('#' + month.id.replace('_month', '') + '_day').empty().append(option_days(month.value));
 }
 
 //將時間種類做顯示
 function date_kind(id, value) {
-	//暫存
-	var trader = '';
+	
 	
 	if($('#' + id + '_week').attr('id') != undefined) $('#' + id + '_week').remove();
+	
+	//暫存
+	var trader = '';
 	if($('#' + id + '_month').attr('id') != undefined) $('#' + id + '_month').remove();
 	if($('#' + id + '_day').attr('id') != undefined) $('#' + id + '_day').remove();
 	
@@ -153,8 +158,7 @@ function date_kind(id, value) {
 
 //新增驗證類別資料
 function date_kind_new(id, value) {
-	//暫存
-	var trader = '';
+
 	
 	
 	switch(value) {
@@ -166,11 +170,15 @@ function date_kind_new(id, value) {
 			break;
 		case '3':
 			month(id);
+			//暫存
+			var trader = '';
 			break;
 	}
 }
 
 function week(id) {
+	//暫存
+	var trader = '';
 	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
 }
@@ -179,6 +187,8 @@ function day(id) {
 	$('#' + id + '_day').append(option_days());
 }
 function month(id) {
+	//暫存
+	var trader = '';
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
 	$('#' + id + '_day').append(option_days(''));

@@ -3,10 +3,14 @@
  */
 $(document).ready(function() {
 	init();
+	//暫存
+	var trader = '';
 	
 	$("#insert_btn").click(function() {
 		if(validate()) insert();
 	});	
+	
+	
 	
 	$("select").change(function() {
 		switch ($(this).attr('id')) {
