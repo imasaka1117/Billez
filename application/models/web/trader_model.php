@@ -179,7 +179,6 @@ class Trader_model extends CI_Model {
 	 * $post	web傳來的參數
 	 */
 	public function search_trader($post) {
-		$aa = array();
 		if(strlen($post['level_code']) > 1) $post['level_code'] = '';
 		
 		//查詢業者列表筆數
@@ -189,7 +188,7 @@ class Trader_model extends CI_Model {
 																		 'where' => $this->sql->where_search(array(Field_1::$id, Field_1::$name, Field_3::$telephone, Field_3::$vat_number, Field_3::$main_contact_name, Field_3::$level_code), array($post['id'], $post['name'], $post['telephone'], $post['vat_number'], $post['main_contact_name'], $post['level_code'])),
 																		 'other' => '')), 'num_rows');
 		$page_count = ceil($sql_result / 10);
-		$abbbb = array();
+
 		//查詢業者列表
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id, Field_1::$name, 'CONCAT(' . Field_1::$city . ',' . Field_1::$district . ',' . Field_3::$address . ') AS address ', Field_3::$telephone, Field_3::$vat_number, Field_3::$main_contact_name, Field_3::$main_contact_phone, Field_3::$main_contact_email), 'function'),
 																		 'from' => Table_1::$trader,
@@ -230,7 +229,6 @@ class Trader_model extends CI_Model {
 	 * $user	當前使用該系統者
 	 */
 	public function insert_trader($post, $user) {
-		$a22222a = array();
 		//查詢業者最大編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$id . ') AS max'), 'function'),
 																		 'from' => Table_1::$trader,
@@ -239,7 +237,7 @@ class Trader_model extends CI_Model {
 																		 'other' => '')), 'row_array');
 		//產生業者編號
 		$id = $this->create->id('TR', $sql_result['max']);
-		$a2222111112a = array();
+
 		//查詢最大業者代碼編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$code . ') AS max'), 'function'),
 																		 'from' => Table_1::$trader_code,
