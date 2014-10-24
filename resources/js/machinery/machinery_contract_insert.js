@@ -70,8 +70,6 @@ function action_price() {
 
 //新增收費選項
 function price_new(id, value) {
-	
-	
 	switch(value) {
 		case '1':
 			//暫存
@@ -130,14 +128,12 @@ function week(id) {
 }
 function day(id) {
 	$('#' + id + '').after('<select id="' + id + '_day" class="required"></select>');
-	$('#' + id + '_day').append(option_days());
-	//暫存
-	var machinery = '';
-}
-function month(id) {
 	//暫存
 	var machinery = '';
 	
+	$('#' + id + '_day').append(option_days());
+}
+function month(id) {
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
 	$('#' + id + '_day').append(option_days(''));

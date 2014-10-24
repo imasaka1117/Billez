@@ -106,10 +106,11 @@ function action_price() {
 
 //新增收費選項
 function price_new(id, value) {
+	//暫存
+	var trader = '';
+	
 	switch(value) {
-		case '1':
-			//暫存
-			var trader = '';
+		case '1':			
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
 			break;
 		case '2':
