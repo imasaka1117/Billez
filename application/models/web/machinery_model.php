@@ -61,6 +61,7 @@ class Machinery_model extends CI_Model {
 	public function search_machinery_contract($post) {
 		//暫存
 		$machinery = '';
+		$machinery_contract = '';
 		
 		if(strlen($post['machinery_code']) > 2) $post['machinery_code'] = '';
 	

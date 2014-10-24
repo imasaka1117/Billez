@@ -49,6 +49,13 @@ function price(id, value) {
 		$('#action_price21').remove();
 	}
 	
+	price_new(id, value);
+	
+	
+}
+
+//新增收費選項
+function price_new(id, value) {
 	switch(value) {
 		case '1':
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
@@ -69,6 +76,14 @@ function date_kind(id, value) {
 	if($('#' + id + '_week').attr('id') != undefined) $('#' + id + '_week').remove();
 	if($('#' + id + '_month').attr('id') != undefined) $('#' + id + '_month').remove();
 	if($('#' + id + '_day').attr('id') != undefined) $('#' + id + '_day').remove();
+	
+	date_kind_new(id, value);
+}
+
+//新增驗證類別資料
+function date_kind_new(id, value) {
+	//暫存
+	var machinery = '';
 	
 	switch(value) {
 		case '1':

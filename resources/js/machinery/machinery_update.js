@@ -30,6 +30,9 @@ function update() {
              
 //初始化
 function init() {
+	//暫存
+	var machinery = '';
+	
 	//將縣市初始化
 	$("#city").empty().append(init_city());
 	
