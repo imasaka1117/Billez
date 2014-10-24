@@ -59,6 +59,8 @@ class Machinery_model extends CI_Model {
 	* $post	web傳來的參數
 	*/
 	public function search_machinery_contract($post) {
+		$machinery = '';
+		
 		if(strlen($post['machinery_code']) > 2) $post['machinery_code'] = '';
 	
 		//查詢代收機構合約列表筆數
