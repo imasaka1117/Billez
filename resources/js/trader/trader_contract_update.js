@@ -5,7 +5,9 @@ $(document).ready(function() {
 	init();
 	
 	$("#insert_btn").click(function() {
-		if(validate()) update();
+		if(validate()) {
+			update();
+		}
 	});	
 	
 	$("select").change(function() {
@@ -41,14 +43,16 @@ function update() {
 	var path = check_ajax(ajax_path + 'trader/update_contract',
 						  new Array('id', 'trader', 'contract_name', 'ad_url', 'bill_kind', 'bill_basis', 'machinery', 'machinery_contract', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'publish', 'publish_week', 'publish_month', 'publish_day', 'enter', 'enter_week', 'enter_month', 'enter_day', 'bill_price', 'month_rent_price', 'entity_price', 'action_price', 'collection', 'collection_week', 'collection_month', 'collection_day', 'send_condition', 'send_condition_times', 'send_email', 'email_publish', 'email_publish_week', 'email_publish_month', 'email_publish_day', 'ftp_ip', 'ftp_account', 'ftp_password', 'ftp_path', 'ftp_receive_path', 'contract_remark'),
 						  new Array('更新成功', '該業者帳單合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
-	if(path != '') location.href = ajax_path + path; 
+	if(path !== '') {
+		location.href = ajax_path + path; 
+	}
 }
 
 //代收機構合約
 function machinery(value) {
 	select_ajax(ajax_path + 'trader/init_machinery_contract', 'machinery_contract', value);
 	
-	if(value == '') {
+	if(value === '') {
 		$('#machinery_contract').removeAttr("class");
 	} else {
 		$('#machinery_contract').attr("class","required");
@@ -57,7 +61,9 @@ function machinery(value) {
 
 //帳單寄送種類
 function times(id, value) {
-	if($('#send_condition_times').attr('id') !== undefined) $('#send_condition_times').remove();
+	if($('#send_condition_times').attr('id') !== undefined) {
+		$('#send_condition_times').remove();
+	}
 	
 	switch (value) {
 		case '2':
@@ -134,9 +140,15 @@ function days(month) {
 
 //將時間種類做顯示
 function date_kind(id, value) {
-	if($('#' + id + '_week').attr('id') !== undefined) $('#' + id + '_week').remove();
-	if($('#' + id + '_month').attr('id') !== undefined) $('#' + id + '_month').remove();
-	if($('#' + id + '_day').attr('id') !== undefined) $('#' + id + '_day').remove();
+	if($('#' + id + '_week').attr('id') !== undefined) {
+		$('#' + id + '_week').remove();
+	}
+	if($('#' + id + '_month').attr('id') !== undefined) {
+		$('#' + id + '_month').remove();
+	}
+	if($('#' + id + '_day').attr('id') !== undefined) {
+		$('#' + id + '_day').remove();
+	}
 	
 	date_kind_new(id, value);
 }
@@ -185,7 +197,11 @@ function init() {
 
 	data = update_ajax(ajax_path + 'trader/search_contract_data', id);
 	
-	for(i in data) {
+	data_parse(data);
+}
+
+function data_parse(data) {
+	for(var i in data) {
 		switch (i) {
 			case 'machinery_contract':
 				$("#" + i).empty().append(machinery($("#machinery").val()));
@@ -206,7 +222,9 @@ function init() {
 			case 'enter_month':
 			case 'collection_month':
 			case 'email_publish_month':
-				if(data[i] === '') continue;
+				if(data[i] === '') {
+					continue;
+				}
 				$("#" + i).val(data[i]);
 				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
 				break;
