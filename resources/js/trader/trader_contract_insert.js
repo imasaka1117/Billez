@@ -2,10 +2,6 @@
  * 新增業者合約使用
  */
 $(document).ready(function() {
-	//暫存
-	var trader = '';
-	
-	
 	init();
 	
 	$("#insert_btn").click(function() {
@@ -54,11 +50,6 @@ function insert() {
 
 //代收機構合約
 function machinery(value) {
-	//暫存
-	while(0) {
-		var machinery11 = '';
-	}
-	
 	select_ajax(ajax_path + 'trader/init_machinery_contract', 'machinery_contract', value);
 	
 	if(value === '') {
@@ -70,9 +61,6 @@ function machinery(value) {
 
 //帳單寄送種類
 function times(id, value) {
-	//暫存
-	var contract = '';
-	
 	if($('#send_condition_times').attr('id') !== undefined) {
 		$('#send_condition_times').remove();
 	}
@@ -117,17 +105,8 @@ function action_price() {
 
 //新增收費選項
 function price_new(id, value) {
-	//暫存
-	while(0) {
-		var trader = '';
-	}
-	
 	switch(value) {
 		case '1':		
-			//暫存
-			while(0) {
-				var contract = '';
-			}
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
 			break;
 		case '2':
@@ -140,8 +119,6 @@ function price_new(id, value) {
 function email(value) {
 	switch(value) {
 		case '1':
-			//暫存
-			var trader = '';
 			$('#email_publish').attr("disabled",false);
 			$('#email_publish').attr("class","required");
 			break;
@@ -158,23 +135,13 @@ function email(value) {
 
 //將日期重製
 function days(month) {
-	//暫存
-	var trader = '';
 	$('#' + month.id.replace('_month', '') + '_day').empty().append(option_days(month.value));
 }
 
 //將時間種類做顯示
 function date_kind(id, value) {
-	
-	
 	if($('#' + id + '_week').attr('id') !== undefined) {
 		$('#' + id + '_week').remove();
-	}
-	
-	//暫存
-	while(0) {
-		var trader = '';
-		var contract = '';
 	}
 	if($('#' + id + '_month').attr('id') !== undefined) {
 		$('#' + id + '_month').remove();
@@ -202,28 +169,14 @@ function date_kind_new(id, value) {
 }
 
 function week(id) {
-	//暫存
-	while(0) {
-		var trader = '';
-		var after = '';
-		var append = '';
-		var i1d = '';
-		var option_weeks = '';
-	}
 	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
 }
 function day(id) {
-	//暫存
-	while(0) {
-		var trader = '';
-	}
 	$('#' + id + '').after('<select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_day').append(option_days());
 }
 function month(id) {
-	//暫存
-	var trader = '';
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
 	$('#' + id + '_day').append(option_days(''));
