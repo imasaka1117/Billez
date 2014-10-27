@@ -1,12 +1,12 @@
 /**
- * 更改業者合約使用
+ * 新增業者和代收機構合約使用
  */
 $(document).ready(function() {
 	init();
 	
 	$("#insert_btn").click(function() {
 		if(validate()) {
-			update();
+			if(typeof(id) !== 'string') insert(); else update();
 		}
 	});	
 	
@@ -16,6 +16,7 @@ $(document).ready(function() {
 			case 'enter':
 			case 'collection':
 			case 'email_publish':
+			case 'pay':	
 				date_kind($(this).attr('id'), $(this).val());
 				break;
 			case 'send_email':
@@ -26,6 +27,7 @@ $(document).ready(function() {
 				days(this);
 				break;
 			case 'bill_price':
+			case 'bill_cost':
 				price($(this).attr('id'), $(this).val());
 				break;
 			case 'send_condition':
@@ -38,11 +40,27 @@ $(document).ready(function() {
 	});
 });
 
-//新增業者合約
+//新增
+function insert() {
+	if(class_name === 'trader') {
+		var ids = new Array('trader', 'contract_name', 'ad_url', 'bill_kind', 'bill_basis', 'machinery', 'machinery_contract', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'publish', 'publish_week', 'publish_month', 'publish_day', 'enter', 'enter_week', 'enter_month', 'enter_day', 'bill_price', 'month_rent_price', 'entity_price', 'action_price', 'collection', 'collection_week', 'collection_month', 'collection_day', 'send_condition', 'send_condition_times', 'send_email', 'email_publish', 'email_publish_week', 'email_publish_month', 'email_publish_day', 'ftp_ip', 'ftp_account', 'ftp_password', 'ftp_path', 'ftp_receive_path', 'contract_remark');
+	} else {
+		var ids = new Array('machinery', 'contract_name', 'ad_url', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'pay', 'pay_week', 'pay_month', 'pay_day', 'bill_cost', 'month_rent_price', 'entity_price', 'action_price', 'contract_remark');
+	}
+	
+	var path = check_ajax(ajax_path + class_name + '/insert_contract', ids, new Array('新增成功', '該合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
+	if(path !== '') location.reload(); 
+}
+
+//更改
 function update() {
-	var path = check_ajax(ajax_path + 'trader/update_contract',
-						  new Array('id', 'trader', 'contract_name', 'ad_url', 'bill_kind', 'bill_basis', 'machinery', 'machinery_contract', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'publish', 'publish_week', 'publish_month', 'publish_day', 'enter', 'enter_week', 'enter_month', 'enter_day', 'bill_price', 'month_rent_price', 'entity_price', 'action_price', 'collection', 'collection_week', 'collection_month', 'collection_day', 'send_condition', 'send_condition_times', 'send_email', 'email_publish', 'email_publish_week', 'email_publish_month', 'email_publish_day', 'ftp_ip', 'ftp_account', 'ftp_password', 'ftp_path', 'ftp_receive_path', 'contract_remark'),
-						  new Array('更新成功', '該業者帳單合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
+	if(class_name === 'trader') {
+		var ids = new Array('id', 'trader', 'contract_name', 'ad_url', 'bill_kind', 'bill_basis', 'machinery', 'machinery_contract', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'publish', 'publish_week', 'publish_month', 'publish_day', 'enter', 'enter_week', 'enter_month', 'enter_day', 'bill_price', 'month_rent_price', 'entity_price', 'action_price', 'collection', 'collection_week', 'collection_month', 'collection_day', 'send_condition', 'send_condition_times', 'send_email', 'email_publish', 'email_publish_week', 'email_publish_month', 'email_publish_day', 'ftp_ip', 'ftp_account', 'ftp_password', 'ftp_path', 'ftp_receive_path', 'contract_remark');
+	} else {
+		var ids = new Array('id', 'machinery', 'contract_name', 'ad_url', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'pay', 'pay_week', 'pay_month', 'pay_day', 'bill_cost', 'month_rent_price', 'entity_price', 'action_price', 'contract_remark');
+	}
+	
+	var path = check_ajax(ajax_path + class_name + '/update_contract', ids, new Array('更改成功', '該帳單合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path !== '') {
 		location.href = ajax_path + path; 
 	}
@@ -50,7 +68,7 @@ function update() {
 
 //代收機構合約
 function machinery(value) {
-	select_ajax(ajax_path + 'trader/init_machinery_contract', 'machinery_contract', value);
+	select_ajax(ajax_path + 'common/init_machinery_contract', 'machinery_contract', value);
 	
 	if(value === '') {
 		$('#machinery_contract').removeAttr("class");
@@ -76,11 +94,8 @@ function times(id, value) {
 //帳單價格處理
 function price(id, value) {
 	month_rent_price();
-	
 	entity_price();
-
 	action_price(); 
-
 	price_new(id, value);
 }
 
@@ -90,12 +105,14 @@ function month_rent_price() {
 		$('#month_rent_price21').remove();
 	}
 }
+
 function entity_price() {
 	if($('#entity_price').attr('id') !== undefined) {
 		$('#entity_price').remove();
 		$('#entity_price21').remove();
 	}
 }
+
 function action_price() {
 	if($('#action_price').attr('id') !== undefined) {
 		$('#action_price').remove();
@@ -106,7 +123,7 @@ function action_price() {
 //新增收費選項
 function price_new(id, value) {
 	switch(value) {
-		case '1':
+		case '1':		
 			$('#' + id + '').after('<span id="month_rent_price21">月費 : </span><input type="text" id="month_rent_price" class="required,digits" size="6" />');
 			break;
 		case '2':
@@ -172,10 +189,12 @@ function week(id) {
 	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
 }
+
 function day(id) {
 	$('#' + id + '').after('<select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_day').append(option_days());
 }
+
 function month(id) {
 	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	$('#' + id + '_month').append(option_months());
@@ -184,20 +203,47 @@ function month(id) {
 
 //初始化
 function init() {
-	//先將電子郵件不能點選
-	$('#email_publish').attr("disabled",true);
+	if(class_name === 'trader') {
+		//先將電子郵件不能點選
+		$('#email_publish').attr("disabled",true);
+		
+		//將業者名稱初始化
+		select_ajax(ajax_path + 'common/init_trader', 'trader', '');
+		
+		//將帳單種類初始化
+		select_ajax(ajax_path + 'common/init_bill_kind', 'bill_kind', '');
+		
+		//將帳單依據初始化
+		select_ajax(ajax_path + 'common/init_bill_basis', 'bill_basis', '');
+	}
+	
 	$('#contract_age').empty().append(option_ages(20));
 	begin();
 	end();
 
 	//將代收業者名稱初始化
-	select_ajax(ajax_path + 'trader/init_machinery', 'machinery', '');
+	select_ajax(ajax_path + 'common/init_machinery', 'machinery', '');
 
-	data = update_ajax(ajax_path + 'trader/search_contract_data', id);
+	if(typeof(id) === 'string') init_update();
+}
+
+function begin() {
+	$('#begin_year').empty().append(option_years());
+	$('#begin_month').empty().append(option_months());
+}
+function end() {
+	$('#end_year').empty().append(option_years());
+	$('#end_month').empty().append(option_months());
+}
+
+//帶入資料
+function init_update() {
+	data = update_ajax(ajax_path + class_name + '/search_contract_data', id);
 	
 	data_parse(data);
 }
 
+//將帶入資料做處理
 function data_parse(data) {
 	for(var i in data) {
 		switch (i) {
@@ -214,6 +260,7 @@ function data_parse(data) {
 			case 'enter':
 			case 'collection':
 			case 'email_publish':
+			case 'pay':
 				date_kind(i, data[i]);
 				break;
 			case 'publish_month':
@@ -227,6 +274,7 @@ function data_parse(data) {
 				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
 				break;
 			case 'bill_price':
+			case 'bill_cost':
 				price(i, data[i]);
 				break;
 			case 'send_condition':
@@ -240,14 +288,3 @@ function data_parse(data) {
 		$('#' + i).val(data[i]);
 	}
 }
-
-function begin() {
-	$('#begin_year').empty().append(option_years());
-	$('#begin_month').empty().append(option_months());
-}
-function end() {
-	$('#end_year').empty().append(option_years());
-	$('#end_month').empty().append(option_months());
-}
-
-

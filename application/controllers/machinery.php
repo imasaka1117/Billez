@@ -40,8 +40,9 @@ class Machinery extends CI_Controller {
 	 */
 	public function update_contract_web() {
 		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'machinery_contract_update.js';
+		$data['now_use'] = 'trader_machinery/trader_machinery_contract_insert_update.js';
 		$data['id'] = $this->input->get('id');
+		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/update_contract', $data);
 	}
@@ -61,7 +62,8 @@ class Machinery extends CI_Controller {
 	 */
 	public function search_contract_web() {
 		$data = $this->param->resources(array('base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'machinery_contract_search.js';
+		$data['now_use'] = 'trader_machinery/trader_machinery_contract_search.js';
+		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/search_contract', $data);
 	}
@@ -90,8 +92,10 @@ class Machinery extends CI_Controller {
 	 */
 	public function update_web() {
 		$data = $this->param->resources(array('address_js'=>Param::$address_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'machinery_update.js';
+		$data['now_use'] = 'trader_machinery/trader_machinery_insert_update.js';
 		$data['id'] = $this->input->get('id');
+		$data['class_name'] = 'machinery';
+		$data['level_value'] = 'b';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/update', $data);
 	}
@@ -111,7 +115,9 @@ class Machinery extends CI_Controller {
 	 */
 	public function search_web() {
 		$data = $this->param->resources(array('base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'machinery_search.js';
+		$data['now_use'] = 'trader_machinery/trader_machinery_search.js';
+		$data['class_name'] = 'machinery';
+		$data['level_value'] = 'b';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/search', $data);
 	}
@@ -143,8 +149,8 @@ class Machinery extends CI_Controller {
 	 */
 	public function insert_contract_web() {
 		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'machinery_contract_insert.js';
-		$data['title'] = 'Billez 新增代收機構合約';
+		$data['now_use'] = 'trader_machinery/trader_machinery_contract_insert_update.js';
+		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/insert_contract', $data);
 	}
@@ -154,56 +160,58 @@ class Machinery extends CI_Controller {
 	 */
 	public function insert_web() {
 		$data = $this->param->resources(array('address_js'=>Param::$address_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'machinery_insert.js';
+		$data['now_use'] = 'trader_machinery/trader_machinery_insert_update.js';
+		$data['class_name'] = 'machinery';
+		$data['level_value'] = 'b';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/insert', $data);
 	}
 	
-	/*
-	 * 將等級選單初始化
-	 */
-	public function init_level() {
-		$this->load->library('web/option');
+// 	/*
+// 	 * 將等級選單初始化
+// 	 */
+// 	public function init_level() {
+// 		$this->load->library('web/option');
 		
-		//查詢代收機構等級代碼及名稱
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
-																		 'from' => Table_1::$level,
-																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where'), array(Field_2::$kind), array($this->input->post('value')), array('')),
-																		 'other' => '')), 'result_array');
-		$data['ajax'] = $this->option->select($sql_result);
-		$this->load->view('web/ajax', $data);
-	}
+// 		//查詢代收機構等級代碼及名稱
+// 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
+// 																		 'from' => Table_1::$level,
+// 																		 'join'=> '',
+// 																		 'where' => $this->sql->where(array('where'), array(Field_2::$kind), array($this->input->post('value')), array('')),
+// 																		 'other' => '')), 'result_array');
+// 		$data['ajax'] = $this->option->select($sql_result);
+// 		$this->load->view('web/ajax', $data);
+// 	}
 	
-	/*
-	 * 將代收代收機構名稱初始化
-	 */
-	public function init_machinery() {
-		$this->load->library('web/option');
+// 	/*
+// 	 * 將代收代收機構名稱初始化
+// 	 */
+// 	public function init_machinery() {
+// 		$this->load->library('web/option');
 		
-		//查詢代收機構編號及代收機構名稱
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
-																		 'from' => Table_1::$machinery_code,
-																		 'join'=> '',
-																		 'where' => '',
-																		 'other' => '')), 'result_array');
-		$data['ajax'] = $this->option->select($sql_result);
-		$this->load->view('web/ajax', $data);
-	}
+// 		//查詢代收機構編號及代收機構名稱
+// 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
+// 																		 'from' => Table_1::$machinery_code,
+// 																		 'join'=> '',
+// 																		 'where' => '',
+// 																		 'other' => '')), 'result_array');
+// 		$data['ajax'] = $this->option->select($sql_result);
+// 		$this->load->view('web/ajax', $data);
+// 	}
 	
-	/*
-	 * 將代收代收機構合約初始化
-	 */
-	public function init_machinery_contract() {
-		$this->load->library('web/option');
+// 	/*
+// 	 * 將代收代收機構合約初始化
+// 	 */
+// 	public function init_machinery_contract() {
+// 		$this->load->library('web/option');
 		
-		//查詢代收機構編號及代收機構名稱
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id . ' AS code', Field_1::$name), 'function'),
-																		 'from' => Table_1::$machinery_contract,
-																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where'), array(Field_2::$machinery_code), array($this->input->post('value')), array('')),
-																		 'other' => '')), 'result_array');
-		$data['ajax'] = $this->option->select($sql_result);
-		$this->load->view('web/ajax', $data);
-	}
+// 		//查詢代收機構編號及代收機構名稱
+// 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id . ' AS code', Field_1::$name), 'function'),
+// 																		 'from' => Table_1::$machinery_contract,
+// 																		 'join'=> '',
+// 																		 'where' => $this->sql->where(array('where'), array(Field_2::$machinery_code), array($this->input->post('value')), array('')),
+// 																		 'other' => '')), 'result_array');
+// 		$data['ajax'] = $this->option->select($sql_result);
+// 		$this->load->view('web/ajax', $data);
+// 	}
 }//end

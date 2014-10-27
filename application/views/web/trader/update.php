@@ -12,6 +12,8 @@
 <script type="text/javascript">
 var ajax_path = '<?=$index_url ?>';
 var id = '<?=$id ?>';
+var class_name = '<?=$class_name ?>';
+var level_value = '<?=$level_value ?>';
 </script>
 </head>
 <body>

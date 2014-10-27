@@ -98,4 +98,3 @@ function update_ajax(controllers, params) {
 	
 	return data;
 }
-
