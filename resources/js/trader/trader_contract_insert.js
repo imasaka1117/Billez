@@ -164,7 +164,10 @@ function date_kind(id, value) {
 	if($('#' + id + '_week').attr('id') !== undefined) $('#' + id + '_week').remove();
 	
 	//暫存
-	var trader = '';
+	while(0) {
+		var trader = '';
+		var contract = '';
+	}
 	if($('#' + id + '_month').attr('id') !== undefined) $('#' + id + '_month').remove();
 	if($('#' + id + '_day').attr('id') !== undefined) $('#' + id + '_day').remove();
 	
