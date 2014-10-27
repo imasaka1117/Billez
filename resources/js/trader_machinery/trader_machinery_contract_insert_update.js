@@ -174,10 +174,10 @@ function date_kind(id, value) {
 function date_kind_new(id, value) {
 	switch(value) {
 		case '1':
-			week(id);	
+			week_day(id, '_week');	
 			break;
 		case '2':
-			day(id);
+			week_day(id, '_day');
 			break;
 		case '3':
 			month(id);
@@ -185,14 +185,14 @@ function date_kind_new(id, value) {
 	}
 }
 
-function week(id) {
-	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
-	$('#' + id + '_week').append(option_weeks());
-}
-
-function day(id) {
-	$('#' + id + '').after('<select id="' + id + '_day" class="required"></select>');
-	$('#' + id + '_day').append(option_days());
+function week_day(id, kind) {
+	$('#' + id + '').after('<select id="' + id + kind + '" class="required"></select>');
+	
+	if(kind === '_day') {
+		$('#' + id + kind).append(option_days());
+	} else {
+		$('#' + id + kind).append(option_weeks());
+	}
 }
 
 function month(id) {
@@ -256,6 +256,25 @@ function data_parse(data) {
 			case 'end_day':
 				$("#" + i).empty().append(days($("#end_month")[0]));
 				break;
+			case 'bill_price':
+			case 'bill_cost':
+				price(i, data[i]);
+				break;
+			case 'send_condition':
+				times(i, data[i]);
+				break;
+			case 'send_email':
+				email(data[i]);
+				break;
+		}
+		
+		$('#' + i).val(data[i]);
+	}
+}
+
+function data_parse2(data) {
+	for(var i in data) {
+		switch (i) {
 			case 'publish':
 			case 'enter':
 			case 'collection':
@@ -267,21 +286,12 @@ function data_parse(data) {
 			case 'enter_month':
 			case 'collection_month':
 			case 'email_publish_month':
+			case 'pay_month':
 				if(data[i] === '') {
 					continue;
 				}
 				$("#" + i).val(data[i]);
 				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
-				break;
-			case 'bill_price':
-			case 'bill_cost':
-				price(i, data[i]);
-				break;
-			case 'send_condition':
-				times(i, data[i]);
-				break;
-			case 'send_email':
-				email(data[i]);
 				break;
 		}
 		
