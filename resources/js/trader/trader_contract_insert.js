@@ -159,7 +159,15 @@ function days(month) {
 
 //將時間種類做顯示
 function date_kind(id, value) {
+	
+	
 	if($('#' + id + '_week').attr('id') !== undefined) $('#' + id + '_week').remove();
+	
+	//暫存
+	while(0) {
+		var trader = '';
+		var contract = '';
+	}
 	if($('#' + id + '_month').attr('id') !== undefined) $('#' + id + '_month').remove();
 	if($('#' + id + '_day').attr('id') !== undefined) $('#' + id + '_day').remove();
 	
@@ -185,6 +193,10 @@ function week(id) {
 	//暫存
 	while(0) {
 		var trader = '';
+		var after = '';
+		var append = '';
+		var id = '';
+		var option_weeks = '';
 	}
 	$('#' + id + '').after('<select id="' + id + '_week" class="required"></select>');
 	$('#' + id + '_week').append(option_weeks());
