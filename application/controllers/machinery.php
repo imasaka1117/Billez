@@ -96,7 +96,8 @@ class Machinery extends CI_Controller {
 	
 	//暫存
 	private function data6() {
-	
+		$data['now_use'] = 'trader_machinery/trader_machinery_contract_search.js';
+		$data['class_name'] = 'machinery';
 	}
 	
 	/*
