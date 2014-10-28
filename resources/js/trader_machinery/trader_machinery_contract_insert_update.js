@@ -10,82 +10,34 @@ $(document).ready(function() {
 		}
 	});	
 	
-	$("#publish").change(function() {
-		date_kind($(this).attr('id'), $(this).val());
+	$("select").change(function() {
+		switch ($(this).attr('id')) {
+			case 'publish':
+			case 'enter':
+			case 'collection':
+			case 'email_publish':
+			case 'pay':	
+				date_kind($(this).attr('id'), $(this).val());
+				break;
+			case 'send_email':
+				email($(this).val());
+				break;
+			case 'begin_month':
+			case 'end_month':
+				days(this);
+				break;
+			case 'bill_price':
+			case 'bill_cost':
+				price($(this).attr('id'), $(this).val());
+				break;
+			case 'send_condition':
+				times($(this).attr('id'), $(this).val());
+				break;
+			case 'machinery':
+				machinery($(this).val());
+				break;
+		}
 	});
-	
-	$("#enter").change(function() {
-		date_kind($(this).attr('id'), $(this).val());
-	});
-	
-	$("#collection").change(function() {
-		date_kind($(this).attr('id'), $(this).val());
-	});
-	
-	$("#email_publish").change(function() {
-		date_kind($(this).attr('id'), $(this).val());
-	});
-	
-	$("#pay").change(function() {
-		date_kind($(this).attr('id'), $(this).val());
-	});
-	
-	$("#send_email").change(function() {
-		email($(this).val());
-	});
-	
-	$("#begin_month").change(function() {
-		days(this);
-	});
-	
-	$("#end_month").change(function() {
-		days(this);
-	});
-	
-	$("#bill_price").change(function() {
-		price($(this).attr('id'), $(this).val());
-	});
-
-	$("#bill_cost").change(function() {
-		price($(this).attr('id'), $(this).val());
-	});
-	
-	$("#send_condition").change(function() {
-		times($(this).attr('id'), $(this).val());
-	});
-	
-	$("#machinery").change(function() {
-		machinery($(this).val());
-	});
-	
-//	$("select").change(function() {
-//		switch ($(this).attr('id')) {
-//			case 'publish':
-//			case 'enter':
-//			case 'collection':
-//			case 'email_publish':
-//			case 'pay':	
-//				date_kind($(this).attr('id'), $(this).val());
-//				break;
-//			case 'send_email':
-//				email($(this).val());
-//				break;
-//			case 'begin_month':
-//			case 'end_month':
-//				days(this);
-//				break;
-//			case 'bill_price':
-//			case 'bill_cost':
-//				price($(this).attr('id'), $(this).val());
-//				break;
-//			case 'send_condition':
-//				times($(this).attr('id'), $(this).val());
-//				break;
-//			case 'machinery':
-//				machinery($(this).val());
-//				break;
-//		}
-//	});
 });
 
 //新增
@@ -117,7 +69,10 @@ function update() {
 //代收機構合約
 function machinery(value) {
 	select_ajax(ajax_path + 'common/init_machinery_contract', 'machinery_contract', value);
-	
+	machinery_value(value);
+}
+
+function machinery_value(value) {
 	if(value === '') {
 		$('#machinery_contract').removeAttr("class");
 	} else {
@@ -133,10 +88,14 @@ function times(id, value) {
 	
 	switch (value) {
 		case '2':
-			$('#' + id + '').after('<select id="send_condition_times" class="required"></select>');
-			$('#send_condition_times').append(option_ages(20));
+			times_value(id);
 			break;
 	}
+}
+
+function times_value(id) {
+	$('#' + id + '').after('<select id="send_condition_times" class="required"></select>');
+	$('#send_condition_times').append(option_ages(20));
 }
 
 //帳單價格處理
@@ -174,13 +133,17 @@ function price_new(id, value) {
 function email(value) {
 	switch(value) {
 		case '1':
-			$('#email_publish').attr("disabled",false);
-			$('#email_publish').attr("class","required");
+			email_attr();
 			break;
 		default:
 			email_remove();
 			break;
 	}
+}
+
+function email_attr() {
+	$('#email_publish').attr("disabled",false);
+	$('#email_publish').attr("class","required");
 }
 
 function email_remove() {
@@ -220,31 +183,37 @@ function date_remove(id_kind) {
 function date_kind_new(id, value) {
 	switch(value) {
 		case '1':
-			week_day(id, '_week');	
+			week_day_month(id, '_week');	
 			break;
 		case '2':
-			week_day(id, '_day');
+			week_day_month(id, '_day');
 			break;
 		case '3':
+			week_day_month(id, '_month');
 			month(id);
 			break;
 	}
 }
 
-function week_day(id, kind) {
-	$('#' + id + '').after('<select id="' + id + kind + '" class="required"></select>');
-	
-	if(kind === '_day') {
-		$('#' + id + kind).append(option_days());
+function week_day_month(id, kind) {
+	if(kind === '_month') {
+		$('#' + id + '').after('<select id="' + id + kind + '" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
 	} else {
-		$('#' + id + kind).append(option_weeks());
+		$('#' + id + '').after('<select id="' + id + kind + '" class="required"></select>');
 	}
+	
+	week_day_month_kind(id, kind);
 }
 
-function month(id) {
-	$('#' + id + '').after('<select id="' + id + '_month" class="required" onchange="days(this)"></select><select id="' + id + '_day" class="required"></select>');
-	$('#' + id + '_month').append(option_months());
-	$('#' + id + '_day').append(option_days(''));
+function week_day_month_kind(id, kind) {
+	if(kind === '_day') {
+		$('#' + id + kind).append(option_days());
+	} else if(kind === '_week') {
+		$('#' + id + kind).append(option_weeks());
+	} else {
+		$('#' + id + kind).append(option_months());
+		$('#' + id + '_day').append(option_days(''));
+	}
 }
 
 //初始化
@@ -289,6 +258,7 @@ function init_update() {
 	data_parse(data);
 	data_parse2(data);
 	data_parse3(data);
+	data_parse4(data);
 }
 
 //將帶入資料做處理
@@ -317,17 +287,6 @@ function data_parse2(data) {
 			case 'pay':
 				date_kind(i, data[i]);
 				break;
-			case 'publish_month':
-			case 'enter_month':
-			case 'collection_month':
-			case 'email_publish_month':
-			case 'pay_month':
-				if(data[i] === '') {
-					continue;
-				}
-				$("#" + i).val(data[i]);
-				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
-				break;
 		}
 		
 		$('#' + i).val(data[i]);
@@ -349,6 +308,26 @@ function data_parse3(data) {
 				break;
 			case 'send_email':
 				email(data[i]);
+				break;
+		}
+		
+		$('#' + i).val(data[i]);
+	}
+}
+
+function data_parse4(data) {
+	for(var i in data) {
+		switch (i) {
+			case 'publish_month':
+			case 'enter_month':
+			case 'collection_month':
+			case 'email_publish_month':
+			case 'pay_month':
+				if(data[i] === '') {
+					continue;
+				}
+				$("#" + i).val(data[i]);
+				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
 				break;
 		}
 		
