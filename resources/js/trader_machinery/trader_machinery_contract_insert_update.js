@@ -240,72 +240,72 @@ function end() {
 function init_update() {
 	data = update_ajax(ajax_path + class_name + '/search_contract_data', id);
 	
-	data_parse(data);
-	data_parse2(data);
-	data_parse3(data);
+//	data_parse(data);
+//	data_parse2(data);
+//	data_parse3(data);
 }
 
 //將帶入資料做處理
-function data_parse(data) {
-	for(var i in data) {
-		switch (i) {
-			case 'begin_day':
-				$("#" + i).empty().append(days($("#begin_month")[0]));			
-				break;
-			case 'end_day':
-				$("#" + i).empty().append(days($("#end_month")[0]));
-				break;
-		}
-		
-		$('#' + i).val(data[i]);
-	}
-}
-
-function data_parse2(data) {
-	for(var i in data) {
-		switch (i) {
-			case 'publish':
-			case 'enter':
-			case 'collection':
-			case 'email_publish':
-			case 'pay':
-				date_kind(i, data[i]);
-				break;
-			case 'publish_month':
-			case 'enter_month':
-			case 'collection_month':
-			case 'email_publish_month':
-			case 'pay_month':
-				if(data[i] === '') {
-					continue;
-				}
-				$("#" + i).val(data[i]);
-				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
-				break;
-		}
-		
-		$('#' + i).val(data[i]);
-	}
-}
-
-function data_parse3(data) {
-	for(var i in data) {
-		switch (i) {
-			case 'machinery_contract':
-				$("#" + i).empty().append(machinery($("#machinery").val()));
-				break;
-			case 'bill_price':
-			case 'bill_cost':
-				price(i, data[i]);
-				break;
-			case 'send_condition':
-				times(i, data[i]);
-				break;
-			case 'send_email':
-				email(data[i]);
-				break;
-		}
-		
-		$('#' + i).val(data[i]);
-	}
-}
+//function data_parse(data) {
+//	for(var i in data) {
+//		switch (i) {
+//			case 'begin_day':
+//				$("#" + i).empty().append(days($("#begin_month")[0]));			
+//				break;
+//			case 'end_day':
+//				$("#" + i).empty().append(days($("#end_month")[0]));
+//				break;
+//		}
+//		
+//		$('#' + i).val(data[i]);
+//	}
+//}
+//
+//function data_parse2(data) {
+//	for(var i in data) {
+//		switch (i) {
+//			case 'publish':
+//			case 'enter':
+//			case 'collection':
+//			case 'email_publish':
+//			case 'pay':
+//				date_kind(i, data[i]);
+//				break;
+//			case 'publish_month':
+//			case 'enter_month':
+//			case 'collection_month':
+//			case 'email_publish_month':
+//			case 'pay_month':
+//				if(data[i] === '') {
+//					continue;
+//				}
+//				$("#" + i).val(data[i]);
+//				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
+//				break;
+//		}
+//		
+//		$('#' + i).val(data[i]);
+//	}
+//}
+//
+//function data_parse3(data) {
+//	for(var i in data) {
+//		switch (i) {
+//			case 'machinery_contract':
+//				$("#" + i).empty().append(machinery($("#machinery").val()));
+//				break;
+//			case 'bill_price':
+//			case 'bill_cost':
+//				price(i, data[i]);
+//				break;
+//			case 'send_condition':
+//				times(i, data[i]);
+//				break;
+//			case 'send_email':
+//				email(data[i]);
+//				break;
+//		}
+//		
+//		$('#' + i).val(data[i]);
+//	}
+//}
