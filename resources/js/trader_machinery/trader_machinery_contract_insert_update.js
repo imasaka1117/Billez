@@ -93,27 +93,15 @@ function times(id, value) {
 
 //帳單價格處理
 function price(id, value) {
-	month_rent_price();
-	entity_price();
-	action_price(); 
+	price_kind('month_rent_price', 'month_rent_price21');
+	price_kind('entity_price', 'entity_price21');
+	price_kind('action_price', 'action_price21');
 	price_new(id, value);
 }
 
-function month_rent_price() {
-	if($('#month_rent_price').attr('id') !== undefined) {
-		remove_price('month_rent_price', 'month_rent_price21');
-	}
-}
-
-function entity_price() {
-	if($('#entity_price').attr('id') !== undefined) {
-		remove_price('entity_price', 'entity_price21');
-	}
-}
-
-function action_price() {
-	if($('#action_price').attr('id') !== undefined) {
-		remove_price('action_price', 'action_price21');
+function price_kind(id, id1) {
+	if($('#' + id).attr('id') !== undefined) {
+		remove_price(id, id1);
 	}
 }
 
@@ -151,11 +139,14 @@ function email_remove() {
 	$('#email_publish_week').remove();
 	$('#email_publish_month').remove();
 	$('#email_publish_day').remove();
+	email_publish();
+}
+
+function email_publish() {
 	$('#email_publish').val('');
 	$('#email_publish').removeAttr("class");
 	$('#email_publish').attr("disabled",true);
 }
-
 
 //將日期重製
 function days(month) {
@@ -164,17 +155,17 @@ function days(month) {
 
 //將時間種類做顯示
 function date_kind(id, value) {
-	if($('#' + id + '_week').attr('id') !== undefined) {
-		$('#' + id + '_week').remove();
-	}
-	if($('#' + id + '_month').attr('id') !== undefined) {
-		$('#' + id + '_month').remove();
-	}
-	if($('#' + id + '_day').attr('id') !== undefined) {
-		$('#' + id + '_day').remove();
-	}
-	
+	date_remove(id + '_week');
+	date_remove(id + '_month');
+	date_remove(id + '_day');
+
 	date_kind_new(id, value);
+}
+
+function date_remove(id_kind) {
+	if($('#' + id_kind).attr('id') !== undefined) {
+		$('#' + id_kind).remove();
+	}
 }
 
 //新增驗證類別資料
