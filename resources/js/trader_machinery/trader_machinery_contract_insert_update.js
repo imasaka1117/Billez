@@ -10,34 +10,82 @@ $(document).ready(function() {
 		}
 	});	
 	
-	$("select").change(function() {
-		switch ($(this).attr('id')) {
-			case 'publish':
-			case 'enter':
-			case 'collection':
-			case 'email_publish':
-			case 'pay':	
-				date_kind($(this).attr('id'), $(this).val());
-				break;
-			case 'send_email':
-				email($(this).val());
-				break;
-			case 'begin_month':
-			case 'end_month':
-				days(this);
-				break;
-			case 'bill_price':
-			case 'bill_cost':
-				price($(this).attr('id'), $(this).val());
-				break;
-			case 'send_condition':
-				times($(this).attr('id'), $(this).val());
-				break;
-			case 'machinery':
-				machinery($(this).val());
-				break;
-		}
+	$("#publish").change(function() {
+		date_kind($(this).attr('id'), $(this).val());
 	});
+	
+	$("#enter").change(function() {
+		date_kind($(this).attr('id'), $(this).val());
+	});
+	
+	$("#collection").change(function() {
+		date_kind($(this).attr('id'), $(this).val());
+	});
+	
+	$("#email_publish").change(function() {
+		date_kind($(this).attr('id'), $(this).val());
+	});
+	
+	$("#pay").change(function() {
+		date_kind($(this).attr('id'), $(this).val());
+	});
+	
+	$("#send_email").change(function() {
+		email($(this).val());
+	});
+	
+	$("#begin_month").change(function() {
+		days(this);
+	});
+	
+	$("#end_month").change(function() {
+		days(this);
+	});
+	
+	$("#bill_price").change(function() {
+		price($(this).attr('id'), $(this).val());
+	});
+
+	$("#bill_cost").change(function() {
+		price($(this).attr('id'), $(this).val());
+	});
+	
+	$("#send_condition").change(function() {
+		times($(this).attr('id'), $(this).val());
+	});
+	
+	$("#machinery").change(function() {
+		machinery($(this).val());
+	});
+	
+//	$("select").change(function() {
+//		switch ($(this).attr('id')) {
+//			case 'publish':
+//			case 'enter':
+//			case 'collection':
+//			case 'email_publish':
+//			case 'pay':	
+//				date_kind($(this).attr('id'), $(this).val());
+//				break;
+//			case 'send_email':
+//				email($(this).val());
+//				break;
+//			case 'begin_month':
+//			case 'end_month':
+//				days(this);
+//				break;
+//			case 'bill_price':
+//			case 'bill_cost':
+//				price($(this).attr('id'), $(this).val());
+//				break;
+//			case 'send_condition':
+//				times($(this).attr('id'), $(this).val());
+//				break;
+//			case 'machinery':
+//				machinery($(this).val());
+//				break;
+//		}
+//	});
 });
 
 //新增
