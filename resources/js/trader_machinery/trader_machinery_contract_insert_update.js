@@ -241,6 +241,8 @@ function init_update() {
 	data = update_ajax(ajax_path + class_name + '/search_contract_data', id);
 	
 	data_parse(data);
+	data_parse2(data);
+	data_parse3(data);
 }
 
 //將帶入資料做處理
@@ -255,16 +257,6 @@ function data_parse(data) {
 				break;
 			case 'end_day':
 				$("#" + i).empty().append(days($("#end_month")[0]));
-				break;
-			case 'bill_price':
-			case 'bill_cost':
-				price(i, data[i]);
-				break;
-			case 'send_condition':
-				times(i, data[i]);
-				break;
-			case 'send_email':
-				email(data[i]);
 				break;
 		}
 		
@@ -292,6 +284,25 @@ function data_parse2(data) {
 				}
 				$("#" + i).val(data[i]);
 				$("#" + i.replace('_month', '') + '_day').empty().append(days($("#" + i)[0]));
+				break;
+		}
+		
+		$('#' + i).val(data[i]);
+	}
+}
+
+function data_parse3(data) {
+	for(var i in data) {
+		switch (i) {
+			case 'bill_price':
+			case 'bill_cost':
+				price(i, data[i]);
+				break;
+			case 'send_condition':
+				times(i, data[i]);
+				break;
+			case 'send_email':
+				email(data[i]);
 				break;
 		}
 		

@@ -17,7 +17,7 @@ class Machinery extends CI_Controller {
 	}
 	
 	//暫存
-	function data1() {
+	private function data1() {
 		
 	}
 	
@@ -31,6 +31,11 @@ class Machinery extends CI_Controller {
 		$this->load->view('web/ajax', $data);
 	}
 	
+	//暫存
+	private function data2() {
+	
+	}
+	
 	/*
 	 * 查詢代收機構合約資料
 	 */
@@ -38,6 +43,11 @@ class Machinery extends CI_Controller {
 		$this->load->model('web/machinery_model');
 		$data['ajax'] = $this->machinery_model->search_machinery_contract_data($this->input->post());
 		$this->load->view('web/ajax', $data);
+	}
+	
+	//暫存
+	private function data3() {
+	
 	}
 	
 	/*
@@ -53,7 +63,7 @@ class Machinery extends CI_Controller {
 	}
 	
 	//暫存
-	function data2() {
+	private function data4() {
 	
 	}
 	
@@ -67,6 +77,11 @@ class Machinery extends CI_Controller {
 		$this->load->view('web/ajax', $data);
 	}
 	
+	//暫存
+	private function data5() {
+	
+	}
+	
 	/*
 	 * 查詢代收機構合約頁面
 	 */
@@ -76,6 +91,11 @@ class Machinery extends CI_Controller {
 		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/search_contract', $data);
+	}
+	
+	//暫存
+	private function data6() {
+	
 	}
 	
 	/*
@@ -88,6 +108,11 @@ class Machinery extends CI_Controller {
 		$this->load->view('web/ajax', $data);
 	}
 	
+	//暫存
+	private function data7() {
+	
+	}
+	
 	/*
 	 * 查詢代收機構資料
 	 */
@@ -98,7 +123,7 @@ class Machinery extends CI_Controller {
 	}
 	
 	//暫存
-	function data3() {
+	private function data8() {
 	
 	}
 	
@@ -115,6 +140,11 @@ class Machinery extends CI_Controller {
 		$this->load->view('web/machinery/update', $data);
 	}
 	
+	//暫存
+	private function data9() {
+	
+	}
+	
 	/*
 	 * 查詢代收機構列表
 	 */
@@ -126,7 +156,7 @@ class Machinery extends CI_Controller {
 	}
 	
 	//暫存
-	function data4() {
+	private function data10() {
 	
 	}
 	
@@ -142,6 +172,11 @@ class Machinery extends CI_Controller {
 		$this->load->view('web/machinery/search', $data);
 	}
 	
+	//暫存
+	private function data11() {
+	
+	}
+	
 	/*
 	 * 新增代收機構處理
 	 */
@@ -154,7 +189,7 @@ class Machinery extends CI_Controller {
 	}
 	
 	//暫存
-	function data5() {
+	private function data12() {
 	
 	}
 	
@@ -169,6 +204,11 @@ class Machinery extends CI_Controller {
 		$this->load->view('web/ajax', $data);
 	}
 	
+	//暫存
+	private function data13() {
+	
+	}
+	
 	/*
 	 * 新增代收機構合約頁面
 	 */
@@ -178,6 +218,11 @@ class Machinery extends CI_Controller {
 		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/insert_contract', $data);
+	}
+	
+	//暫存
+	private function data14() {
+	
 	}
 	
 	/*
@@ -193,7 +238,7 @@ class Machinery extends CI_Controller {
 	}
 	
 	//暫存
-	function data6() {
+	private function data15() {
 	
 	}
 }//end
