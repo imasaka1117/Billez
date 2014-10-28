@@ -34,6 +34,8 @@
 					<li><a href="<?=$index_url ?>bill/search_web">查詢帳單</a></li>
 					<li><a href="<?=$index_url ?>bill/insert_pay_set_web">新增繳費帳單格式</a></li>
 					<li><a href="<?=$index_url ?>bill/insert_receive_set_web">新增入帳帳單格式</a></li>
+					<li><a href="<?=$index_url ?>bill/update_pay_set_web">修改繳費帳單格式</a></li>
+					<li><a href="<?=$index_url ?>bill/update_receive_set_web">修改入帳帳單格式</a></li>
 					<li><a href="<?=$index_url ?>bill/">匯入帳單</a></li>
 					<li><a href="<?=$index_url ?>bill/">寄發帳單</a></li>
 				</ul>

@@ -15,6 +15,16 @@ class Bill extends CI_Controller {
 		$this->load->library('db/table_1');
 		$this->load->library('sql');
 	}
+
+	/*
+	 * 更改繳費帳單設定頁面
+	 */
+	public function update_pay_set_web() {
+		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data['now_use'] = 'bill/bill_receive_set_insert.js';
+		$this->load->view('templates/header', $data);
+		$this->load->view('web/bill/insert_receive_set', $data);
+	}
 	
 	/*
 	 * 新增入帳帳單設定
