@@ -56,6 +56,7 @@ class Machinery extends CI_Controller {
 	public function update_contract_web() {
 		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
 		$data['now_use'] = 'trader_machinery/trader_machinery_contract_insert_update.js';
+		$data['now_use2'] = 'trader_machinery/trader_machinery_contract_insert_update2.js';
 		$data['id'] = $this->input->get('id');
 		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
@@ -215,6 +216,7 @@ class Machinery extends CI_Controller {
 	public function insert_contract_web() {
 		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
 		$data['now_use'] = 'trader_machinery/trader_machinery_contract_insert_update.js';
+		$data['now_use2'] = 'trader_machinery/trader_machinery_contract_insert_update2.js';
 		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/insert_contract', $data);
