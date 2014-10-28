@@ -96,8 +96,7 @@ class Machinery extends CI_Controller {
 	
 	//暫存
 	private function data6() {
-		$data['now_use'] = 'trader_machinery/trader_machinery_contract_search.js';
-		$data['class_name'] = 'machinery';
+		
 	}
 	
 	/*
@@ -138,6 +137,10 @@ class Machinery extends CI_Controller {
 		$data['id'] = $this->input->get('id');
 		$data['now_use'] = 'trader_machinery/trader_machinery_insert_update.js';
 		$data['class_name'] = 'machinery';
+		//暫存
+		$data['now_use1111'] = '';
+		$data['class_name111111'] = '';
+		//暫存
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/update', $data);
 	}
