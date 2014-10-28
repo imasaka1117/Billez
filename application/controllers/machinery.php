@@ -132,10 +132,10 @@ class Machinery extends CI_Controller {
 	 */
 	public function update_web() {
 		$data = $this->param->resources(array('address_js'=>Param::$address_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'trader_machinery/trader_machinery_insert_update.js';
 		$data['id'] = $this->input->get('id');
 		$data['class_name'] = 'machinery';
 		$data['level_value'] = 'b';
+		$data['now_use'] = 'trader_machinery/trader_machinery_insert_update.js';
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/machinery/update', $data);
 	}

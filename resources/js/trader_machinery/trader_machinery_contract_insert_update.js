@@ -249,9 +249,6 @@ function init_update() {
 function data_parse(data) {
 	for(var i in data) {
 		switch (i) {
-			case 'machinery_contract':
-				$("#" + i).empty().append(machinery($("#machinery").val()));
-				break;
 			case 'begin_day':
 				$("#" + i).empty().append(days($("#begin_month")[0]));			
 				break;
@@ -294,6 +291,9 @@ function data_parse2(data) {
 function data_parse3(data) {
 	for(var i in data) {
 		switch (i) {
+			case 'machinery_contract':
+				$("#" + i).empty().append(machinery($("#machinery").val()));
+				break;
 			case 'bill_price':
 			case 'bill_cost':
 				price(i, data[i]);
