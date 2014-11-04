@@ -145,7 +145,7 @@ class Login_model extends CI_Model {
 			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$billez_code), ''),
 																			 'from' => Table_1::$bill,
 																			 'join'=> '',
-																			 'where' => $this->sql->where(array('like'), array(Field_1::$billez_code), array($data['subscribe_code']), array('after')),
+																			 'where' => $this->sql->where(array('where'), array('CONCAT(' . Field_1::$trader_code . ',' . Field_1::$bill_kind_code . ',' . Field_1::$identify_data . ') ='), array($data['subscribe_code']), array('')),
 																			 'other' => '')), 'result_array');
 			//若是該訂閱沒有帳單則跳過一輪,有的話則把帳單編號丟入陣列
 			if(count($sql_result) == 0) continue;

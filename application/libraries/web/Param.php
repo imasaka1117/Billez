@@ -7,10 +7,11 @@ class Param {
 	//css
 	static public $login_css = 'resources/css/login.css';
 	static public $base_css = 'resources/css/base.css';
-
+	
 	//js
 	static public $js_path = 'resources/js/';
 	static public $jquery_js = 'resources/js/function/jQuery 1.11.0.min.js';
+	static public $ajax_file_js = 'resources/js/function/ajaxfileupload.js';
 	static public $validate_js = 'resources/js/function/validate.js';
 	static public $address_js = 'resources/js/function/address.js';
 	static public $date_js = 'resources/js/function/date.js';

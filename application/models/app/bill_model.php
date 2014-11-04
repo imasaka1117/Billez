@@ -177,7 +177,7 @@ class Bill_model extends CI_Model {
 		
 		foreach($sql_result as $result) {
 			if($result != '') {
-				$datas = split(',', $result);
+				$datas = explode(',', $result);
 				array_push($possible_data,$datas[2]);
 			}
 		}
@@ -211,7 +211,7 @@ class Bill_model extends CI_Model {
 		foreach($sql_result as $result) {
 			foreach($result as $item => $value) {
 				if($item == 'bill_memo' || $item == 'subscribe_fail') {
-					$datas = split(',', $value);
+					$datas = explode(',', $value);
 					
 					foreach($datas as $data) {
 						if($data != '') array_push($possible_data, $data);

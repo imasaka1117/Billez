@@ -176,7 +176,7 @@ class Push {
 			}
 	
 			Push::$billez_code = array_slice($temp_ids, $begin, $end - 1);
-			$this->send_push($gcm_word);
+			$this->gcm_push($gcm_word);
 	
 			sleep($second);
 			$begin = $end;

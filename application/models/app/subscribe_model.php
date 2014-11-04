@@ -231,7 +231,7 @@ class Subscribe_model extends CI_Model {
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$billez_code), ''),
 																		 'from' => Table_1::$bill,
 																		 'join'=> '',
-																		 'where' => $this->sql->where(array('like'), array(Field_1::$billez_code), array($route_data["subscribe_code"]), array('after')),
+																		 'where' => $this->sql->where(array('where'), array('CONCAT(' . Field_1::$trader_code . ',' . Field_1::$bill_kind_code . ',' . Field_1::$identify_data . ') ='), array($route_data["subscribe_code"]), array('')),
 																		 'other' => '')), 'num_rows');
 		//若沒有則新增訂閱處理中狀態
 		if(!$sql_result) return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->subscribe_handle($route_data)), $route_data['private_key'], ''));

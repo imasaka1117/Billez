@@ -10,6 +10,8 @@
 <script type="text/javascript" src="<?=$js_path ?><?=$now_use ?>"></script>
 <script type="text/javascript">
 var ajax_path = '<?=$index_url ?>';
+var class_name = '<?=$class_name ?>';
+var function_name = '<?=$function_name ?>';
 </script>
 </head>
 <body>

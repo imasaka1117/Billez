@@ -34,7 +34,7 @@ function check_ajax(controllers, params, result) {
 	var post_vars = set_ajax(params);
 	var path = '';
 	$.post(controllers, $.param(post_vars), function(ajax_return) {
-		alert(ajax_return);
+//		alert(ajax_return);
 		var result_count = result.length;
 		
 		if(ajax_return.length > 1) {
@@ -56,7 +56,7 @@ function check_ajax(controllers, params, result) {
  */
 function select_ajax(controllers, id, value) {
 	$.post(controllers, $.param({ 'value' : value }), function(ajax_return) {
-		alert(ajax_return);
+//		alert(ajax_return);
 		$("#" + id + "").empty().append(ajax_return);
 	});
 }
@@ -73,7 +73,7 @@ function search_ajax(controllers, params, id, page) {
 	var post_vars = set_ajax(params);
 	post_vars['page'] = page;
 	$.post(controllers, $.param(post_vars), function(ajax_return) {
-		alert(ajax_return);
+//		alert(ajax_return);
 			
 		$('#' + id).empty().append(ajax_return);
 	});
@@ -89,7 +89,7 @@ function update_ajax(controllers, params) {
 	post_vars['id'] = params;
 	var data = new Object();
 	$.post(controllers, $.param(post_vars), function(ajax_return) {
-		alert(ajax_return);
+//		alert(ajax_return);
 			
 		data = JSON.parse(ajax_return);
 		
