@@ -17,8 +17,45 @@ class Bill extends CI_Controller {
 	}
 	
 	/*
-	 * 推播帳單
+	 * 匯入入帳帳單
 	*/
+	public function import_receive() {
+		if(!file_exists('./resources/upload/receive_bill/' . $this->input->get('trader') . $this->input->get('bill_kind')))
+			mkdir('./resources/upload/receive_bill/' . $this->input->get('trader') . $this->input->get('bill_kind'));
+	
+		$config['upload_path'] = './resources/upload/receive_bill/' . $this->input->get('trader') . $this->input->get('bill_kind');
+		$config['allowed_types'] = 'csv';
+	
+		$this->load->library('upload', $config);
+	
+		if($this->upload->do_upload('bill_file') === false) {
+			$result = $this->upload->display_errors();
+		} else {
+			$result = $this->upload->data();
+		}
+	
+		session_start();
+		$this->load->model('web/bill_import_model');
+		$this->load->library('create');
+		$data['ajax'] = $this->bill_import_model->import_receive($result, $this->input->get(), $_SESSION['user']);
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 匯入入帳帳單頁面
+	 */
+	public function import_receive_web() {
+		$data = $this->param->resources(array('ajax_file_js'=>Param::$ajax_file_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data['class_name'] = 'bill';
+		$data['now_use'] = 'bill/bill_import.js';
+		$data['function_name'] = 'import_receive';
+		$this->load->view('templates/header', $data);
+		$this->load->view('web/bill/import_pay', $data);
+	}
+	
+	/*
+	 * 推播帳單
+	 */
 	public function push_bill() {
 		session_start();
 		$this->load->model('web/bill_model');

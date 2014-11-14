@@ -20,21 +20,22 @@ class Email_model extends CI_Model {
 		$config['protocol'] = 'smtp';
 		$config['mailtype'] = 'html';
 
-		switch($data['event']) {
-			case '':
-				;
-				break;
-					
-			default:
-				;
-				break;
-		}
-		
 		$this->email->initialize($config);
 		$this->email->from($email_form['send_email'], $email_form['send_name']);
 		$this->email->to($route_data['email']);
 		$this->email->subject($email_form['subject']);
-		$this->email->message(str_replace('$password', $route_data['password'], $email_form['body']));
+		
+		switch($data['event']) {
+			case '1':
+				$email_form['body'] = str_replace('$var1', $route_data['password'], $email_form['body']);
+				break;
+			case '4':
+				$email_form['body'] = str_replace('$var1', $route_data['problem'], $email_form['body']);
+				$email_form['body'] = str_replace('$var2', $route_data['response'], $email_form['body']);
+				break;		
+		}
+		
+		$this->email->message($email_form['body']);
 		$result = $this->email->send();
 
 		if($result == 1) {

@@ -31,24 +31,28 @@ class Option {
 
 		$html_string = $html_string . '</tr>';
 		
-		foreach ($result as $data) {
-			$html_string = $html_string . "<tr>";
-		
-			foreach ($data as $item => $value) {
-				switch ($item) {
-					case 'id':
-						$html_string = $html_string . "<td><a href='" . $url . "?id=" . $value . "'>$value</a></td>";
-						break;
-					default:
-						$html_string = $html_string . "<td>$value</td>";
-						break;
+		if(count($result)) {
+			foreach ($result as $data) {
+				$html_string = $html_string . "<tr>";
+			
+				foreach ($data as $item => $value) {
+					switch ($item) {
+						case 'id':
+							$html_string = $html_string . "<td><a href='" . $url . "?id=" . $value . "'>$value</a></td>";
+							break;
+						default:
+							$html_string = $html_string . "<td>$value</td>";
+							break;
+					}
 				}
+			
+				$html_string = $html_string . "</tr>";
 			}
-		
-			$html_string = $html_string . "</tr>";
+			
+			return $html_string . "</table>";
+		} else {
+			return $html_string . "</table><h3>查無資料<h3>";
 		}
-
-		return $html_string . "</table>";
 	}
 	
 	/*

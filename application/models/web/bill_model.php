@@ -2,6 +2,31 @@
 
 class Bill_model extends CI_Model {
 	/*
+	 * 查詢繳費帳單匯入紀錄列表
+	 * $post	web傳來的參數
+	 */
+	public function search_import_receive_log($post) {
+		if(strlen($post['trader']) > 4) $post['trader'] = '';
+		if(strlen($post['bill_kind']) > 2) $post['bill_kind'] = '';
+	
+		//查詢入帳帳單匯入紀錄列表筆數
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$batch_code), 'function'),
+																		 'from' => Table_1::$bill_import_log,
+																		 'join'=> '',
+																		 'where' => $this->sql->where_search(array(Field_1::$import_bill_kind), array(2)),
+																		 'other' => '')), 'num_rows');
+		$page_count = ceil($sql_result / 10);
+	
+		//查詢帳單列表
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$batch_code, Field_1::$year, Field_1::$month, Field_1::$import_time, Field_2::$file_name, 'IF (' . Field_1::$pushed . ' = "y", "是", "否") AS ' . Field_1::$pushed), 'function'),
+																		 'from' => Table_1::$bill_import_log,
+																		 'join'=> '',
+																		 'where' => $this->sql->where_search(array(Field_1::$import_bill_kind), array(2)),
+																		 'other' => $this->sql->other(array('limit'), array(array(10, ($post['page'] * 10) - 10))))), 'result_array');
+		return $this->option->table($sql_result, array('批次碼', '年份', '月份', '匯入時間', '檔案名稱', '是否已推播'), base_url() . Param::$index_url . 'bill/import_receive_web') . $this->option->page($page_count, $post['page']);
+	}
+	
+	/*
 	 * 推播帳單
 	 * $post web傳來的參數
 	 * $user 使用者
@@ -13,9 +38,11 @@ class Bill_model extends CI_Model {
 		if($push_data['import_bill_kind'] == 1) {
 			$read = Field_1::$read;
 			$gcm = 'gcm_2';
+			$event = 2;
 		} else {
 			$read = Field_3::$receive_read;
 			$gcm = 'gcm_3';
+			$event = 5;
 		}
 		
 		//查詢尚未推播的會員編號和帳單編號
@@ -59,7 +86,7 @@ class Bill_model extends CI_Model {
 		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
 			$route_data['sub_param'] = 1;
 			$route_data['id'] = $user['id'];
-			$this->push_model->bill_push($route_data, array('message' => $gcm, 'event' => 2, 'record' => '帳單推播_最新帳單推播通知', 'code' => '05'));
+			$this->push_model->bill_push($route_data, array('message' => $gcm, 'event' => $event, 'record' => '帳單推播_最新帳單推播通知', 'code' => '05'));
 			return 0;
 		} else {
 			return 1;

@@ -288,6 +288,10 @@ class Bill_model extends CI_Model {
 																		 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$trader_contract), array(Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$bill . '.' . Field_1::$trader_code . '=' . Table_1::$trader_contract . '.' . Field_1::$trader_code . ' AND ' . Table_1::$bill . '.' . Field_1::$bill_kind_code . '=' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code), array('', '', '')),
 																		 'where' => $this->sql->where(array('where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'or_where_in', 'where', 'where', 'where_not_in'), array(Field_1::$identify_data, Field_1::$bill_owner, Field_1::$data1, Field_1::$data2, Field_1::$data3, Field_1::$data4, Field_1::$data5, 'YEAR(NOW()) - YEAR(' . Field_2::$publish_time . ') =', 'MONTH(NOW()) - MONTH(' . Field_2::$publish_time . ') =', 'CONCAT(' . Table_1::$bill . '.' . Field_1::$trader_code . ',' . Table_1::$bill . '.' . Field_1::$bill_kind_code . ',' . Field_1::$identify_data . ')'), array($possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, $possible_data, 0, 0, $subscribe_code_list), array('')),
 																		 'other' => '')), 'result_array');
-		return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->filter_possible($possible_data, $sql_result)), $route_data['private_key'], ''));
+		if(isset($route_data['scheduling'])) {
+			return $this->filter_possible($possible_data, $sql_result);
+		} else {
+			return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($route_data['sub_param'], $this->filter_possible($possible_data, $sql_result)), $route_data['private_key'], ''));
+		}	
 	}
 }//end

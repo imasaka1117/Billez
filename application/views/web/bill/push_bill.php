@@ -21,8 +21,7 @@ var function_name = '<?=$function_name ?>';
 		<table cellpadding="10">
 			<tr>
 				<td>*推播種類 : </td>	
-				<td><select id="import_bill_kind" class="required"><option value="">請選擇</option><option value="1">繳費帳單</option></select></td>
-<!-- 			<option value="2">入帳帳單</option> -->
+				<td><select id="import_bill_kind" class="required"><option value="">請選擇</option><option value="1">繳費帳單</option><option value="2">入帳帳單</option></select></td>
 			</tr>
 		</table>
 	</div>

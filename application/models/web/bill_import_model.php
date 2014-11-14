@@ -2,10 +2,104 @@
 
 class Bill_import_model extends CI_Model {
 	/*
+	 * 匯入入帳帳單
+	 * $file	帳單檔案
+	 * $get		web傳來的參數
+	 * $user	使用者	
+	 */
+	public function import_receive($file, $get, $user) {
+		$get['import_kind'] = 2;
+		
+		$start = $this->pre_import_check($file, $get, $user);
+		
+		if($start !== true) return $start;
+		
+		//開啟檔案
+		$receive_bill = fopen(iconv("UTF-8", "BIG5", $file['full_path']), "r");
+		
+		//標題列
+		$title = $this->search_receive_set($get, fgets($receive_bill));
+		
+		//指標指向檔案起點
+		rewind($receive_bill);
+		
+		//標題欄位處理
+		$form = $this->title_handle($receive_bill, $title);
+
+		$file_data = fgetcsv($receive_bill);
+		$year = $file_data[$form['bill'][Field_1::$year]];
+		$month = $file_data[$form['bill'][Field_1::$month]];
+		
+		//查詢該次匯入的批次碼
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$batch_code), ''),
+																		 'from' => Table_1::$bill,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where', 'where', 'where'), array(Field_1::$year, Field_1::$month, Field_1::$trader_code, Field_1::$bill_kind_code), array($file_data[$form['bill'][Field_1::$year]], $file_data[$form['bill'][Field_1::$month]], $get['trader'], $get['bill_kind']), array('')),
+																		 'other' => '')), 'row_array');
+		$batch_code = $sql_result['batch_code'];
+		
+		//指標指向檔案起點
+		rewind($receive_bill);
+		$file_data = fgetcsv($receive_bill);
+		
+		//開始新增帳單
+		$result = $this->update_bill($receive_bill, $form, $user, $get);
+		
+		if($result === false) {
+			$this->import_error($file, $get, $user, '匯入出錯');
+			return json_encode(array('b6'=>'匯入出錯,請至錯誤紀錄查詢'), JSON_UNESCAPED_UNICODE);
+		}
+		
+		$this->sql->clear_static();
+		
+		//新增帳單匯入紀錄
+		$this->sql->add_static(array('table'=> Table_1::$bill_import_log,
+									 'select'=> $this->sql->field(array(Field_1::$batch_code, Field_1::$trader_code, Field_1::$bill_kind_code, Field_1::$import_bill_kind, Field_1::$year, Field_1::$month, Field_1::$import_time, Field_2::$file_name, Field_1::$pushed, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($batch_code, $get['trader'], $get['bill_kind'], $get['import_kind'], $year, $month, $this->sql->get_time(1), $file['file_name'], 'n', $user['id'], $this->sql->get_time(1), $user['id'], $this->sql->get_time(1))),
+									 'where'=> '',
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $user['id'], Table_1::$bill_import_log, '帳單匯入_新增帳單匯入紀錄', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $user['id'], Table_1::$bill_import_log, '帳單匯入_新增帳單匯入紀錄', $this->sql->get_time(1), '')),
+									 'kind'=> 1));
+		//執行
+		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));
+		return json_encode($result, JSON_UNESCAPED_UNICODE);
+	}
+	
+	/*
+	 * 更新帳單為已處理帳單
+	 * $receive_bill	帳單檔案
+	 * $form			匯入格式
+	 * $user			使用者資料
+	 * $get				業者帳單種類
+	 */
+	private function update_bill($receive_bill, $form, $user, $get) {
+		$bill_field = array(Field_2::$pay_state, Field_1::$update_user, Field_1::$update_time);
+		$bill_value = array('y', $user['id'], $this->sql->get_time(1));
+		$update_count = 0;
+
+		while($file_data = fgetcsv($receive_bill)) {
+			//更新帳單繳費狀態
+			$this->sql->add_static(array('table'=> Table_1::$bill,
+										 'select'=> $this->sql->field($bill_field, $bill_value),
+										 'where'=> $this->sql->where(array('where', 'where', 'where', 'where', 'where'), array(Field_1::$trader_code, Field_1::$bill_kind_code, Field_1::$identify_data, Field_1::$year, Field_1::$month), array($get['trader'], $get['bill_kind'], $file_data[$form['bill']['identify_data']], $file_data[$form['bill']['year']], $file_data[$form['bill']['month']]), array('', '', '', '', '')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $user['id'], Table_1::$bill, '帳單匯入_更新帳單為已繳費狀態' . $file_data[$form['bill']['identify_data']], $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $user['id'], Table_1::$bill, '帳單匯入_更新帳單為已繳費狀態' . $receive_bill[$form['bill']['identify_data']], $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+			$update_count++;
+		}
+		
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			return array('update'=>$update_count);
+		} else {
+			return false;
+		}
+	}
+	
+	/*
 	 * 匯入繳費帳單
 	 * $file	帳單檔案
 	 * $get		web傳來的參數
-	 * $user	使用者	return json_encode(array(''=>), JSON_UNESCAPED_UNICODE);
+	 * $user	使用者	
 	 */
 	public function import_pay($file, $get, $user) {
 		$get['import_kind'] = 1;
@@ -46,7 +140,7 @@ class Bill_import_model extends CI_Model {
 		
 		//新增帳單匯入紀錄
 		$this->sql->add_static(array('table'=> Table_1::$bill_import_log, 
-									 'select'=> $this->sql->field(array(Field_1::$batch_code, Field_1::$trader_code, Field_1::$bill_kind_code, Field_1::$import_bill_kind, Field_1::$year, Field_1::$month, Field_1::$import_time, Field_2::$file_name, Field_1::$pushed, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($result['batch_code'], $get['trader'], $get['bill_kind'], $get['import_kind'], $year, $month, $this->sql->get_time(1), $file['raw_name'], 'n', $user['id'], $this->sql->get_time(1), $user['id'], $this->sql->get_time(1))), 
+									 'select'=> $this->sql->field(array(Field_1::$batch_code, Field_1::$trader_code, Field_1::$bill_kind_code, Field_1::$import_bill_kind, Field_1::$year, Field_1::$month, Field_1::$import_time, Field_2::$file_name, Field_1::$pushed, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($result['batch_code'], $get['trader'], $get['bill_kind'], $get['import_kind'], $year, $month, $this->sql->get_time(1), $file['file_name'], 'n', $user['id'], $this->sql->get_time(1), $user['id'], $this->sql->get_time(1))), 
 									 'where'=> '', 
 									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $user['id'], Table_1::$bill_import_log, '帳單匯入_新增帳單匯入紀錄', $this->sql->get_time(1))), 
 									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $user['id'], Table_1::$bill_import_log, '帳單匯入_新增帳單匯入紀錄', $this->sql->get_time(1), '')), 
@@ -179,10 +273,10 @@ class Bill_import_model extends CI_Model {
 		foreach($sql_result as $action_id) {
 			//新增推播狀態
 			$this->sql->add_static(array('table'=> Table_1::$push_state,
-										 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$billez_code, Field_1::$read, Field_3::$receive_read, Field_1::$times, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($action_id, $insert_data['billez_code'], 'n', 'n', 0, $user['id'], $this->sql->get_time(1), $user['id'], $this->sql->get_time(1))),
-										 'where'=> $this->sql->where(array('where', 'where'), array(Field_1::$id, Field_3::$subscribe_code), array($action_id, $get['trader'] . $get['bill_kind'] . $insert_data['file_data'][$form[Field_1::$identify_data]]), array('', '')),
-										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $user['id'], Table_1::$push_state, '帳單匯入_新增推播狀態' . $action_id, $this->sql->get_time(1))),
-										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $user['id'], Table_1::$push_state, '帳單匯入_新增推播狀態' . $action_id, $this->sql->get_time(1), '')),
+										 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$billez_code, Field_1::$read, Field_3::$receive_read, Field_1::$times, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($action_id['id'], $insert_data['billez_code'], 'n', 'n', 0, $user['id'], $this->sql->get_time(1), $user['id'], $this->sql->get_time(1))),
+										 'where'=> $this->sql->where(array('where', 'where'), array(Field_1::$id, Field_3::$subscribe_code), array($action_id['id'], $get['trader'] . $get['bill_kind'] . $insert_data['file_data'][$form[Field_1::$identify_data]]), array('', '')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $user['id'], Table_1::$push_state, '帳單匯入_新增推播狀態' . $action_id['id'], $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $user['id'], Table_1::$push_state, '帳單匯入_新增推播狀態' . $action_id['id'], $this->sql->get_time(1), '')),
 										 'kind'=> 1));
 		}
 	}
@@ -338,7 +432,7 @@ class Bill_import_model extends CI_Model {
 		//用csv抓取標題
 		$csv_title = fgetcsv($pay_bill);
 		$csv_title_count = count($csv_title);
-
+		
 		//bill資料表對應
 		$bill_match = array();
 
@@ -363,6 +457,8 @@ class Bill_import_model extends CI_Model {
 				}
 			}
 		}
+
+		if(count($pay_place_match) == 0) return array('bill'=>$bill_match);
 
 		return array('bill'=>$bill_match, 'pay_place'=>$pay_place_match);
 	}
@@ -522,6 +618,34 @@ class Bill_import_model extends CI_Model {
 	}
 
 	/*
+	 * 查詢入帳帳單格式設定
+	 * $get	業者及帳單種類
+	 * $file_title	檔案標題
+	 */
+	private function search_receive_set($get, $file_title) {
+		//查詢該業者帳單繳費設定
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
+																		 'from' => Table_1::$trader_receive_bill_form,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$trader_code, Field_1::$bill_kind_code), array($get['trader'], $get['bill_kind']), array('', '')),
+																		 'other' => '')), 'row_array');
+		//若沒有則回傳尚未設定錯誤
+		if(!isset($sql_result['trader_code'])) {
+			return '尚未新增入帳帳單格式';
+		}
+	
+		foreach($sql_result as $item => $value) {
+			$byte_num = explode(',', $value);
+	
+			if(count($byte_num) == 1 || $byte_num[0] == '') continue;
+	
+			$titles[$item] 	= substr($file_title, $byte_num[0], $byte_num[1] - $byte_num[0] + 1 );
+		}
+	
+		return $titles;
+	}
+	
+	/*
 	 * 查詢繳費帳單格式設定
 	 * $get	業者及帳單種類
 	 * $file_title	檔案標題
@@ -595,7 +719,7 @@ class Bill_import_model extends CI_Model {
 		//新增匯入錯誤紀錄
 		$this->sql->add_static(array('table'=> Table_1::$import_error_log,
 				'select'=> $this->sql->field(array(Field_1::$trader_code, Field_1::$bill_kind_code, Field_2::$file_name, Field_2::$file_path, Field_2::$kind, Field_2::$reason, Field_2::$data, Field_2::$user, Field_2::$time, Field_2::$result),
-						array($get['trader'], $get['bill_kind'], $file['raw_name'], $file['full_path'], $get['import_kind'], $get['error_kind'], $error_data, $user['id'], $this->sql->get_time(1), 'n')),
+						array($get['trader'], $get['bill_kind'], $file['file_name'], $file['full_path'], $get['import_kind'], $get['error_kind'], $error_data, $user['id'], $this->sql->get_time(1), 'n')),
 				'where'=> '',
 				'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $user['id'], Table_1::$import_error_log, '繳費帳單匯入_新增匯入錯誤紀錄', $this->sql->get_time(1))),
 				'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $user['id'], Table_1::$import_error_log, '繳費帳單匯入_新增匯入錯誤紀錄', $this->sql->get_time(1), '')),

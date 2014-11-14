@@ -5,7 +5,6 @@ class Field_4 {
 	 * 整個資料庫的欄位名稱
 	 * 加進新的之前先查詢是否已經有現存的
 	 */
-	static public $push_300_time = 'push_300_time';
 	static public $get_file_time = 'get_file_time';
 	static public $possible_bill_time = 'possible_bill_time';
 	static public $error_list_time = 'error_list_time';

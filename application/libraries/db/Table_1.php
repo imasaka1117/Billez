@@ -38,7 +38,7 @@ class Table_1 {
 	static public $sms_state = 'sms_state';
 	static public $subscribe = 'subscribe';
 	static public $system_log = 'system_log';
-	static public $system_setting = 'system_setting';
+	static public $system_set = 'system_set';
 	static public $trader_bill = 'trader_bill';
 	static public $trader_code = 'trader_code';
 	static public $trader_contract = 'trader_contract';
@@ -50,4 +50,5 @@ class Table_1 {
 	static public $user_log = 'user_log';
 	static public $pay_kind_list = 'pay_kind_list';
 	static public $customer_publish_bill_form = 'customer_publish_bill_form';
+	static public $function_authority = 'function_authority';
 }

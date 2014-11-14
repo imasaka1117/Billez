@@ -59,6 +59,7 @@ class Push {
 		
 		//依照字符選擇要哪一種推播
 		foreach($uni_moblie_phone_id as $moblie_phone_id) {
+			sleep(1);
 			if(substr($moblie_phone_id, 0, 2) == 'AP') $this->gcm_push($moblie_phone_id, $message); else $this->apn_push($moblie_phone_id, $message);
 		}
 	}

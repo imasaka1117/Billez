@@ -166,7 +166,10 @@ class Sql {
 		$array = array();
 		
 		for($i = 0; $i < $count; $i++) {
-			if($value[$i] != '') array_push($array, array('command' => 'like', 'field' => $field[$i], 'value' => $value[$i], 'control' => 'both'));
+			if($value[$i] != '') {
+				if($field[$i] == 'table') array_push($array, array('command' => 'where', 'field' => $field[$i], 'value' => $value[$i], 'control' => ''));
+				array_push($array, array('command' => 'like', 'field' => $field[$i], 'value' => $value[$i], 'control' => 'both'));
+			}
 		}
 		
 		return $array;

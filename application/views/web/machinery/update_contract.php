@@ -58,7 +58,7 @@ var class_name = '<?=$class_name ?>';
 				<td><select id="bill_cost" class="required">
 						<option value="">請選擇 種類</option>
 						<option value="1">月租</option>
-						<option value="2">件計</option></select>
+						<option value="2">件計</option></select></td>
 			</tr>
 			<tr>
 				<td>*付款時間 :</td>
@@ -67,7 +67,7 @@ var class_name = '<?=$class_name ?>';
 						<option value="1">每週</option>
 						<option value="2">每月</option>
 						<option value="3">每年</option>
-						<option value="4">不固定</option></select>
+						<option value="4">不固定</option></select></td>
 			</tr>
 			<tr>	
 				<td>合約備註 :</td>

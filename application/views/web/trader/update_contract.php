@@ -76,7 +76,7 @@ var class_name = '<?=$class_name ?>';
 						<option value="1">每週</option>
 						<option value="2">每月</option>
 						<option value="3">每年</option>
-						<option value="4">不固定</option></select>
+						<option value="4">不固定</option></select></td>
 			</tr>
 			<tr>
 				<td>*帳單入帳時間種類 :</td>
@@ -85,14 +85,14 @@ var class_name = '<?=$class_name ?>';
 						<option value="1">每週</option>
 						<option value="2">每月</option>
 						<option value="3">每年</option>
-						<option value="4">不固定</option></select>
+						<option value="4">不固定</option></select></td>
 			</tr>
 			<tr>
 				<td>*帳單價格 :</td>
 				<td><select id="bill_price" class="required">
 						<option value="">請選擇 種類</option>
 						<option value="1">月租</option>
-						<option value="2">件計</option></select>
+						<option value="2">件計</option></select></td>
 	
 			</tr>
 			<tr>
@@ -102,7 +102,7 @@ var class_name = '<?=$class_name ?>';
 						<option value="1">每週</option>
 						<option value="2">每月</option>
 						<option value="3">每年</option>
-						<option value="4">不固定</option></select>
+						<option value="4">不固定</option></select></td>
 			</tr>
 			<tr>
 				<td>*寄送條件 :</td>
@@ -110,7 +110,7 @@ var class_name = '<?=$class_name ?>';
 						<option value="">請選擇   寄送種類</option>
 						<option value="1">實體不限次數寄送</option>
 						<option value="2">實體有限次數寄送</option>
-						<option value="3">只有實體帳單寄送</option></select>
+						<option value="3">只有實體帳單寄送</option></select></td>
 			</tr>
 			<tr>
 				<td>*是否寄送電子帳單 :</td>
@@ -123,7 +123,7 @@ var class_name = '<?=$class_name ?>';
 						<option value="1">每週</option>
 						<option value="2">每月</option>
 						<option value="3">每年</option>
-						<option value="4">不固定</option></select>
+						<option value="4">不固定</option></select></td>
 			</tr>
 			<tr>
 				<td>FTP 網路位置 : </td>
@@ -150,7 +150,7 @@ var class_name = '<?=$class_name ?>';
 				<td><textarea id="contract_remark" rows="5" cols="45"></textarea></td>
 			</tr>
 		</table>
-		<input type="button" id="insert_btn" value="新增" />
+		<input type="button" id="insert_btn" value="更改" /> <input type="button" value="返回" onclick="history.back()" />
 	</div>
 <div id="query_div">
 </div>
