@@ -98,3 +98,21 @@ function update_ajax(controllers, params) {
 	
 	return data;
 }
+
+/*
+ * 匯出資料使用
+ * 		controllers 是傳送位置
+ *  	data 		匯出所需要的條件資料
+ *  	method		傳送方法 post or get
+ */
+function export_ajax(controllers, data, method) {
+	var inputs = '';
+	
+	for(i in data) {
+		inputs += '<input type="hidden" name="'+ i +'" value="'+ data[i] +'" />';
+	}
+	
+	$('body').append('<form id="temp_ajax11111" action="'+ controllers +'" method="'+ method +'">'+inputs+'</form>');
+	
+	$('#temp_ajax11111').submit().remove();
+}

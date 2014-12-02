@@ -48,6 +48,8 @@ function insert() {
 		var ids = new Array('machinery', 'contract_name', 'ad_url', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'pay', 'pay_week', 'pay_month', 'pay_day', 'bill_cost', 'month_rent_price', 'entity_price', 'action_price', 'contract_remark');
 	}
 	
+	if(!date_compare()) return false;
+
 	var path = check_ajax(ajax_path + class_name + '/insert_contract', ids, new Array('新增成功', '該合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path !== '') location.reload(); 
 }
@@ -60,10 +62,25 @@ function update() {
 		var ids = new Array('id', 'machinery', 'contract_name', 'ad_url', 'contract_age', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day', 'pay', 'pay_week', 'pay_month', 'pay_day', 'bill_cost', 'month_rent_price', 'entity_price', 'action_price', 'contract_remark');
 	}
 	
+	if(!date_compare()) return false;
+	
 	var path = check_ajax(ajax_path + class_name + '/update_contract', ids, new Array('更改成功', '該帳單合約名稱已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path !== '') {
 		location.href = ajax_path + path; 
 	}
+}
+
+//比較合約日期的大小
+function date_compare() {
+	var begin = $('#begin_year').val() + '/' + $('#begin_month').val() + '/' + $('#begin_day').val();
+	var end = $('#end_year').val() + '/' + $('#end_month').val() + '/' + $('#end_day').val();
+	
+	if(Date.parse(begin) > Date.parse(end)) {
+		alert('合約開始日期大於結束日期');
+		return false;
+	}
+	
+	return true;
 }
 
 //初始化
@@ -104,7 +121,7 @@ function begin_end(year, month) {
 //帶入資料
 function init_update() {
 	data = update_ajax(ajax_path + class_name + '/search_contract_data', id);
-	
+	alert(data);
 	data_parse(data);
 	data_parse2(data);
 	data_parse3(data);

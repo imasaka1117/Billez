@@ -5,7 +5,11 @@ $(document).ready(function() {
 	init();
 
 	$("#search_btn").click(function() {
-		window.location.href = ajax_path + class_name + '/update_system_set_web?id=' + $('#name').val(); 
+		if($('#name').val() !== '') {
+			window.location.href = ajax_path + class_name + '/update_system_set_web?id=' + $('#name').val();
+		} else {
+			alert('未選擇設定名稱');
+		}
 	});
 });
 

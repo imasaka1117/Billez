@@ -143,16 +143,17 @@ class Subscribe_model extends CI_Model {
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('MAX(' . Field_1::$batch_code . ') AS max'), 'function'),
 																		 'from' => Table_1::$bill,
 																		 'join'=> '',
-																		 'where' => $this->sql->where(array('like'), array(Field_1::$billez_code), array($route_data['subscribe_code']), array('after')),
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$trader_code, Field_1::$bill_kind_code), array($trader_code, $bill_kind_code), array('', '')),
 																		 'other' => '')), 'row_array');
+		
 		//查詢該最新的帳單編號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$billez_code), ''),
 																		 'from' => Table_1::$bill,
 																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where', 'like'), array(Field_1::$batch_code, Field_1::$billez_code), array($sql_result['max'], $route_data['subscribe_code']), array('', 'after')),
+																		 'where' => $this->sql->where(array('where', 'where', 'where', 'where'), array(Field_1::$batch_code, Field_1::$trader_code, Field_1::$bill_kind_code, Field_1::$identify_data), array($sql_result['max'], $trader_code, $bill_kind_code, substr($route_data['subscribe_code'], 6)), array('', '', '', '')),
 																		 'other' => '')), 'row_array');
 		$billez_code = $sql_result['billez_code'];
-		
+
 		//新增推播狀態
 		$this->sql->add_static(array('table'=> Table_1::$push_state,
 									 'select'=> $this->sql->field(array(Field_1::$id, Field_1::$billez_code, Field_2::$time, Field_1::$read, Field_3::$receive_read, Field_1::$times, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($route_data['id'], $billez_code, $this->sql->get_time(1), 'n', 'n', 1, $route_data['id'], $this->sql->get_time(1), $route_data['id'], $this->sql->get_time(1))),

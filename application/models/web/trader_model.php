@@ -69,11 +69,11 @@ class Trader_model extends CI_Model {
 	public function search_trader_contract_data($post) {
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$trader_code . '.' . Field_1::$name . ' AS trader', Table_1::$trader_contract . '.' . Field_1::$name . ' AS contract_name', Field_4::$bill_ad_url . ' AS ad_url', Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind', Table_1::$bill_basis . '.' . Field_1::$name . ' AS bill_basis', Field_2::$machinery_code . ' AS machinery', Field_4::$machinery_contract, Field_2::$age . ' AS contract_age', 'YEAR(' . Field_2::$begin . ') AS begin_year', 'MONTH(' . Field_2::$begin . ') AS begin_month', 'DAY(' . Field_2::$begin . ') AS begin_day', 'YEAR(' . Field_2::$end . ') AS end_year', 'MONTH(' . Field_2::$end . ') AS end_month', 'DAY(' . Field_2::$end . ') AS end_day', Field_4::$publish, Field_4::$publish_week, Field_4::$publish_month, Field_4::$publish_day, Field_4::$enter, Field_4::$enter_week, Field_4::$enter_month, Field_4::$enter_day, Field_4::$bill_price_kind . ' AS bill_price', Field_4::$month_rent_price, Field_2::$entity_price, Field_2::$action_price, Field_4::$collection, Field_4::$collection_week, Field_4::$collection_month, Field_4::$collection_day, Field_3::$send_condition, Field_4::$send_condition_times, Field_4::$email_send . ' AS send_email', Field_4::$email_publish, Field_4::$email_publish_week, Field_4::$email_publish_month, Field_4::$email_publish_day, Field_4::$ftp_ip, Field_4::$ftp_account, Field_4::$ftp_password, Field_4::$ftp_path, Field_4::$ftp_receive_path, Field_4::$contract_remark), 'function'),
 																		 'from' => Table_1::$trader_contract,
-																		 'join' => $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$trader_bill, Table_1::$bill_basis, Table_1::$trader_machinery), array(Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_bill . '.' . Field_1::$trader_code . ' AND ' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$trader_bill . '.' . Field_4::$bill_basis_code . ' = ' . Table_1::$bill_basis . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_machinery . '.' . Field_1::$trader_code . ' AND ' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$trader_machinery . '.' . Field_1::$bill_kind_code), array('', '', '', '', '')),
+																		 'join' => $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code, Table_1::$trader_bill, Table_1::$bill_basis, Table_1::$trader_machinery), array(Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_bill . '.' . Field_1::$trader_code . ' AND ' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$trader_bill . '.' . Field_1::$bill_kind_code, Table_1::$trader_bill . '.' . Field_4::$bill_basis_code . ' = ' . Table_1::$bill_basis . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_machinery . '.' . Field_1::$trader_code . ' AND ' . Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$trader_machinery . '.' . Field_1::$bill_kind_code), array('', '', '', '', '')),
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($post['id']), array('')),
 																		 'other' => '')), 'row_array');
 		return json_encode($sql_result, JSON_UNESCAPED_UNICODE);
-	}
+	}	
 	
 	/*
 	 * 查詢業者合約列表
@@ -292,6 +292,8 @@ class Trader_model extends CI_Model {
 	 * $user	當前使用該系統者
 	 */
 	private function insert_trader_contract($post, $user) {
+		if(strlen($post['email_publish']) > 1) $post['email_publish'] = '';
+		
 		if(strlen($post['machinery']) == 2) {
 			//新增業者代收機構
 			$this->sql->add_static(array('table'=> Table_1::$trader_machinery,

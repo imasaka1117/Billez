@@ -2,17 +2,65 @@
 
 class Sms_model extends CI_Model {
 	/*
+	 * 寄發簡訊
+	 * $kind			要寄發的種類用此來判斷送出的內容	1 為認證碼 2為重複寄發認證碼 3為修改資料認證碼 4為修改資料重複認證碼 5為分享帳單 6為好友推薦
+	 * $mobile_phone	要寄發的手機號碼
+	 * $form			要發送的簡訊格式內容
+	 * $data			要傳送的資料
+	 * 回傳結果1 為成功 失敗為2
+	 */
+	public function sms($kind, $mobile_phone, $form, $data) {
+		include "resources/api/sms2.inc";
+		
+		//篩選種類
+		switch(kind) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 6:
+				$form['body'] = str_replace('$var1', $data, $form['body']);
+				break;
+			case 5:
+				$form['body'] = str_replace('$var1', $data['billez_code'], $form['body']);
+				$form['body'] = str_replace('$var2', $data['message'], $form['body']);
+				break;
+		}
+		
+		//與簡訊伺服器連線
+		$sms = new sms2();
+		$ret_code = $sms->create_conn($form['server_name'], $form['server_port'], 10, $form['account'], $form['password']);
+		$ret_msg = $sms->get_ret_msg();
+		
+		if($ret_code == 0) {
+			$send_code = $sms->send_text($mobile_phone, $form['body']);
+			$send_msg = $sms->get_ret_msg();
+			
+			if($send_code != 0) $result = $send_msg;
+			
+			$result = 1;
+		} else {
+			$result = $ret_msg;
+		}		
+		
+		$result = 1;
+		return $result;
+	}
+	
+	/* 
 	 * 更新資料及寄送認證碼簡訊
 	 * $route_data	所需參數
 	 * $authentication_code 要寄發的認證碼
 	 * $data	此次寄發參數資料陣列  包含 event 事件, success 成功回傳代碼  fail 失敗回傳代碼 
 	 */
 	public function send_sms($route_data, $send_data, $data) {
-		/*
-		 * 這裡待加入簡訊內容規格
-		 */
-		$sms_form = array();
-		$sms_result = $this->sms->send_sms(1, $route_data['mobile_phone'], $sms_form, $send_data);
+		//查詢目前使用的寄發認證碼簡訊規格
+		$sms_form = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$server_name, Field_2::$server_port, Field_2::$account, Field_1::$password, Field_2::$body), ''),
+																		 'from' => Table_1::$sms_form,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$state, Field_2::$form_kind), array('y', $data['event']), array('', '')),
+																		 'other' => '')), 'row_array');
+		$sms_result = $this->sms($data['event'], $route_data['mobile_phone'], $sms_form, $send_data);
 
 		//判斷失敗或成功及記錄失敗原因
 		if($sms_result == 1) {

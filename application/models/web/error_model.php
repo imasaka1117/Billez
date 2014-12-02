@@ -45,7 +45,7 @@ class Error_model extends CI_Model {
 		if(strlen($post['bill_kind']) > 2) $post['bill_kind'] = '';
 		if(strlen($post['import_kind']) > 1) $post['import_kind'] = '';
 		if(strlen($post['state']) > 1) $post['state'] = '';
-		if(strlen($post['time']) > 10) $post['time'] = '';
+		if(strlen($post['time']) > 10 || strlen($post['time']) == 9) $post['time'] = '';
 
 		//查詢帳單匯入錯誤列表筆數
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$time), ''),

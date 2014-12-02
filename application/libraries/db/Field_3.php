@@ -39,7 +39,6 @@ class Field_3 {
 	static public $range = 'range';
 	static public $way = 'way';
 	static public $level = 'level';
-	static public $person_list = 'person_list';
 	static public $authentication_code = 'authentication_code';
 	static public $sms_frequency = 'sms_frequency';
 	static public $authentication_code2 = 'authentication_code2';

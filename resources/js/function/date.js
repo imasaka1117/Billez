@@ -27,7 +27,7 @@ function option_days(day) {
 	
 	switch (day) {
 		case '2':
-			days = 29;
+			days = 28;
 			break;
 		case '4':
 		case '6':

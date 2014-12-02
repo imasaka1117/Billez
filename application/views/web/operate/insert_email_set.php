@@ -33,11 +33,11 @@
 			</tr>
 			<tr>
 				<td>帳號 : </td>
-				<td><input type="text" id="account" /></td>
+				<td><input type="text" id="account" class="word" /></td>
 			</tr>
 			<tr>
 				<td>密碼 : </td>
-				<td><input type="text" id="password" /></td>
+				<td><input type="text" id="password" class="word" /></td>
 			</tr>
 			<tr>
 				<td>*寄件者郵件 : </td>
@@ -45,14 +45,20 @@
 			</tr>
 			<tr>
 				<td>*寄件者姓名 : </td>
-				<td><input type="text" id="send_name" class="required" /></td>
+				<td><input type="text" id="send_name" class="word,required" /></td>
 			</tr>
 			<tr>
 				<td>*主旨 : </td>
 				<td><input type="text" id="subject" class="required" /></td>
 			</tr>
 			<tr>
-				<td>*內文 : <br />在資料處換上<br />$var1,$var2 以此類推<br />忘記密碼 : 1個<br />問題回報 : 2個<br />印刷業者 : 1個<br />電子帳單 : 1個</td>
+				<td>*內文 : <br />
+					在資料處換上<br />
+					$var1,$var2 以此類推<br />
+					忘記密碼 : 1個<br />
+					問題回報 : 2個<br />
+					印刷業者 : 1個<br />
+					電子帳單 : 1個</td>
 				<td><textarea id="body" rows="10" cols="50" class="required"></textarea></td>
 			</tr>
 		</table>

@@ -72,6 +72,36 @@ class Common extends CI_Controller {
 	}
 	
 	/*
+	 * 將簡訊設定名稱初始化
+	 */
+	public function init_sms_form_name() {
+		//查詢設定名稱
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$form_name . ' AS code',Field_2::$form_name . ' AS name'), 'function'),
+																		 'from' => Table_1::$sms_form,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, '');
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 將簡訊設定初始化
+	 */
+	public function init_sms_set() {
+		//查詢已啟用的簡訊設定
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$form_name), ''),
+																		 'from' => Table_1::$sms_form,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$state, Field_2::$form_kind), array('y', $this->input->post('value')), array('', '')),
+																		 'other' => '')), 'row_array');
+		if(isset($sql_result['form_name'])) {
+			$data['ajax'] = $sql_result['form_name'];
+			$this->load->view('web/ajax', $data);
+		}
+	}
+	
+	/*
 	 * 將電子郵件設定名稱初始化
 	 */
 	public function init_form_name() {

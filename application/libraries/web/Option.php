@@ -71,6 +71,8 @@ class Option {
 		$pre_page			= $show_page_down - 1;
 		$pre_flag			= true;
 	
+		if($page_count < $next_page) $next_flag = false;
+	
 		if($page_count < $show_page_up) {
 			$show_page_up = ($show_page_down - 1) + ($page_count % 10);
 			$next_flag = false;

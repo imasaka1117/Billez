@@ -5,7 +5,11 @@ $(document).ready(function() {
 	init();
 
 	$("#search_btn").click(function() {
-		window.location.href = ajax_path + class_name + '/update_email_set_web?id=' + $('#form_name').val(); 
+		if($('#form_name').val() !== '') {
+			window.location.href = ajax_path + class_name + '/update_email_set_web?id=' + $('#form_name').val(); 
+		} else {
+			alert('未選擇設定名稱');
+		}
 	});
 });
 

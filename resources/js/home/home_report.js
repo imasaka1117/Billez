@@ -13,4 +13,7 @@ function init_index() {
 //	$.post("/Billez/control/index_control.php", param, function(ajax_return) {
 //		$("#content_div").append(ajax_return);
 //	});
+//	
+
+
 }

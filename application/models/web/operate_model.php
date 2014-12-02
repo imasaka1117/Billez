@@ -114,6 +114,84 @@ class Operate_model extends CI_Model {
 	}
 	
 	/*
+	 * 新增簡訊設定
+	* $post 新增資料
+	* $user 使用者
+	*/
+	public function insert_sms_set($post, $user) {
+		//檢查名稱是否存在
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$form_name), ''),
+																		 'from' => Table_1::$sms_form,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_2::$form_name), array($post['form_name']), array('')),
+																		 'other' => '')), 'num_rows');
+		//若存在則回傳錯誤訊息
+		if($sql_result) return 1;
+	
+		//新增簡訊設定
+		$this->sql->add_static(array('table'=> Table_1::$sms_form,
+									 'select'=> $this->sql->field(array(Field_2::$form_name, Field_2::$form_kind, Field_1::$state, Field_2::$server_name, Field_2::$server_port, Field_2::$account, Field_1::$password, Field_2::$body, Field_1::$create_user, Field_1::$create_time, Field_1::$update_user, Field_1::$update_time), array($post['form_name'], $post['form_kind'], 'n', $post['server_name'], $post['server_port'], $post['account'], $post['password'], $post['body'], $user['id'], $this->sql->get_time(1), $user['id'], $this->sql->get_time(1))),
+									 'where'=> '',
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(1, $user['id'], Table_1::$sms_form, '新增簡訊設定_新增簡訊設定', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(1, $user['id'], Table_1::$sms_form, '新增簡訊設定_新增簡訊設定', $this->sql->get_time(1), '')),
+									 'kind'=> 1));
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			return 'reload';
+		} else {
+			return 2;
+		}
+	}
+	
+	/*
+	 * 查詢簡訊設定資料
+	* $post 資料
+	*/
+	public function search_sms_set_data($post) {
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$form_name, Field_2::$form_kind, Field_1::$state, Field_2::$server_name, Field_2::$server_port, Field_2::$account, Field_1::$password, Field_2::$body), ''),
+																		 'from' => Table_1::$sms_form,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_2::$form_name), array($post['id']), array('')),
+																		 'other' => '')), 'row_array');
+		return json_encode($sql_result, JSON_UNESCAPED_UNICODE);
+	}
+	
+	/*
+	 * 更新簡訊設定
+	* $post 更新資料
+	* $user 使用者
+	*/
+	public function update_sms_set($post, $user) {
+		if($post['state'] == 'y') {
+			//先將該種類啟用更改為不啟用
+			$this->sql->add_static(array('table'=> Table_1::$sms_form,
+										 'select'=> $this->sql->field(array(Field_1::$state), array('n')),
+										 'where'=> $this->sql->where(array('where'), array(Field_2::$form_kind), array($post['form_kind']), array('')),
+										 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $user['id'], Table_1::$sms_form, '查詢簡訊設定_更改種類設定為不啟用', $this->sql->get_time(1))),
+										 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $user['id'], Table_1::$sms_form, '查詢簡訊設定_更改種類設定為不啟用', $this->sql->get_time(1), '')),
+										 'kind'=> 2));
+			//執行
+			if(!$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+				return 1;
+			}
+		}
+	
+		//更新簡訊設定
+		$this->sql->add_static(array('table'=> Table_1::$sms_form,
+									 'select'=> $this->sql->field(array(Field_2::$form_kind, Field_1::$state, Field_2::$server_name, Field_2::$server_port, Field_2::$account, Field_1::$password, Field_2::$body, Field_1::$update_user, Field_1::$update_time), array($post['form_kind'],$post['state'], $post['server_name'], $post['server_port'], $post['account'], $post['password'], $post['body'], $user['id'], $this->sql->get_time(1))),
+									 'where'=> $this->sql->where(array('where'), array(Field_2::$form_name), array($post['form_name']), array('')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $user['id'], Table_1::$sms_form, '查詢簡訊設定_更新簡訊設定', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $user['id'], Table_1::$sms_form, '查詢簡訊設定_更新簡訊設定', $this->sql->get_time(1), '')),
+									 'kind'=> 2));
+		//執行
+		if($this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind))) {
+			return 'reload';
+		} else {
+			return 1;
+		}
+	}
+	
+	/*
 	 * 新增系統設定
 	 * $post 新增資料
 	 * $user 使用者

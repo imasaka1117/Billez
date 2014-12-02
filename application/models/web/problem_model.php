@@ -94,7 +94,7 @@ class Problem_model extends CI_Model {
 	public function search($post) {	
 		if(strlen($post['state']) > 1) $post['state'] = '';
 		if(strlen($post['scope']) > 1) $post['scope'] = '';
-		if(strlen($post['ask_time']) > 10) $post['ask_time'] = '';
+		if(strlen($post['ask_time']) > 10 || strlen($post['ask_time']) == 9) $post['ask_time'] = '';
 
 		//查詢問題列表筆數
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),

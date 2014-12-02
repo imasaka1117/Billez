@@ -102,13 +102,15 @@ class Activity_model extends CI_Model {
 																		 'other' => '')), 'row_array');
 		$name = $sql_result['last_name'] . $sql_result['first_name'];
 		
+		//查詢目前使用的寄發認證碼簡訊規格
+		$sms_form = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$server_name, Field_2::$server_port, Field_2::$account, Field_1::$password, Field_2::$body), ''),
+																	   'from' => Table_1::$sms_form,
+																	   'join'=> '',
+																	   'where' => $this->sql->where(array('where', 'where'), array(Field_1::$state, Field_2::$form_kind), array('y', 6), array('', '')),
+																	   'other' => '')), 'row_array');
 		//寄發推薦簡訊
 		foreach($mobile_phone_list_3rd as $mobile_phone) {
-			/*
-			 * 這裡待加入簡訊內容規格
-			 */
-			$sms_form = array();
-			$sms_result = $this->sms->send_sms(3, $mobile_phone, $sms_form, $name);
+			$sms_result = $this->sms_model->sms(6, $mobile_phone, $sms_form, $name);
 				
 			if($sms_result == 1) {
 				$result = 1;

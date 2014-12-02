@@ -15,6 +15,7 @@
  * digits		整數
  * creditcard	信用卡號
  * mobile		手機號碼
+ * word			只能輸入數字和中文和英文和底線
  * 
  * 錯誤訊息可以自己更改 搜尋message即可找到修改處
  * required: "不可空白",
@@ -26,6 +27,7 @@
  * digits: "只能填入數字(不可有小數點)",
  * creditcard: "信用卡號要16位數",	
  * mobile: "必須是09開頭且只有10位數"
+ * word: "有非法字元"
  * 
  * 增加驗證使用方式
  * 1.查詢validate函式 新增一個陣列 ex : kind.mobile = new Array('mobile');
@@ -59,6 +61,7 @@ function validate() {
 	kind.digits = new Array('digits');
 	kind.creditcard = new Array('creditcard');
 	kind.mobile = new Array('mobile');
+	kind.word = new Array('word');
 	kind.required = new Array('required');
 	
 	//蒐集所有元素ID
@@ -126,10 +129,36 @@ function handle(kind) {
 			case 'mobile':
 				validate_mobile(kind[i], message);
 				break;
+			case 'word':
+				validate_word(kind[i], message);
+				break;
 			case 'required':
 				validate_required(kind[i], message);
 				break;		
 		}
+	}
+}
+
+/**
+ * 文字驗證
+ * @param id		元素ID
+ * @param message	錯誤訊息
+ */
+function validate_word(id, message) {
+	id.shift();
+	
+	var reg_1 = /[^\u4E00-\u9FA5]/g;
+	var reg_2 = /[^\W]/g;
+	reg = new RegExp(reg_2);
+	
+	for(j in id) {
+		var match = $('#' + id[j]).val().match(reg_1);
+		
+		var char = '';
+
+		for(i in match) char += match[i];
+
+		mult_validate_check(id[j], message, reg, char);
 	}
 }
 
@@ -175,6 +204,24 @@ function validate_url(id, message) {
 	id.shift();
 	reg = new RegExp("^[http://]");
 	validate_check(id, message, reg);
+}
+
+/**
+ * 多重驗證確認資料及顯示錯誤訊息
+ * @param id		元素ID
+ * @param message	錯誤訊息
+ * @param reg		正規表達式
+ * @param char		篩選出來的字元
+ */
+function mult_validate_check(id, message, reg, char) {
+	if($('#' + id + '1').attr('id') == undefined) $('#' + id + '').after('<span id="' + id + '1" style="color:red"></span>');
+
+	if(reg.test(char) == false) {
+		if($('#' + id).val() !== '') $('#' + id + '1').text(message);
+		if(char === '') $('#' + id + '1').empty();
+	} else if ($('#' + id + '1').text() == message) {
+		$('#' + id + '1').empty();
+	}
 }
 
 /**
@@ -235,6 +282,8 @@ function get_message(kind) {
 			return '信用卡號要16位數且只能填入數字';
 		case 'mobile':
 			return '必須為09開頭且為10位數';
+		case 'word':
+			return '有非法字元';
 		case 'required':
 			return '不可空白';		
 	}
@@ -273,10 +322,3 @@ function classify(kind, id) {
 	
 	return kind;
 }
-		
-		
-		
-		
-		
-		
-		

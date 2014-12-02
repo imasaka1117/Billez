@@ -25,7 +25,7 @@ var level_value = '<?=$level_value ?>';
 			</tr>
 			<tr>
 				<td>*業者名稱 :</td>
-				<td><input type="text" id="name" size="20" class="required" /></td>
+				<td><input type="text" id="name" size="20" class="word,required" /></td>
 			</tr>
 			<tr>
 				<td>*聯絡電話 :</td>
@@ -43,14 +43,14 @@ var level_value = '<?=$level_value ?>';
 				<td>*聯絡地址 :</td>
 				<td><select id="city" class="required" ></select><br />
 					<select id="district" class="required"><option value="">請選擇 鎮/區</option></select><br />
-					<input type="text" id="address" size="50" class="required" /></td>
+					<input type="text" id="address" size="50" class="word,required" /></td>
 			</tr>
 			<tr>
 				<th>主要聯絡人</th>
 			</tr>
 			<tr>
 				<td>*姓名 : </td>
-				<td><input type="text" id="main_contact_name" size="20" class="required" /></td>
+				<td><input type="text" id="main_contact_name" size="20" class="word,required" /></td>
 			</tr>
 			<tr>
 				<td>*電話 : </td>
@@ -65,7 +65,7 @@ var level_value = '<?=$level_value ?>';
 			</tr>
 			<tr>
 				<td>*姓名 : </td>
-				<td><input type="text" id="second_contact_name" size="20" class="required" /></td>
+				<td><input type="text" id="second_contact_name" size="20" class="word,required" /></td>
 			</tr>
 			<tr>
 				<td>*電話 : </td>

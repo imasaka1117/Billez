@@ -20,20 +20,28 @@ var class_name = '<?=$class_name ?>';
 				<th>目前啟用名稱 : </th>	
 			</tr>
 			<tr>
-				<td>忘記密碼 : </td>	
-				<td><span id="forget_password" style="color: red"></span></td>
+				<td>加入會員認證碼 : </td>	
+				<td><span id="join" style="color: red"></span></td>
 			</tr>
 			<tr>
-				<td>電子帳單 : </td>	
-				<td><span id="email_bill" style="color: red"></span></td>
+				<td>重複寄發加入會員認證碼 : </td>	
+				<td><span id="re_join" style="color: red"></span></td>
 			</tr>
 			<tr>
-				<td>印刷業者 : </td>	
-				<td><span id="print_trader" style="color: red"></span></td>
+				<td>修改資料認證碼 : </td>	
+				<td><span id="alter" style="color: red"></span></td>
 			</tr>
 			<tr>
-				<td>問題回報 : </td>	
-				<td><span id="problem_reply" style="color: red"></span></td>
+				<td>重複寄發修改資料認證碼 : </td>	
+				<td><span id="re_alter" style="color: red"></span></td>
+			</tr>
+			<tr>
+				<td>分享帳單 : </td>	
+				<td><span id="share" style="color: red"></span></td>
+			</tr>
+			<tr>
+				<td>推薦好友 : </td>	
+				<td><span id="friend" style="color: red"></span></td>
 			</tr>			
 		</table>
 		<table cellpadding="10">

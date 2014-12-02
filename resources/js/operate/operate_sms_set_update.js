@@ -12,15 +12,15 @@ $(document).ready(function() {
              
 //更新問題
 function update() {
-	var path = check_ajax(ajax_path + class_name + '/update_email_set', 
-						  new Array('form_name', 'form_kind', 'state', 'server_name', 'server_port', 'account', 'password', 'send_email', 'send_name', 'subject', 'body'), 
+	var path = check_ajax(ajax_path + class_name + '/update_sms_set', 
+						  new Array('form_name', 'form_kind', 'state', 'server_name', 'server_port', 'account', 'password', 'body'), 
 						  new Array('更改成功', '伺服器忙碌中！！請在試一次'));
-	if(path !== '') window.location.href = ajax_path + class_name + '/search_email_set_web	'; 
+	if(path !== '') window.location.href = ajax_path + class_name + '/search_sms_set_web	'; 
 }
 
 //初始化
 function init() {
-	data = update_ajax(ajax_path + class_name + '/search_email_set_data', id);
+	data = update_ajax(ajax_path + class_name + '/search_sms_set_data', id);
 	
 	for(i in data) {
 		if(data[i] != null) $('#' + i).val(data[i]);

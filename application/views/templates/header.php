@@ -70,9 +70,9 @@
 			</li>
 			<li><a href="#">促銷優惠</a>
 				<ul>
-					<li><span href="<?=$index_url ?>">新增促銷優惠</a></li>
-					<li><span href="<?=$index_url ?>">查詢促銷優惠</a></li>
-					<li><span href="<?=$index_url ?>">寄發電子報</a></li>
+					<li><a href="<?=$index_url ?>promo/insert_web">新增促銷優惠</a></li>
+					<li><a href="<?=$index_url ?>promo/search_web">查詢促銷優惠</a></li>
+					<li><a href="<?=$index_url ?>promo/send_web">寄發電子報</a></li>
 				</ul>
 			</li>
 			<li><a href="#">問題記錄</a>
@@ -95,8 +95,8 @@
 					<li><a href="<?=$index_url ?>operate/search_operate_web">查詢操作</a></li>
 					<li><a href="<?=$index_url ?>operate/insert_email_set_web">新增電子郵件設定</a></li>
 					<li><a href="<?=$index_url ?>operate/search_email_set_web">查詢電子郵件設定</a></li>
-					<li><span href="<?=$index_url ?>operate/insert_sms_set_web">新增簡訊設定</a></li>
-					<li><span href="<?=$index_url ?>operate/search_sms_set_web">查詢簡訊設定</a></li>
+					<li><a href="<?=$index_url ?>operate/insert_sms_set_web">新增簡訊設定</a></li>
+					<li><a href="<?=$index_url ?>operate/search_sms_set_web">查詢簡訊設定</a></li>
 					<li><a href="<?=$index_url ?>operate/insert_system_set_web">新增系統設定</a></li>
 					<li><a href="<?=$index_url ?>operate/search_system_set_web">查詢系統設定</a></li>
 					<li><a href="<?=$index_url ?>operate/scheduling_set_web">排程設定</a></li>

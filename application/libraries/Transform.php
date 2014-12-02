@@ -6,6 +6,44 @@ class Transform {
 	 */
 
 	/*
+	 * 促銷活動範圍
+	 */
+	public function promo_range($code) {
+		switch ($code) {
+			case 1:
+				$code = '行動會員';
+				break;
+			case 2:
+				$code = '業者';
+				break;
+			case 3:
+				$code = '代收機構';
+				break;
+		}
+	
+		return $code;
+	}
+	
+	/*
+	 * 促銷活動優惠種類
+	 */
+	public function promo_way($code) {
+		switch ($code) {
+			case 1:
+				$code = '贈品';
+				break;
+			case 2:
+				$code = '現金減免';
+				break;
+			case 3:
+				$code = '點數';
+				break;
+		}
+	
+		return $code;
+	}
+	
+	/*
 	 * 帳單匯入種類
 	 */
 	public function import_bill_kind($code) {

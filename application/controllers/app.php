@@ -41,7 +41,6 @@ class App extends CI_Controller {
 			case '1':
 			case '5':
 				$this->load->library('push');
-				$this->load->library('sms');
 				$this->load->model('send/push_model');
 				$this->load->model('send/sms_model');
 		
@@ -61,7 +60,6 @@ class App extends CI_Controller {
 				break;
 			case '3':
 				$this->load->library('create');
-				$this->load->library('sms');
 				$this->load->model('send/sms_model');
 				$this->load->model('app/alter_model');
 				break;
@@ -84,7 +82,7 @@ class App extends CI_Controller {
 				$this->load->model('app/memorandum_model');
 				break;
 			case '10':
-				$this->load->library('sms');
+				$this->load->model('send/sms_model');
 				$this->load->model('app/activity_model');
 				break;
 			case '11':

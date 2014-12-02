@@ -120,7 +120,7 @@ class Push {
 	public function gcm_push($token, $message) {
 		//google api key
 		$google_api_key = 'AIzaSyBYJOblFP9_L96Ws8WumtMdqOcT3y7gkqY';
-		
+
 		//傳送欄位,資料內容和要push的手機ID
 		$fields = array('registration_ids' => array($token), 'data' => array( 'message' => $message));
 		

@@ -2,22 +2,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="application/html; charset=utf-8" />
-<script type="text/javascript" src="resources/js/function/jQuery 1.11.0.min.js"></script>
 <script type="text/javascript">
 
-$(document).ready(function() {
-});
-
 function comp() {
-	var data = $('#userfile').val();
+	
+	var data = document.getElementById('userfile').value;
 	var array = data.split(',');
 	var html = '';
 	
 	for(var i in array) {
 		html += array[i] + ': start => ' + data.indexOf(array[i]) + '... end => ' + (data.indexOf(array[i]) + array[i].length - 1) + '<br />';
 	}
-	
-	$('#query_div').append(html);
+
+	document.getElementById('query_div').innerHTML = html;
+
 	
 }
 
@@ -61,7 +59,24 @@ function comp() {
 
 // echo array_keys($b, 3)[0];
 
+/* Socket to Air Server IP ,Port */
 
+// include "sms2.inc";
+
+// $server_ip = '202.39.54.130';
+// $server_port = 8000;
+// $TimeOut=10;
+
+// $user_acc  = "acc";
+// $user_pwd  = "pwd";
+// $mobile_number= "";
+// $message= "hiAir簡訊測試";
+
+
+// /*建立連線*/
+// $mysms = new sms2();
+// $ret_code = $mysms->create_conn($server_ip, $server_port, $TimeOut, $user_acc, $user_pwd);
+// $ret_msg = $mysms->get_ret_msg();
 
 
 

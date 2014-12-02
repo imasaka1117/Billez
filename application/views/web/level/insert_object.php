@@ -17,7 +17,7 @@
 		<table cellpadding="10">
 			<tr>
 				<td>*等級對象名稱 : </td>
-				<td><input type="text" id="name" size="20" class="required" /></td>
+				<td><input type="text" id="name" size="20" class="word,required" /></td>
 			</tr>
 		</table>
 		<input type="button" id="insert_btn" value="新增" />
