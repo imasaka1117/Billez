@@ -15,6 +15,7 @@ class App extends CI_Controller {
 		$this->load->library('db/field_2');
 		$this->load->library('db/field_3');
 		$this->load->library('db/field_4');
+		$this->load->library('db/field_5');
 		$this->load->library('db/table_1');
 		$this->load->library('key');
 		$this->load->library('json');
@@ -93,8 +94,15 @@ class App extends CI_Controller {
 				break;
 		}
 		
-		if($route_data['control_param'] != 0) $data['response'] = $this->$function[$route_data['control_param']]->index($route_data);
+		if($route_data['control_param'] != 0) {
+			$data['response'] = $this->$function[$route_data['control_param']]->index($route_data);
+			$this->route_model->insert_temp_return($data['response']);
+		}
 
+// 		if(!isset($_REQUEST['retry'])) {
+// 			sleep(20);
+// 		}
+		
 		//將要回應給APP的結果載入view輸出
 		$this->load->view('app/response.php', $data);
 	}

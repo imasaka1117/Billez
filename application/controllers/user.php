@@ -17,61 +17,70 @@ class User extends CI_Controller {
 	}
 	
 	/*
-	 * 
+	 * 更新使用者(修改過) 
 	 */
 	public function update() {
+
 		session_start();
-		$this->load->model('web/problem_model');
-		$this->load->model('send/email_model');
-		$this->load->library('email');
-		$data['ajax'] = $this->problem_model->update($this->input->post(), $_SESSION['user']);
+		$this->load->model('web/user_model');
+
+		$data['ajax'] = $this->user_model->update($this->input->post(), $_SESSION['user']);
 		$this->load->view('web/ajax', $data);
 	}
 	
 	/*
-	 *
+	 * 查詢使用者資料(修改過)
 	 */
 	public function search_data() {
-		$this->load->model('web/problem_model');
-		$data['ajax'] = $this->problem_model->search_data($this->input->post());
+		$this->load->model('web/user_model');
+		$data['ajax'] = $this->user_model->search_data($this->input->post());
 		$this->load->view('web/ajax', $data);
 	}
 	
 	/*
-	 *
+	 * 更改使用者頁面(修改過)
 	 */
 	public function update_web() {
-		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'problem/problem_update.js';
-		$data['class_name'] = 'problem';
+		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 
+											   'base_css'=>Param::$base_css, 
+				                               'js_path'=>Param::$js_path, 
+				                               'jquery_js'=>Param::$jquery_js, 
+				                               'function_js'=>Param::$function_js, 
+				                               'index_url'=>Param::$index_url));
+		$data['now_use'] = 'user/user_update.js';
+		$data['class_name'] = 'user';
 		$data['id'] = $this->input->get('id');
 		$this->load->view('templates/header', $data);
-		$this->load->view('web/problem/update', $data);
+		$this->load->view('web/user/update', $data);
 	}
 	
 	/*
-	 * 
+	 * 查詢使用者(修改過)
 	 */
 	public function search() {
-		$this->load->model('web/problem_model');
+		$this->load->model('web/user_model');
 		$this->load->library('web/option');
-		$data['ajax'] = $this->problem_model->search($this->input->post());
+		$data['ajax'] = $this->user_model->search($this->input->post());
 		$this->load->view('web/ajax', $data);
 	}
 	
 	/*
-	 * 
+	 * 查詢使用者頁面
 	 */
 	public function search_web() {
-		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'problem/problem_search.js';
-		$data['class_name'] = 'problem';
+		$data = $this->param->resources(array('base_css'=>Param::$base_css, 
+				                               'js_path'=>Param::$js_path, 
+				                               'jquery_js'=>Param::$jquery_js, 
+				                               'function_js'=>Param::$function_js, 
+				                               'index_url'=>Param::$index_url));
+		$data['now_use'] = 'user/user_search.js';
+		$data['class_name'] = 'user';
 		$this->load->view('templates/header', $data);
-		$this->load->view('web/problem/search', $data);
+		$this->load->view('web/user/search', $data);
 	}
 	
 	/*
-	 * 
+	 * 輸入使用者
 	 */
 	public function insert() {
 		session_start();
@@ -82,10 +91,15 @@ class User extends CI_Controller {
 	}
 	
 	/*
-	 *
+	 * 輸入使用者頁面
 	 */
 	public function insert_web() {
-		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 
+				                               'base_css'=>Param::$base_css, 
+				                               'js_path'=>Param::$js_path, 
+				                               'jquery_js'=>Param::$jquery_js, 
+				                               'function_js'=>Param::$function_js, 
+				                               'index_url'=>Param::$index_url));
 		$data['now_use'] = 'user/user_insert.js';
 		$data['class_name'] = 'user';
 		$this->load->view('templates/header', $data);

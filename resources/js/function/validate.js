@@ -148,7 +148,7 @@ function validate_word(id, message) {
 	id.shift();
 	
 	var reg_1 = /[^\u4E00-\u9FA5]/g;
-	var reg_2 = /[^\W]/g;
+	var reg_2 = /^[a-zA-z0-9]+$/;
 	reg = new RegExp(reg_2);
 	
 	for(j in id) {
@@ -214,9 +214,10 @@ function validate_url(id, message) {
  * @param char		篩選出來的字元
  */
 function mult_validate_check(id, message, reg, char) {
+	
 	if($('#' + id + '1').attr('id') == undefined) $('#' + id + '').after('<span id="' + id + '1" style="color:red"></span>');
 
-	if(reg.test(char) == false) {
+	if(reg.test(char) == false) {		
 		if($('#' + id).val() !== '') $('#' + id + '1').text(message);
 		if(char === '') $('#' + id + '1').empty();
 	} else if ($('#' + id + '1').text() == message) {

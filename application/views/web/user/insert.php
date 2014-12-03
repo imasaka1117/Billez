@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Billez 新增等級名稱</title>
+<title>Billez 新增使用者名稱</title>
 <meta http-equiv="Content-Type" content="application/html; charset=utf-8" />
 <link type="text/css" rel="stylesheet" href="<?=$base_css ?>" />
 <script type="text/javascript" src="<?=$jquery_js ?>"></script>
@@ -15,25 +15,25 @@
 </head>
 <body>
 	<div id="content_div">
-		<p class="title_p">新增等級名稱</p>
+		<p class="title_p">新增使用者</p>
 		<h4 id="tip_h4" style="color:red">* 號為必填</h4>
 		<table cellpadding="10">
 			<tr>
-				<td>*電子郵件: </td>
-				<td><input type="text" id="email" class="required,email"/></td>
+				<td>*名稱 : </td>
+				<td><input type="text" id="name" class="word,required"/></td>
 			</tr>
 			<tr>
 				<td>*密碼 : </td>
-				<td><input type="text" id="password" class="required"/></td>
+				<td><input type="text" id="password" class="word,required"/></td>
 			</tr>
 			<tr>
-				<td>*名稱 : </td>
-				<td><input type="text" id="name" class="required"/></td>
+				<td>*電子郵件 : </td>
+				<td><input type="text" id="email" class="required,email"/></td>
 			</tr>
 			<tr>
 				<td>*類型 : </td>
-				<td><select name="kind" size="0" class="required">
-					<option value="0">請選擇</option>
+				<td><select id="kind" name="kind" size="0" class="required">
+					<option value="">請選擇</option>
 					<option value="1">OP</option>
 					<option value="2">客服</option>
 					<option value="3">管理者</option>
@@ -55,7 +55,7 @@
 			<tr>
 				<td></td>
 				<td>
-					<input type="checkbox" name="function_authority" id="insert_trader" value="y" checked="checked"/>新增業者
+					<input type="checkbox" name="function_authority" id="insert_trader" value="y" />新增業者
 					<input type="checkbox" name="function_authority" id="insert_trader_contract" value="y" />新增業者合約
 					<input type="checkbox" name="function_authority" id="search_trader" value="y" />查詢業者
 				</td>
@@ -63,7 +63,7 @@
 			<tr>
 				<td></td>
 				<td>
-					<input type="checkbox" name="function_authority" id="search_trader_contract" value="y" checked="checked"/>查詢業者合約
+					<input type="checkbox" name="function_authority" id="search_trader_contract" value="y" />查詢業者合約
 					<input type="checkbox" name="function_authority" id="export_trader" value="y" />匯出業者
 					<input type="checkbox" name="function_authority" id="export_trader_report" value="y" />匯出業者報表
 				</td>
@@ -72,8 +72,8 @@
 				<td></td>
 				<td>
 					<input type="checkbox" name="function_authority" id="insert_machinery" value="y"/>新增代收機構
-					<input type="checkbox" name="function_authority" id="insert_machinery_contract" value="y" checked="checked"/>新增代收機構合約
-					<input type="checkbox" name="function_authority" id="search_machinery" value="y" checked="checked"/>查詢代收機構
+					<input type="checkbox" name="function_authority" id="insert_machinery_contract" value="y" />新增代收機構合約
+					<input type="checkbox" name="function_authority" id="search_machinery" value="y" />查詢代收機構
 				</td>
 			</tr>
 			<tr>

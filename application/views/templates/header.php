@@ -104,8 +104,8 @@
 			</li>
 			<li><a href="#">作業人員</a>
 				<ul>
-					<li><span href="<?=$index_url ?>user/insert_web">新增使用者</a></li>
-					<li><span href="<?=$index_url ?>user/search_web">查詢使用者</a></li>
+					<li><a href="<?=$index_url ?>user/insert_web">新增使用者</a></li>
+					<li><a href="<?=$index_url ?>user/search_web">查詢使用者</a></li>
 				</ul>
 			</li>
 			<li><a href="<?=$index_url ?>" onclick="javascript : return confirm('確定要登出嗎?');">登出系統</a></li>
