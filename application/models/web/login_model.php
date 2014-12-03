@@ -10,7 +10,7 @@ class Login_model extends CI_Model {
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id, Field_1::$name, Field_2::$kind), ''),
 																		 'from' => Table_1::$user_list,
 																		 'join'=> '',
-																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$email, Field_1::$password), array($post['login_email'], $post['login_password']), array('')),
+																		 'where' => $this->sql->where(array('where', 'where'), array(Field_1::$email, Field_1::$password), array($post['login_email'], md5($post['login_password'])), array('', '')),
 																		 'other' => '')), 'row_array');
 		if(!isset($sql_result['id'])) return 1;
 		
