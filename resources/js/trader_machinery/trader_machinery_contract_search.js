@@ -7,6 +7,7 @@ $(document).ready(function() {
 	$("#search_btn").click(function() {
 		search_page_num(1);
 	});
+
 });
 
 //初始化

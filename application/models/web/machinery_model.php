@@ -2,6 +2,236 @@
 
 class Machinery_model extends CI_Model {
 	/*
+	 * 匯出代收機構報表
+	 * $post 參數資料
+	 */
+	public function report($post) {
+// 		require "resources/api/tcpdf/tcpdf.php";
+		
+		$trader_bill_list = search_trader_bill($_POST["machinery"], $_POST["contract"]);
+		
+		$price_data = search_machinery_price_kind($_POST["contract"]);
+		
+		$begin_date = $_POST["begin_year"] . "/" . $_POST["begin_month"] . "/" . $_POST["begin_day"];
+		$end_date 	= $_POST["end_year"] . "/" . $_POST["end_month"] . "/" . $_POST["end_day"];
+		$end_date2 	= $_POST["end_year"] . "/" . $_POST["end_month"] . "/" . $_POST["end_day"];
+		$entity_log_list = array();
+		$push_log_list = array();
+		$machinery_name = search_machinery_code_name($_POST["machinery"]);
+		$machinery_contract_name = search_machinery_contract_name($_POST["contract"]);
+		
+		if($begin_date == $end_date) {
+			$end_date = $end_date . " 23:59:59";
+		}
+		
+		foreach ($trader_bill_list as $trader_bill) {
+			array_push($entity_log_list, search_entity_log($trader_bill["trader_code"], $trader_bill["bill_kind_code"], $begin_date, $end_date));
+			array_push($push_log_list, search_action_bill_log($trader_bill["trader_code"], $trader_bill["bill_kind_code"], $begin_date, $end_date));
+		}
+		
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		
+		$pdf->SetFont('msungstdlight','',10);
+		$pdf->AddPage();
+		
+		$html1 = '<p><span style="color:red">' . $machinery_name . ' ' . $machinery_contract_name . '</span> 費用報表</p>';
+		$html1 = $html1 . '<p>查詢範圍 : <span style="color:red">' . $begin_date . '</span> ~ <span style="color:red">' . $end_date2 . '</span></p>';
+		
+		if($price_data["bill_cost_kind"] == "rent") {
+			$year  = $_POST["end_year"] - $_POST["begin_year"];
+			$month = $_POST["end_month"] - $_POST["begin_month"];
+			$day = $_POST["end_day"] - $_POST["begin_day"];
+		
+			if($year <= 0) {
+				$pay = $month * $price_data["month_rent_price"];
+			} else {
+				$pay = ($year * 12 + $month) * $price_data["month_rent_price"];
+			}
+		
+			$html1 = $html1 . '<p>付費種類 : <span style="color:red">月租費</span></p>';
+			$html1 = $html1 . '<p>付費費用 : <span style="color:red">' . $price_data["month_rent_price"] . '</span></p>';
+			$html1 = $html1 . '<p>需付費用 : <span style="color:red">' . $pay . ' NT</span></p>';
+		} else {
+			$html1 = $html1 . '<p>付費種類 : <span style="color:red">以件計費</span></p>';
+			$html1 = $html1 . '<p>付費費用 : 實體帳單 : <span style="color:red">' . $price_data["entity_price"] . '</span> 行動帳單 : <span style="color:red">' . $price_data["action_price"] . '</p>';
+			$html1 = $html1 . '<p>需付帳單數量 : </p>';
+				
+			$entity_bill_num = 0;
+			$action_bill_num = 0;
+			$billez_code_list = array();
+			$action_bill_count = array();
+			$i = 0;
+		
+			foreach ($push_log_list as $push_logs) {
+				$billez_code_list = array();
+					
+				foreach ($push_logs as $push_log) {
+					array_push($billez_code_list, $push_log["billez_code"]);
+				}
+					
+				array_push($action_bill_count, count(array_unique($billez_code_list)));
+			}
+				
+			foreach ($entity_log_list as $entity_logs) {
+				foreach ($entity_logs as $entity_log) {
+					$html1 = $html1 . '<p> ' . $entity_log["trader_name"] . ' ' . $entity_log["bill_kind_name"] . ' 實體帳單數量為 : ' . $entity_log["bill_count"] . ' 行動帳單數量為 : ' . $action_bill_count[$i] . '</p>';
+		
+					$entity_bill_num = $entity_bill_num + $entity_log["bill_count"];
+					$action_bill_num = $action_bill_num + $action_bill_count[$i];
+					$i++;
+				}
+			}
+				
+			$pay = $entity_bill_num * $price_data["entity_price"] + $action_bill_num * $price_data["action_price"];
+				
+			$html1 = $html1 . '<p>總計費用 : <span style="color:red">' . $pay . '</span></p>';
+		}
+		
+		$html1 = $html1 . '<p>寄送記錄 : </p>';
+		$html1 = $html1 . '<p>(一)實體帳單 : </p>';
+		
+		if(count($entity_log_list) == 0) {
+			$html1 = $html1 . '<p>無記錄!!</p>';
+		} else {
+			$html1 = $html1 . '<table border="1" cellpadding="2">
+									<tr>
+										<td>寄出時間</td>
+										<td>檔案名稱</td>
+										<td>帳單筆數</td>
+										<td>印刷業者Email</td>
+									</tr>';
+		
+			foreach ($entity_log_list as $entity_logs) {
+				foreach ($entity_logs as $entity_log) {
+					$html1 = $html1 . '<tr>
+										<td>' . $entity_log["send_time"] . '</td>
+										<td>' . $entity_log["file_name"] . '</td>
+										<td>' . $entity_log["bill_count"] . '</td>
+										<td>' . $entity_log["print_trader_email"] . '</td>
+									</tr>';
+				}
+			}
+			$html1 = $html1 . '</table>';
+		}
+		
+		$html1 = $html1 . '<p>(二)行動帳單 : </p>';
+		
+		if(count($push_log_list) == 0) {
+			$html1 = $html1 . '<p>無記錄!!</p>';
+		} else {
+			$html1 = $html1 . '<table border="1" cellpadding="2">
+									<tr>
+										<td>寄出時間</td>
+										<td>姓氏</td>
+										<td>名字</td>
+										<td>手機號碼</td>
+										<td>帳單編號</td>
+									</tr>';
+		
+			foreach ($push_log_list as $push_logs) {
+				foreach ($push_logs as $push_log) {
+					$html1 = $html1 . '<tr>
+										<td>' . $push_log["time"] . '</td>
+										<td>' . $push_log["last_name"] . '</td>
+										<td>' . $push_log["first_name"] . '</td>
+										<td>' . $push_log["monile_phone"] . '</td>
+										<td>' . $push_log["billez_code"] . '</td>
+									</tr>';
+				}
+			}
+			$html1 = $html1 . '</table>';
+		}
+		
+		$pdf->writeHTML($html1, true, false, false, false, '');
+		
+		$pdf->Output('example_001.pdf', 'I');
+	}
+	
+	/*
+	 * 匯出代收機構資料
+	* $post 網頁傳送資料
+	*/
+	public function export($post) {
+		require 'resources/api/PHPExcel.php';
+		
+		$data = explode(',', $post['export_list']);
+		$machinery_data = array();
+		
+		if($post['kind'] == 'data') {
+			//查詢代收機構資料
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$machinery . '.' . Field_1::$name, 'CONCAT(' . Field_1::$city . ',' . Field_1::$district . ',' . Field_3::$address . ') AS ' . Field_3::$address, Field_3::$telephone, Field_3::$main_contact_name, Field_3::$main_contact_phone, Field_3::$main_contact_email, Field_3::$second_contact_name, Field_3::$second_contact_phone, Field_3::$second_contact_email), 'function'),
+																			 'from' => Table_1::$machinery,
+																			 'join'=> $this->sql->join(array(Table_1::$machinery_code), array(Table_1::$machinery . '.' . Field_1::$name . ' = ' . Table_1::$machinery_code . '.' . Field_1::$name), array('')),
+																			 'where' => $this->sql->where(array('where_in'), array(Field_1::$code), array($data), array('')),
+																			 'other' => '')), 'result_array');
+			$title = array("名稱", "地址", "電話", "主要聯絡人名稱", "主要聯絡人電話", "主要聯絡人電子郵件", "次要聯絡人名稱", "次要聯絡人電話", "次要聯絡人電子郵件");
+			$row = array("A", "B", "C", "D", "E", "F", "G", "H", "I");
+			$file_name = iconv('utf-8', 'big5', '代收機構資料');
+			$title_name = '代收機構';
+			$machinery_data = $sql_result;
+		} else {
+			//查詢代收機構合約資料
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$machinery_contract . '.' . Field_1::$name, Table_1::$machinery_code . '.' . Field_1::$name . ' AS machinery', Field_2::$age, Field_2::$begin, Field_2::$end, Field_2::$bill_cost_kind, Field_4::$month_rent_price, Field_2::$entity_price, Field_2::$action_price, Field_2::$pay, Field_3::$pay_week, Field_3::$pay_day, Field_3::$pay_month, Field_3::$ad_url), 'function'),
+																			 'from' => Table_1::$machinery_contract,
+																			 'join'=> $this->sql->join(array(Table_1::$machinery_code), array(Table_1::$machinery_contract . '.' . Field_2::$machinery_code . ' = ' . Table_1::$machinery_code . '.' . Field_1::$code), array('')),
+																			 'where' => $this->sql->where(array('where_in'), array(Field_1::$id), array($data), array('')),
+																			 'other' => '')), 'result_array');
+			foreach($sql_result as $data) {
+				$data['bill_cost_kind'] = $this->transform->bill_cost_kind($data['bill_cost_kind']);
+				$data['pay'] = $this->transform->time_kind($data['pay']);
+
+				array_push($machinery_data, $data);
+			}
+
+			$title = array('合約名稱', '代收機構', '合約年限', '合約開始日', '合約結束日', '付費種類', '月租費用', '實體帳單費用', '行動帳單費用', '付款時間種類', '每週', '日期', '月份', '廣告位置');
+			$row = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N");
+			$file_name = iconv('utf-8', 'big5', '代收機構合約資料');
+			$title_name = '代收機構合約';
+		}
+
+		$title_num = count($title);
+	
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header("Content-Disposition: attachment;filename=$file_name.xlsx");
+		header('Cache-Control: max-age=0');
+	
+		$objPHPExcel = new PHPExcel();
+		$objActSheet = $objPHPExcel->getActiveSheet();
+		$objActSheet->setTitle($title_name);
+	
+		for($i = 0; $i < $title_num; $i++) {
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($row[$i] . 1, $title[$i]);
+			$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+		}
+	
+		if(count($machinery_data) != 0) {
+			//$i是 excel欄位名稱 ABCD	$k是excel列數 要從2開始  因為1是標題列
+			$k = 2;
+			
+			foreach($machinery_data as $data) {
+				$i = 0;
+			
+				foreach($data as $item => $value) {
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($row[$i] . $k, $value);
+					$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+			
+					$i++;
+				}
+			
+				$k++;
+			}
+		} else {
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2', '查無' . $title_name . '資料');
+			$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+		}
+	
+		$objWriter = PHPExcel_IOFactory:: createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save( 'php://output');
+	
+		exit();
+	}
+	
+	/*
 	 * 確認更新代收機構合約資料
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者

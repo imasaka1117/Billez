@@ -49,7 +49,7 @@ class Field_4 {
 	static public $purpose = 'purpose';
 	static public $page = 'page';
 	static public $temp_return = 'temp_return';
-	static public $temp2222 = '';
+	static public $temp_request = 'temp_request';
 	static public $temp3333 = '';
 	static public $temp4444 = '';
 	static public $temp5555 = '';

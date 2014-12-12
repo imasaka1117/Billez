@@ -70,4 +70,25 @@ class Action_member extends CI_Controller {
 		$this->load->view('templates/header', $data);
 		$this->load->view('web/action_member/search', $data);
 	}
+	
+	/*
+	 * 匯出行動會員資料
+	*/
+	public function export() {
+		$this->load->model('web/action_member_model');
+		$this->load->library('web/option');
+		$data['ajax'] = $this->action_member_model->export($this->input->post());
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 匯出行動會員資料
+	 */
+	public function export_web() {
+		$data = $this->param->resources(array('base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data['now_use'] = 'action_member/action_member_export.js';
+		$data['class_name'] = 'action_member';
+		$this->load->view('templates/header', $data);
+		$this->load->view('web/action_member/export', $data);
+	}
 }//end

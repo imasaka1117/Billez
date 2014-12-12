@@ -10,10 +10,10 @@ class Sms_model extends CI_Model {
 	 * 回傳結果1 為成功 失敗為2
 	 */
 	public function sms($kind, $mobile_phone, $form, $data) {
-		include "resources/api/sms2.inc";
+		require "resources/api/sms2.inc";
 		
 		//篩選種類
-		switch(kind) {
+		switch($kind) {
 			case 1:
 			case 2:
 			case 3:

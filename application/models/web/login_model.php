@@ -18,24 +18,7 @@ class Login_model extends CI_Model {
 		session_start();
 		$_SESSION['user'] = array('id'=>$sql_result['id'], 
 								  'name'=>$sql_result['name'], 
-								  'kind'=>$sql_result['kind'],
-								  'level'=>$this->transform->home_page($sql_result['kind']));
-		/*
-		 * 依照登入者給予不同的登入畫面
-		 * op 操作人員
-		 * cs 客服
-		 * ma 管理者
-		 */
-		switch($sql_result['kind']) {
-			case 1:
-				return 'home/op';
-				break;
-			case 2:
-				return 'home/cs';
-				break;
-			case 3:
-				return 'home/ma';
-				break;
-		}
+								  'kind'=>$sql_result['kind']);
+		return 'home/ma';
 	}
 }//end

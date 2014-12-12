@@ -96,7 +96,7 @@ class App extends CI_Controller {
 		
 		if($route_data['control_param'] != 0) {
 			$data['response'] = $this->$function[$route_data['control_param']]->index($route_data);
-			$this->route_model->insert_temp_return($data['response']);
+			$this->route_model->insert_temp_return($data['response'], $route_data);
 		}
 
 // 		if(!isset($_REQUEST['retry'])) {

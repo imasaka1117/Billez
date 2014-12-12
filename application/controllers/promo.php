@@ -17,7 +17,7 @@ class Promo extends CI_Controller {
 	}
 	
 	/*
-	 * 更新等級名稱
+	 * 更新促銷優惠
 	 */
 	public function update() {
 		session_start();
@@ -27,7 +27,7 @@ class Promo extends CI_Controller {
 	}
 	
 	/*
-	 * 查詢等級資料
+	 * 查詢促銷優惠資料
 	 */
 	public function search_data() {
 		$this->load->model('web/promo_model');
@@ -36,7 +36,7 @@ class Promo extends CI_Controller {
 	}
 	
 	/*
-	 * 觀看等級資料頁面
+	 * 觀看促銷優惠頁面
 	 */
 	public function update_web() {
 		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
@@ -48,7 +48,7 @@ class Promo extends CI_Controller {
 	}
 	
 	/*
-	 * 查詢等級
+	 * 查詢促銷優惠
 	 */
 	public function search() {
 		$this->load->model('web/promo_model');
@@ -59,7 +59,7 @@ class Promo extends CI_Controller {
 	}
 	
 	/*
-	 * 查詢等級頁面
+	 * 查詢促銷優惠頁面
 	 */
 	public function search_web() {
 		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));

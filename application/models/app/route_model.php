@@ -8,12 +8,6 @@ class Route_model extends CI_Model {
 	 * $post	所有的POST資料
 	 */
 	public function index() {
-		if(isset($_REQUEST['retry'])) {
-			return $this->temp_return($_REQUEST['mobile_phone_id']);
-		} else {
-			$this->clear_temp_return($_REQUEST['mobile_phone_id']);
-		}
-		
 		if(!(isset($_REQUEST['encode']) || isset($_REQUEST['public_key']))) {
 			if(isset($_REQUEST['special'])) {
 				/*
@@ -39,7 +33,15 @@ class Route_model extends CI_Model {
 			//沒有傳送id參數請求,解密及產生引導資料
 			$route_data = $this->decode_tempdata($_REQUEST['encode'], $_REQUEST['mobile_phone_id']);
 		}
-
+		
+		if(isset($_REQUEST['retry'])) {
+			$isback = $this->temp_return($_REQUEST['mobile_phone_id'], $route_data);
+			
+			if($isback !== false) return $isback;
+		} else {
+			$this->clear_temp_return($_REQUEST['mobile_phone_id']);
+		}
+		
 		return $route_data;
 	}
 	
@@ -165,15 +167,22 @@ class Route_model extends CI_Model {
 	/*
 	 * 取得上一次回傳的資料
 	 * $mobile_phone_id 手機ID
+	 * $route_data 請求資料
 	 */
-	private function temp_return($mobile_phone_id) {
+	private function temp_return($mobile_phone_id, $route_data) {
+		$temp_request = $this->create_request($route_data);
+		
 		//查詢暫存回傳資料
-		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_4::$temp_return), ''),
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_4::$temp_return, Field_4::$temp_request), ''),
 																		 'from' => Table_1::$moblie_phone_id_and_key,
 																		 'join'=> '',
 																		 'where' => $this->sql->where(array('where'), array(Field_1::$mobile_phone_id), array($mobile_phone_id), array('')),
 																		 'other' => '')), 'row_array');
-		return $this->key->route_data('', array('control_param', 'data'), array('0', $sql_result['temp_return']));
+		if($temp_request == $sql_result['temp_request']) {
+			return $this->key->route_data('', array('control_param', 'data'), array('0', $sql_result['temp_return']));
+		} else {
+			return false;
+		}
 	}
 	
 	/*
@@ -191,10 +200,10 @@ class Route_model extends CI_Model {
 		
 		//更新暫存回傳資料為null
 		$this->sql->add_static(array('table'=> Table_1::$moblie_phone_id_and_key,
-									 'select'=> $this->sql->field(array(Field_4::$temp_return, Field_1::$update_time), array(null, $this->sql->get_time(1))),
+									 'select'=> $this->sql->field(array(Field_4::$temp_return, Field_4::$temp_request, Field_1::$update_time), array(null, null, $this->sql->get_time(1))),
 									 'where'=> $this->sql->where(array('where'), array(Field_1::$mobile_phone_id), array($mobile_phone_id), array('')),
-									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, 2, Table_1::$moblie_phone_id_and_key, '清除暫存回傳資料', $this->sql->get_time(1))),
-									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, 2, Table_1::$moblie_phone_id_and_key, '清除暫存回傳資料', $this->sql->get_time(1), '')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, 2, Table_1::$moblie_phone_id_and_key, '清除暫存回傳資料及請求資料', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, 2, Table_1::$moblie_phone_id_and_key, '清除暫存回傳資料及請求資料', $this->sql->get_time(1), '')),
 									 'kind'=> 2));
 		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));
 		
@@ -204,18 +213,43 @@ class Route_model extends CI_Model {
 	/*
 	 * 新增暫存回傳資料
 	 * $response 回傳給APP的資料
+	 * $route_data 請求資料
 	 */
-	public function insert_temp_return($response) {
+	public function insert_temp_return($response, $route_data) {
 		//先清除之前的sql語法
 		$this->sql->clear_static();
 		
+		$temp_request = $this->create_request($route_data);
+		
 		//加入暫存回傳資料
 		$this->sql->add_static(array('table'=> Table_1::$moblie_phone_id_and_key,
-									 'select'=> $this->sql->field(array(Field_4::$temp_return, Field_1::$update_time), array($response, $this->sql->get_time(1))),
+									 'select'=> $this->sql->field(array(Field_4::$temp_return, Field_4::$temp_request, Field_1::$update_time), array($response, $temp_request, $this->sql->get_time(1))),
 									 'where'=> $this->sql->where(array('where'), array(Field_1::$mobile_phone_id), array($_REQUEST['mobile_phone_id']), array('')),
-									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, 2, Table_1::$moblie_phone_id_and_key, '加入暫存回傳資料', $this->sql->get_time(1))),
-									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, 2, Table_1::$moblie_phone_id_and_key, '加入暫存回傳資料', $this->sql->get_time(1), '')),
+									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, 2, Table_1::$moblie_phone_id_and_key, '加入暫存回傳資料及請求種類', $this->sql->get_time(1))),
+									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, 2, Table_1::$moblie_phone_id_and_key, '加入暫存回傳資料及請求種類', $this->sql->get_time(1), '')),
 									 'kind'=> 2));
 		$this->query_model->execute_sql(array('table' => Sql::$table, 'select' => Sql::$select, 'where' => Sql::$where, 'log' => Sql::$log, 'error' => Sql::$error, 'kind' => Sql::$kind));		
+	}
+	
+	/*
+	 * 產出請求字串
+	 * $route_data 請求資料
+	 */
+	private function create_request($route_data) {
+		$request = array();
+		
+		foreach($route_data as $item => $value) {
+			switch($item) {
+				case 'id':
+				case 'mobile_phone_id':
+				case 'private_key':
+					break;
+				default:
+					$request[$item] = $value;
+					break;
+			}
+		}
+		
+		return $this->json->encode_json('vale', $request);
 	}
 }

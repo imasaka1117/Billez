@@ -20,6 +20,62 @@ class Common extends CI_Controller {
 	}
 	
 	/*
+	 * 將業者合約清單初始化
+	*/
+	public function init_trader_contract_list() {
+		//查詢編號及名稱
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id . ' AS code', Field_1::$name), 'function'),
+																		 'from' => Table_1::$trader_contract,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, 1);
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 將業者清單初始化
+	*/
+	public function init_trader_list() {
+		//查詢名稱和編號
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
+																		 'from' => Table_1::$trader_code,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, 1);
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 將代收機構合約清單初始化
+	*/
+	public function init_machinery_contract_list() {
+		//查詢編號及名稱
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id . ' AS code', Field_1::$name), 'function'),
+																		 'from' => Table_1::$machinery_contract,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, 1);
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 將代收機構清單初始化
+	 */
+	public function init_machinery_list() {
+		//查詢名稱和編號
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
+																		 'from' => Table_1::$machinery_code,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, 1);
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
 	 * 將排程啟用狀態初始化
 	 */
 	public function init_scheduling() {
@@ -520,9 +576,23 @@ class Common extends CI_Controller {
 	public function init_bill_kind() {
 		//查詢帳單種類名稱和代號
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), ''),
-				'from' => Table_1::$bill_kind_code,
-				'join'=> '',
-				'where' => '',
+																		 'from' => Table_1::$bill_kind_code,
+																		 'join'=> '',
+																		 'where' => '',
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, '');
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
+	 * 將帳單種類初始化
+	 */
+	public function init_trader_bill_kind() {
+		//查詢帳單種類名稱和代號
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$code, Field_1::$name), 'function'),
+				'from' => Table_1::$trader_bill,
+				'join'=> $this->sql->join(array(Table_1::$bill_kind_code), array(Table_1::$trader_bill . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code), array('')),
+				'where' => $this->sql->where(array('where'), array(Field_1::$trader_code), array($this->input->post('value')), array('')),
 				'other' => '')), 'result_array');
 		$data['ajax'] = $this->option->select($sql_result, '');
 		$this->load->view('web/ajax', $data);

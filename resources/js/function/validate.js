@@ -234,10 +234,10 @@ function mult_validate_check(id, message, reg, char) {
 function validate_check(id, message, reg) {
 	for(j in id) {
 		if($('#' + id[j] + '1').attr('id') == undefined) $('#' + id[j] + '').after('<span id="' + id[j] + '1" style="color:red"></span>');
-
-		if(reg.test($('#' + id[j] + '').val()) == false) {
+		if(reg.test($('#' + id[j] + '').val()) == false || $('#' + id[j] + '').val() === null) {
 			$('#' + id[j] + '1').text(message);
 		} else if ($('#' + id[j] + '1').text() == message) {
+			
 			$('#' + id[j] + '1').empty();
 		}
 	}

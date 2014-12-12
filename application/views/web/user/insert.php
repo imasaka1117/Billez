@@ -177,13 +177,13 @@
 				<td>
 					<input type="checkbox" name="function_authority" id="search_system_set" value="y"/>查詢系統設定
 					<input type="checkbox" name="function_authority" id="scheduling_set" value="y"/>排程設定
-					<input type="checkbox" name="function_authority" id="search_user" value="y"/>查詢操作員
+					<input type="checkbox" name="function_authority" id="search_user" value="y"/>查詢使用者
 				</td>
 			</tr>
 			<tr>
 				<td></td>
 				<td>
-					<input type="checkbox" name="function_authority" id="insert_user" value="y"/>新增操作員
+					<input type="checkbox" name="function_authority" id="insert_user" value="y"/>新增使用者
 					<input type="checkbox" name="function_authority" id="insert_email_set" value="y"/>新增電子郵件設定
 					<input type="checkbox" name="function_authority" id="search_email_set" value="y"/>查詢電子郵件設定
 				</td>

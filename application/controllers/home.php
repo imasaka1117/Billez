@@ -8,21 +8,7 @@ class Home extends CI_Controller {
 	}
 	
 	/*
-	 * 操作人員登入畫面
-	 */
-	public function op() {
-		$this->load->view('web/home/op', $data);
-	}
-	
-	/*
-	 * 客服人員登入畫面
-	 */
-	public function cs() {
-		$this->load->view('web/home/cs', $data);
-	}
-	
-	/*
-	 * 管理人員登入畫面
+	 * 登入畫面
 	 */
 	public function ma() {
 		$data = $this->param->resources(array('base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));

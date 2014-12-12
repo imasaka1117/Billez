@@ -2,6 +2,94 @@
 
 class Trader_model extends CI_Model {
 	/*
+	 * 匯出業者資料
+	* $post 網頁傳送資料
+	*/
+	public function export($post) {
+		require 'resources/api/PHPExcel.php';
+	
+		$data = explode(',', $post['export_list']);
+		$trader_data = array();
+	
+		if($post['kind'] == 'data') {
+			//查詢業者資料
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$trader . '.' . Field_1::$name, 'CONCAT(' . Field_1::$city . ',' . Field_1::$district . ',' . Field_3::$address . ') AS ' . Field_3::$address, Field_3::$telephone, Field_3::$main_contact_name, Field_3::$main_contact_phone, Field_3::$main_contact_email, Field_3::$second_contact_name, Field_3::$second_contact_phone, Field_3::$second_contact_email), 'function'),
+																			 'from' => Table_1::$trader,
+																			 'join'=> $this->sql->join(array(Table_1::$trader_code), array(Table_1::$trader . '.' . Field_1::$name . ' = ' . Table_1::$trader_code . '.' . Field_1::$name), array('')),
+																			 'where' => $this->sql->where(array('where_in'), array(Field_1::$code), array($data), array('')),
+																			 'other' => '')), 'result_array');
+			$title = array("名稱", "地址", "電話", "主要聯絡人名稱", "主要聯絡人電話", "主要聯絡人電子郵件", "次要聯絡人名稱", "次要聯絡人電話", "次要聯絡人電子郵件");
+			$row = array("A", "B", "C", "D", "E", "F", "G", "H", "I");
+			$file_name = iconv('utf-8', 'big5', '業者資料');
+			$title_name = '業者';
+			$trader_data = $sql_result;
+		} else {
+			//查詢業者合約資料
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$trader_contract . '.' . Field_1::$name, Table_1::$trader_code . '.' . Field_1::$name . ' AS trader', Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind', Field_2::$age, Field_2::$begin, Field_2::$end, Field_4::$bill_price_kind, Field_4::$month_rent_price, Field_2::$entity_price, Field_2::$action_price, Field_4::$publish, Field_4::$publish_week, Field_4::$publish_day, Field_4::$publish_month, Field_4::$enter, Field_4::$enter_week, Field_4::$enter_day, Field_4::$enter_month, Field_4::$collection, Field_4::$collection_week, Field_4::$collection_day, Field_4::$collection_month, Field_3::$send_condition, Field_4::$send_condition_times, Field_4::$email_send, Field_4::$email_publish, Field_4::$email_publish_week, Field_4::$email_publish_day, Field_4::$email_publish_month, Field_4::$ftp_ip, Field_4::$ftp_account, Field_4::$ftp_password, Field_4::$ftp_path, Field_4::$ftp_receive_path), 'function'),
+																			 'from' => Table_1::$trader_contract,
+																			 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code), array(Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code), array('', '')),
+																			 'where' => $this->sql->where(array('where_in'), array(Field_1::$id), array($data), array('')),
+																			 'other' => '')), 'result_array');
+			foreach($sql_result as $data) {
+				$data['publish'] = $this->transform->time_kind($data['publish']);
+				$data['enter'] = $this->transform->time_kind($data['enter']);
+				$data['collection'] = $this->transform->time_kind($data['collection']);
+				$data['email_publish'] = $this->transform->time_kind($data['email_publish']);
+				$data['send_condition'] = $this->transform->send_condition($data['send_condition']);
+				$data['bill_price_kind'] = $this->transform->bill_cost_kind($data['bill_price_kind']);
+	
+				array_push($trader_data, $data);
+			}
+	
+			$title = array('合約名稱', '業者', '帳單種類', '合約年限', '合約開始日', '合約結束日', '收費種類', '月租費用', '實體帳單費用', '行動帳單費用', '帳單發行時間種類', '每週', '日期', '月份', '帳單入帳時間種類', '每週', '日期', '月份', '收款時間種類', '每週', '日期', '月份', '寄送帳單條件', '寄送實體帳單期數', '寄送電子帳單', '寄送電子帳單時間種類', '每週', '日期', '月份', 'FTP網址', 'FTP帳號', 'FTP密碼', 'FTP繳費帳單檔案路徑', 'FTP入帳帳單檔案路徑');
+			$row = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH');
+			$file_name = iconv('utf-8', 'big5', '業者合約資料');
+			$title_name = '業者合約';
+		}
+	
+		$title_num = count($title);
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header("Content-Disposition: attachment;filename=$file_name.xlsx");
+		header('Cache-Control: max-age=0');
+	
+		$objPHPExcel = new PHPExcel();
+		$objActSheet = $objPHPExcel->getActiveSheet();
+		$objActSheet->setTitle($title_name);
+	
+		for($i = 0; $i < $title_num; $i++) {
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($row[$i] . 1, $title[$i]);
+			$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+		}
+	
+		if(count($trader_data) != 0) {
+			//$i是 excel欄位名稱 ABCD	$k是excel列數 要從2開始  因為1是標題列
+			$k = 2;
+				
+			foreach($trader_data as $data) {
+				$i = 0;
+					
+				foreach($data as $item => $value) {
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($row[$i] . $k, $value);
+					$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+						
+					$i++;
+				}
+					
+				$k++;
+			}
+		} else {
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2', '查無' . $title_name . '資料');
+			$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+		}
+	
+		$objWriter = PHPExcel_IOFactory:: createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save( 'php://output');
+	
+		exit();
+	}
+	
+	/*
 	 * 確認更新業者合約資料
 	 * $post	web傳來的參數
 	 * $user	當前使用該系統者

@@ -2,6 +2,76 @@
 
 class Action_member_model extends CI_Model {
 	/*
+	 * 匯出行動會員資料
+	 * $post 網頁傳送資料
+	 */
+	public function export($post) {
+		require 'resources/api/PHPExcel.php';
+		
+		//查詢業者及帳單種類名稱
+		$trader = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$name), ''),
+																		 'from' => Table_1::$trader_code,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$code), array($post['trader']), array('')),
+																		 'other' => '')), 'row_array');
+		$bill_kind = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$name), ''),
+																		 'from' => Table_1::$bill_kind_code,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$code), array($post['bill_kind']), array('')),
+																		 'other' => '')), 'row_array');
+		$file_name = iconv('utf-8', 'big5', '訂閱' . $trader['name'] . $bill_kind['name'] . '行動會員資料');
+		
+		//查詢使用者資料
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('DISTINCT ' . Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone, Field_1::$email), 'function'),
+																		 'from' => Table_1::$subscribe,
+																		 'join'=> $this->sql->join(array(Table_1::$action_member), array(Table_1::$subscribe . '.' . Field_1::$id . ' = ' . Table_1::$action_member . '.' . Field_1::$id), array('')),
+																		 'where' => $this->sql->where(array('where'), array('SUBSTRING(' . Field_3::$subscribe_code . ', 1, 6) ='), array($post['trader'] . $post['bill_kind']), array('')),
+																		 'other' => '')), 'result_array');
+		$title = array("姓氏", "名字", "手機號碼", "電子郵件");
+		$row = array("A", "B", "C", "D");
+		$title_num = count($title);
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header("Content-Disposition: attachment;filename=$file_name.xlsx");
+		header('Cache-Control: max-age=0');
+		
+		$objPHPExcel = new PHPExcel();
+		$objActSheet = $objPHPExcel->getActiveSheet();
+		$objActSheet->setTitle('行動會員資料');
+		
+		for($i = 0; $i < $title_num; $i++) {
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($row[$i] . 1, $title[$i]);
+			$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+		}
+		
+		if(count($sql_result) != 0) {
+			//$i是 excel欄位名稱 ABCD	$k是excel列數 要從2開始  因為1是標題列
+			$k = 2;
+			
+			foreach($sql_result as $data) {
+				$i = 0;
+					
+				foreach($data as $item => $value) {
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($row[$i] . $k, $value);
+					$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+			
+					$i++;
+				}
+					
+				$k++;
+			}
+		} else {
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A2', '查無訂閱該業者帳單行動會員');
+			$objActSheet->getColumnDimension($row[$i])->setAutoSize(true);
+		}
+
+		$objWriter = PHPExcel_IOFactory:: createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save( 'php://output');
+		
+		exit();
+	}
+	
+	/*
 	 * 更新行動會員密碼
 	 * $post 查詢資料
 	 * $user 使用者

@@ -4,7 +4,45 @@ class Transform {
 	/*
 	 * 各種代碼轉換
 	 */
-
+	
+	/*
+	 * 時間種類
+	*/
+	public function time_kind($code) {
+		switch ($code) {
+			case 1:
+				$code = '每週';
+				break;
+			case 2:
+				$code = '每月';
+				break;
+			case 3:
+				$code = '每年';
+				break;
+			case 4:
+				$code = '不固定';
+				break;
+		}
+	
+		return $code;
+	}
+	
+	/*
+	 * 付款種類
+	*/
+	public function bill_cost_kind($code) {
+		switch ($code) {
+			case 1:
+				$code = '月租';
+				break;
+			case 2:
+				$code = '件計';
+				break;
+		}
+	
+		return $code;
+	}
+	
 	/*
 	 * 促銷活動範圍
 	 */

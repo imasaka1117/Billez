@@ -11,7 +11,7 @@ $(document).ready(function() {
 	$("select").change(function() {
 		switch($(this).attr('id')) {
 			case 'trader':
-				$('#bill_kind').empty().append(select_ajax(ajax_path + 'common/init_bill_kind', 'bill_kind', $(this).val()));
+				$('#bill_kind').empty().append(select_ajax(ajax_path + 'common/init_trader_bill_kind', 'bill_kind', $(this).val()));
 				break;
 		}
 	});

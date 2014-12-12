@@ -27,7 +27,7 @@ class Change_model extends CI_Model {
 		//更新金鑰組
 		$this->sql->add_static(array('table'=> Table_1::$key,
 									 'select'=> $this->sql->field(array(Field_2::$private_key, Field_2::$public_key, Field_1::$update_user, Field_1::$update_time), array($key['private_key'], $key['public_key'], $route_data['id'], $this->sql->get_time(1))),
-									 'where'=> $this->sql->where(array('where'), array(), array(), array('')),
+									 'where'=> $this->sql->where(array('where'), array(Field_1::$id), array($route_data['id']), array('')),
 									 'log'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_4::$purpose, Field_1::$create_time), array(2, $route_data['id'], Table_1::$key, '金鑰_每次請求更新金鑰組', $this->sql->get_time(1))),
 									 'error'=> $this->sql->field(array(Field_3::$operate, Field_2::$user, Field_3::$table, Field_1::$message, Field_1::$create_time, Field_3::$db_message), array(2, $route_data['id'], Table_1::$key, '金鑰_每次請求更新金鑰組', $this->sql->get_time(1), '')),
 									 'kind'=> 2));

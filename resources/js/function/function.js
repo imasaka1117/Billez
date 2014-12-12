@@ -56,7 +56,7 @@ function check_ajax(controllers, params, result) {
  */
 function select_ajax(controllers, id, value) {
 	$.post(controllers, $.param({ 'value' : value }), function(ajax_return) {
-//		alert(ajax_return);
+		alert(ajax_return);
 		$("#" + id + "").empty().append(ajax_return);
 	});
 }
@@ -112,7 +112,7 @@ function export_ajax(controllers, data, method) {
 		inputs += '<input type="hidden" name="'+ i +'" value="'+ data[i] +'" />';
 	}
 	
-	$('body').append('<form id="temp_ajax11111" action="'+ controllers +'" method="'+ method +'">'+inputs+'</form>');
+	$('body').append('<form id="temp_ajax" action="'+ controllers +'" method="'+ method +'">'+inputs+'</form>');
 	
-	$('#temp_ajax11111').submit().remove();
+	$('#temp_ajax').submit().remove();
 }
