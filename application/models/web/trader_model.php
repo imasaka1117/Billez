@@ -2,6 +2,154 @@
 
 class Trader_model extends CI_Model {
 	/*
+	 * 匯出代收機構報表
+	* $post 參數資料
+	*/
+	public function report($post) {
+		require "resources/api/tcpdf/tcpdf.php";
+
+		//查詢該業者合約價格
+		$price_data = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_4::$bill_price_kind, Field_4::$month_rent_price, Field_2::$entity_price, Field_2::$action_price), ''),
+																		 'from' => Table_1::$trader_contract,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($post['trader_contract']), array('')),
+																		 'other' => '')), 'row_array');
+		//查詢業者及合約名稱
+		$trader = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$trader_code . '.' . Field_1::$name . ' AS trader', Table_1::$trader_contract . '.' . Field_1::$name . ' AS trader_contract', Field_1::$bill_kind_code, Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind_name'), 'function'),
+																		'from' => Table_1::$trader_contract,
+																		'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code), array(Table_1::$trader_contract . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$trader_contract . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code), array('', '')),
+																		'where' => $this->sql->where(array('where'), array(Field_1::$id), array($post['trader_contract']), array('')),
+																		'other' => '')), 'row_array');
+		$begin_date = $post['begin_year'] . '/' . $post['begin_month'] . '/' . $post['begin_day'];
+		$end_date = $post['end_year'] . '/' . $post['end_month'] . '/' . $post['end_day'];
+	
+		//查詢實體帳單紀錄
+		$entity_log_list = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$send_time, Table_1::$trader_code . '.' . Field_1::$name . ' AS trader', Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind', Field_2::$file_name, Field_2::$bill_count, Field_2::$print_trader_email), 'function'),
+																			  'from' => Table_1::$entity_bill_log,
+																			  'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code), array(Table_1::$entity_bill_log . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$entity_bill_log . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code), array('', '')),
+																			  'where' => $this->sql->where(array('where', 'where', 'where', 'where', 'where'), array(Field_1::$trader_code, Field_1::$bill_kind_code, Field_2::$send_result, 'DATE(' . Field_2::$send_time . ') >=', 'DATE(' . Field_2::$send_time . ') <='), array($post['trader'], $trader['bill_kind_code'], 1, $begin_date, $end_date), array('', '', '', '', '')),
+																			  'other' => '')), 'result_array');
+
+		//查詢行動帳單紀錄
+		$push_log_list = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone, Field_1::$billez_code, Field_2::$time), ''),
+																			'from' => Table_1::$push_state,
+																			'join'=> $this->sql->join(array(Table_1::$action_member), array(Table_1::$push_state . '.' . Field_1::$id . ' = ' . Table_1::$action_member . '.' . Field_1::$id), array('')),
+																			'where' => $this->sql->where(array('like', 'where', 'where', 'where'), array(Field_1::$billez_code, Field_1::$read, 'DATE(' . Field_2::$time . ') >=', 'DATE(' . Field_2::$time . ') <='), array($post['trader'] . $trader['bill_kind_code'], 'y', $begin_date, $end_date), array('after', '', '', '')),
+																			'other' => '')), 'result_array');
+
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	
+		$pdf->SetFont('msungstdlight','',10);
+		$pdf->AddPage();
+	
+		$html1 = '<p><span style="color:red">' . $trader['trader'] . ' ' . $trader['trader_contract'] . '</span> 費用報表</p>';
+		$html1 = $html1 . '<p>查詢範圍 : <span style="color:red">' . $begin_date . '</span> ~ <span style="color:red">' . $end_date . '</span></p>';
+	
+		if($price_data["bill_price_kind"] == "1") {
+			$year  = $post["end_year"] - $post["begin_year"];
+			$month = $post["end_month"] - $post["begin_month"];
+			$day = $post["end_day"] - $post["begin_day"];
+	
+			if($year <= 0) {
+				$pay = $month * $price_data["month_rent_price"];
+			} else {
+				$pay = ($year * 12 + $month) * $price_data["month_rent_price"];
+			}
+	
+			$html1 = $html1 . '<p>付費種類 : <span style="color:red">月租費</span></p>';
+			$html1 = $html1 . '<p>付費費用 : <span style="color:red">' . $price_data["month_rent_price"] . '</span></p>';
+			$html1 = $html1 . '<p>需付費用 : <span style="color:red">' . $pay . ' NT</span></p>';
+		} else {
+			$html1 = $html1 . '<p>付費種類 : <span style="color:red">以件計費</span></p>';
+			$html1 = $html1 . '<p>付費費用 : 實體帳單 : <span style="color:red">' . $price_data["entity_price"] . '</span> 行動帳單 : <span style="color:red">' . $price_data["action_price"] . '</p>';
+			$html1 = $html1 . '<p>需付帳單數量 : </p>';
+	
+			if(count($push_log_list)) {
+				$billez_code_list = array();
+					
+				foreach ($push_log_list as $push_log) {
+					array_push($billez_code_list, $push_log["billez_code"]);
+				}
+					
+				$action_bill_count = count(array_unique($billez_code_list));
+			} else {
+				$action_bill_count = 0;
+			}
+
+			if(count($entity_log_list)) {
+				$entity_bill_count = '';
+					
+				foreach ($entity_log_list as $entity_log) {
+					$entity_bill_count += $entity_log["bill_count"];
+				}
+
+			} else {
+				$entity_bill_count = 0;
+			}
+				
+			$html1 = $html1 . '<p> ' . $trader["trader"] . ' ' . $trader["bill_kind_name"];
+			$html1 = $html1 . ' 實體帳單數量為 : ' . $entity_bill_count . ' 行動帳單數量為 : ' . $action_bill_count . '</p>';
+			$pay = $entity_bill_count * $price_data["entity_price"] + $action_bill_count * $price_data["action_price"];
+			$html1 = $html1 . '<p>總計費用 : <span style="color:red">' . $pay . '</span></p>';
+		}
+	
+		$html1 = $html1 . '<p>寄送記錄 : </p>';
+		$html1 = $html1 . '<p>(一)實體帳單 : </p>';
+	
+		if(count($entity_log_list) == 0) {
+			$html1 = $html1 . '<p>無記錄!!</p>';
+		} else {
+			$html1 = $html1 . '<table border="1" cellpadding="2">
+									<tr>
+										<td>寄出時間</td>
+										<td>檔案名稱</td>
+										<td>帳單筆數</td>
+										<td>印刷業者Email</td>
+									</tr>';
+	
+			foreach ($entity_log_list as $entity_logs) {
+				$html1 = $html1 . '<tr>
+									<td>' . $entity_logs["send_time"] . '</td>
+									<td>' . $entity_logs["file_name"] . '</td>
+									<td>' . $entity_logs["bill_count"] . '</td>
+									<td>' . $entity_logs["print_trader_email"] . '</td>
+								</tr>';
+			}
+			$html1 = $html1 . '</table>';
+		}
+	
+		$html1 = $html1 . '<p>(二)行動帳單 : </p>';
+	
+		if(count($push_log_list) == 0) {
+			$html1 = $html1 . '<p>無記錄!!</p>';
+		} else {
+			$html1 = $html1 . '<table border="1" cellpadding="2">
+									<tr>
+										<td>寄出時間</td>
+										<td>姓氏</td>
+										<td>名字</td>
+										<td>手機號碼</td>
+										<td>帳單編號</td>
+									</tr>';
+	
+			foreach ($push_log_list as $push_logs) {
+				$html1 = $html1 . '<tr>
+									<td>' . $push_logs["time"] . '</td>
+									<td>' . $push_logs["last_name"] . '</td>
+									<td>' . $push_logs["first_name"] . '</td>
+									<td>' . $push_logs["mobile_phone"] . '</td>
+									<td>' . $push_logs["billez_code"] . '</td>
+								</tr>';
+			}
+			$html1 = $html1 . '</table>';
+		}
+	
+		$pdf->writeHTML($html1, true, false, false, false, '');
+	
+		$pdf->Output('trader_report.pdf', 'I');
+	}
+	
+	/*
 	 * 匯出業者資料
 	* $post 網頁傳送資料
 	*/

@@ -20,10 +20,10 @@ class Trader extends CI_Controller {
 	 * 匯出業者報表
 	*/
 	public function report() {
-		$this->load->model('web/machinery_model');
+		$this->load->model('web/trader_model');
 		$this->load->library('web/option');
 		$this->load->library('transform');
-		$data['ajax'] = $this->machinery_model->report($this->input->post());
+		$data['ajax'] = $this->trader_model->report($this->input->post());
 		$this->load->view('web/ajax', $data);
 	}
 	
@@ -31,11 +31,11 @@ class Trader extends CI_Controller {
 	 * 匯出業者報表頁面
 	*/
 	public function report_web() {
-		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
 		$data['now_use'] = 'trader_machinery/trader_machinery_report.js';
-		$data['class_name'] = 'machinery';
+		$data['class_name'] = 'trader';
 		$this->load->view('templates/header', $data);
-		$this->load->view('web/machinery/report', $data);
+		$this->load->view('web/trader/report', $data);
 	}
 	
 	/*

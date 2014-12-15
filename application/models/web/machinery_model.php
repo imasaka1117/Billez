@@ -9,9 +9,9 @@ class Machinery_model extends CI_Model {
 		require "resources/api/tcpdf/tcpdf.php";
 		
 		//查詢該代收機構合約下的業者帳單
-		$trader_bill_list = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$trader_code, Field_1::$bill_kind_code), ''),
+		$trader_bill_list = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$trader_code, Field_1::$bill_kind_code, Table_1::$trader_code . '.' . Field_1::$name . ' AS trader', Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind'), 'function'),
 																			   'from' => Table_1::$trader_machinery,
-																			   'join'=> '',
+																			   'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code), array(Table_1::$trader_machinery . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$trader_machinery . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code), array('', '')),
 																			   'where' => $this->sql->where(array('where', 'where'), array(Field_2::$machinery_code, Field_4::$machinery_contract), array($post['machinery'], $post['machinery_contract']), array('', '')),
 																			   'other' => '')), 'result_array');
 		//查詢該代收機構合約價格
@@ -50,7 +50,7 @@ class Machinery_model extends CI_Model {
 																			 'other' => '')), 'result_array');
 			array_push($push_log_list, $sql_result);
 		}
-		
+
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		
 		$pdf->SetFont('msungstdlight','',10);
@@ -78,41 +78,49 @@ class Machinery_model extends CI_Model {
 			$html1 = $html1 . '<p>付費費用 : 實體帳單 : <span style="color:red">' . $price_data["entity_price"] . '</span> 行動帳單 : <span style="color:red">' . $price_data["action_price"] . '</p>';
 			$html1 = $html1 . '<p>需付帳單數量 : </p>';
 				
-			$entity_bill_num = 0;
-			$action_bill_num = 0;
-			$billez_code_list = array();
 			$action_bill_count = array();
-			$i = 0;
-			$isfitst = true;
-		
+			$entity_bill_count = array();
+			$trader_bill_count = count($trader_bill_list);
+			
 			foreach ($push_log_list as $push_logs) {
-				$billez_code_list = array();
+				if(count($push_logs)) {
+					$billez_code_list = array();
 					
-				foreach ($push_logs as $push_log) {
-					array_push($billez_code_list, $push_log["billez_code"]);
+					foreach ($push_logs as $push_log) {
+						array_push($billez_code_list, $push_log["billez_code"]);
+					}
+					
+					array_push($action_bill_count, count(array_unique($billez_code_list)));
+				} else {
+					array_push($action_bill_count, 0);
 				}
-					
-				array_push($action_bill_count, count(array_unique($billez_code_list)));
 			}
 
 			foreach ($entity_log_list as $entity_logs) {
-				
-				foreach ($entity_logs as $entity_log) {
-					if($isfitst) {
-						$html1 = $html1 . '<p> ' . $entity_log["trader"] . ' ' . $entity_log["bill_kind"]; 
-						$isfitst = false;
-					}
-		
-					$entity_bill_num = $entity_bill_num + $entity_log["bill_count"];
-								
+				if(count($entity_logs)) {
+					$entity_bill_num = '';
 					
+					foreach ($entity_logs as $entity_log) {
+						$entity_bill_num += $entity_log["bill_count"];
+					}
+					
+					array_push($entity_bill_count, $entity_bill_num);
+				} else {
+					array_push($entity_bill_count, 0);
 				}
-				
-				$action_bill_num = $action_bill_num + $action_bill_count[$i];
-				$i++;
-				$html1 = $html1 . ' 實體帳單數量為 : ' . $entity_bill_num . ' 行動帳單數量為 : ' . $action_bill_num . '</p>';
 			}
-				
+			
+			for($i = 0; $i < $trader_bill_count; $i++) {
+				$html1 = $html1 . '<p> ' . $trader_bill_list[$i]["trader"] . ' ' . $trader_bill_list[$i]["bill_kind"];
+				$html1 = $html1 . ' 實體帳單數量為 : ' . $entity_bill_count[$i] . ' 行動帳單數量為 : ' . $action_bill_count[$i] . '</p>';
+			}
+			
+			$entity_bill_num = 0;
+			$action_bill_num = 0;
+			
+			foreach($entity_bill_count as $num)	$entity_bill_num += $num;
+			foreach($action_bill_count as $num)	$action_bill_num += $num;
+			
 			$pay = $entity_bill_num * $price_data["entity_price"] + $action_bill_num * $price_data["action_price"];
 				
 			$html1 = $html1 . '<p>總計費用 : <span style="color:red">' . $pay . '</span></p>';
@@ -120,8 +128,18 @@ class Machinery_model extends CI_Model {
 		
 		$html1 = $html1 . '<p>寄送記錄 : </p>';
 		$html1 = $html1 . '<p>(一)實體帳單 : </p>';
+		$entity_log = 0;
+		$action_log = 0;
 		
-		if(count($entity_log_list) == 0) {
+		foreach($entity_log_list as $entity) {
+			if(count($entity) == 0) $entity_log++;
+		}
+		
+		foreach($push_log_list as $action) {
+			if(count($action) == 0) $action_log++;
+		}
+		
+		if(count($entity_log_list) == $entity_log) {
 			$html1 = $html1 . '<p>無記錄!!</p>';
 		} else {
 			$html1 = $html1 . '<table border="1" cellpadding="2">
@@ -147,7 +165,7 @@ class Machinery_model extends CI_Model {
 		
 		$html1 = $html1 . '<p>(二)行動帳單 : </p>';
 		
-		if(count($push_log_list) == 0) {
+		if(count($push_log_list) == $action_log) {
 			$html1 = $html1 . '<p>無記錄!!</p>';
 		} else {
 			$html1 = $html1 . '<table border="1" cellpadding="2">
@@ -175,7 +193,7 @@ class Machinery_model extends CI_Model {
 		
 		$pdf->writeHTML($html1, true, false, false, false, '');
 		
-		$pdf->Output('example_001.pdf', 'I');
+		$pdf->Output('machinery_report.pdf', 'I');
 	}
 	
 	/*

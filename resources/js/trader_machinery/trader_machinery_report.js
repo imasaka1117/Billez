@@ -45,7 +45,7 @@ function export_data() {
 function init() {
 	begin_end('begin_year', 'begin_month');
 	begin_end('end_year', 'end_month');
-	
+
 	if(class_name == 'trader') {
 		select_ajax(ajax_path + 'common/init_trader', 'trader', '');
 	} else {

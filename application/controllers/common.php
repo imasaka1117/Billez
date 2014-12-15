@@ -529,6 +529,20 @@ class Common extends CI_Controller {
 	}
 	
 	/*
+	 * 將業者合約初始化
+	*/
+	public function init_trader_contract() {
+		//查詢業者編號及業者名稱
+		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id . ' AS code', Field_1::$name), 'function'),
+																		 'from' => Table_1::$trader_contract,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$trader_code), array($this->input->post('value')), array('')),
+																		 'other' => '')), 'result_array');
+		$data['ajax'] = $this->option->select($sql_result, '');
+		$this->load->view('web/ajax', $data);
+	}
+	
+	/*
 	 * 將業者名稱初始化
 	 */
 	public function init_trader() {
