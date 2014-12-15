@@ -5,91 +5,68 @@ $(document).ready(function() {
 	init();
 	
 	$("#export_btn").click(function() {
-		$("#export_list option").attr("selected", "selected");
 		if(validate()) export_data();
 	});	
 	
-	$("input:button").click(function() {
+	$("select").change(function() {
 		switch ($(this).attr('id')) {
-			case 'all_e':
-				$("#list").find("option").each(function() { 
-				    $("#export_list").append($("<option></option>").attr("value", this.value).text(this.text));
-				}); 
-				$("#list option").remove();
+			case 'begin_month':
+			case 'end_month':
+				days(this);
 				break;
-			case 'single_e':
-				$("#list").find(":selected").each(function() { 
-				    $("#export_list").append($("<option></option>").attr("value", this.value).text(this.text));
-				    $("#list").find(":selected").remove();
-				}); 
+			case 'machinery':
+				$('#machinery_contract').empty().append(select_ajax(ajax_path + 'common/init_machinery_contract', 'machinery_contract', $('#machinery').val()));
 				break;
-			case 'all_b':
-				$("#export_list").find("option").each(function() { 
-				    $("#list").append($("<option></option>").attr("value", this.value).text(this.text));
-				}); 
-				$("#export_list option").remove();
-				break;
-			case 'single_b':
-				$("#export_list").find(":selected").each(function() { 
-				    $("#list").append($("<option></option>").attr("value", this.value).text(this.text));
-				    $("#export_list").find(":selected").remove();
-				}); 
-				break;
-			case 'export_btn':
-				if(!check_input_not_blank("format")) return false;
-				$("#export_list option").attr("selected", "selected");
-				if($("#export_list").val() == null) {
-					alert("* 號欄位請勿空白 ! ");
-					return false;
-				}
+			case 'trader':
+				$('#trader_contract').empty().append(select_ajax(ajax_path + 'common/init_trader_contract', 'trader_contract', $('#trader').val()));
 				break;
 		}
 	});
 	
-	$("input:radio").click(function() {
-		$('#export_list').empty();
-		$('#export_table').show();
-		
-		var list_text = '業者名單 : ';
-		var export_list_text = '*要匯出的業者名單 : ';
-		var list_text2 = '業者合約名單 : ';
-		var export_list_text2 = '*要匯出的業者合約名單 : ';
-		var common = 'init_trader_list';
-		var common2 = 'init_trader_contract_list';
-		
-		if(class_name == 'machinery') {
-			list_text = '代收機構名單 : ';
-			export_list_text = '*要匯出的代收機構名單 : ';
-			list_text2 = '代收機構合約名單 : ';
-			export_list_text2 = '*要匯出的代收機構合約名單 : ';
-			common = 'init_machinery_list';
-			common2 = 'init_machinery_contract_list';
-		}
-		
-		switch(this.value) {
-			case 'data':
-				$('#list_text').text(list_text);
-				$('#export_list_text').text(export_list_text);
-				select_ajax(ajax_path + 'common/' + common, 'list', '');
-				break;
-			case 'contract':
-				$('#list_text').text(list_text2);
-				$('#export_list_text').text(export_list_text2);
-				select_ajax(ajax_path + 'common/' + common2, 'list', '');
-				break;
-		}
-	});
 });
              
+//將日期重製
+function days(month) {
+	$('#' + month.id.replace('_month', '') + '_day').empty().append(option_days(month.value));
+}
+
 //匯出資料
 function export_data() {
-	var data = set_ajax(new Array('export_list'));
-	data['kind'] = $('input[name=kind]:checked').val();
-	export_ajax(ajax_path + class_name + '/export', data, 'post');
+	if(!date_compare()) return false;
+	if(class_name == 'trader') {
+		var data = set_ajax(new Array('trader', 'trader_contract', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day'));
+	} else {
+		var data = set_ajax(new Array('machinery', 'machinery_contract', 'begin_year', 'begin_month', 'begin_day', 'end_year', 'end_month', 'end_day'));
+	}
+	export_ajax(ajax_path + class_name + '/report', data, 'post');
 }
 
 //初始化
 function init() {
-	$('#export_table').hide();
+	begin_end('begin_year', 'begin_month');
+	begin_end('end_year', 'end_month');
 	
+	if(class_name == 'trader') {
+		select_ajax(ajax_path + 'common/init_trader', 'trader', '');
+	} else {
+		select_ajax(ajax_path + 'common/init_machinery', 'machinery', '');
+	}
+}
+
+function begin_end(year, month) {
+	$('#' + year).empty().append(option_years());
+	$('#' + month).empty().append(option_months());
+}
+
+//比較合約日期的大小
+function date_compare() {
+	var begin = $('#begin_year').val() + '/' + $('#begin_month').val() + '/' + $('#begin_day').val();
+	var end = $('#end_year').val() + '/' + $('#end_month').val() + '/' + $('#end_day').val();
+	
+	if(Date.parse(begin) > Date.parse(end)) {
+		alert('開始日期大於結束日期');
+		return false;
+	}
+	
+	return true;
 }

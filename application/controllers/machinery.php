@@ -31,7 +31,7 @@ class Machinery extends CI_Controller {
 	 * 匯出代收機構資料報表頁面
 	*/
 	public function report_web() {
-		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
+		$data = $this->param->resources(array('date_js'=>Param::$date_js, 'validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
 		$data['now_use'] = 'trader_machinery/trader_machinery_report.js';
 		$data['class_name'] = 'machinery';
 		$this->load->view('templates/header', $data);

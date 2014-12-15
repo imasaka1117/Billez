@@ -56,7 +56,7 @@ function check_ajax(controllers, params, result) {
  */
 function select_ajax(controllers, id, value) {
 	$.post(controllers, $.param({ 'value' : value }), function(ajax_return) {
-		alert(ajax_return);
+//		alert(ajax_return);
 		$("#" + id + "").empty().append(ajax_return);
 	});
 }

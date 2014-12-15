@@ -65,6 +65,8 @@ class Route_model extends CI_Model {
 		//組合APP給的公鑰
 		$app_public_key = $this->key->merge_key($public_key);
 		
+		if($mobile_phone_id == '') return $this->json->encode_json('vale', $this->key->encode_app($this->json->encode_json($first . '_1', $first . '_102'), $app_public_key, 'public'));
+		
 		//查詢手機ID是否存在,若存在則更新金鑰組,不存在則新增一個手機ID及金鑰組
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone_id), ''),
 																		 'from' => Table_1::$moblie_phone_id_and_key,
@@ -190,6 +192,9 @@ class Route_model extends CI_Model {
 	 * $mobile_phone_id 手機ID
 	 */
 	private function clear_temp_return($mobile_phone_id) {
+		//先清除之前的sql語法
+		$this->sql->clear_static();
+		
 		//先查詢該手機ID金鑰資料是否存在
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$mobile_phone_id), ''),
 																		 'from' => Table_1::$moblie_phone_id_and_key,

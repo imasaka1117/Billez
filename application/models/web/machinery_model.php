@@ -6,27 +6,49 @@ class Machinery_model extends CI_Model {
 	 * $post 參數資料
 	 */
 	public function report($post) {
-// 		require "resources/api/tcpdf/tcpdf.php";
+		require "resources/api/tcpdf/tcpdf.php";
 		
-		$trader_bill_list = search_trader_bill($_POST["machinery"], $_POST["contract"]);
+		//查詢該代收機構合約下的業者帳單
+		$trader_bill_list = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$trader_code, Field_1::$bill_kind_code), ''),
+																			   'from' => Table_1::$trader_machinery,
+																			   'join'=> '',
+																			   'where' => $this->sql->where(array('where', 'where'), array(Field_2::$machinery_code, Field_4::$machinery_contract), array($post['machinery'], $post['machinery_contract']), array('', '')),
+																			   'other' => '')), 'result_array');
+		//查詢該代收機構合約價格
+		$price_data = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$bill_cost_kind, Field_4::$month_rent_price, Field_2::$entity_price, Field_2::$action_price), ''),
+																		 'from' => Table_1::$machinery_contract,
+																		 'join'=> '',
+																		 'where' => $this->sql->where(array('where'), array(Field_1::$id), array($post['machinery_contract']), array('')),
+																		 'other' => '')), 'row_array');
+		//查詢代收機構及合約名稱
+		$machinery = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Table_1::$machinery_code . '.' . Field_1::$name . ' AS machinery', Table_1::$machinery_contract . '.' . Field_1::$name . ' AS machinery_contract'), 'function'), 
+																	    'from' => Table_1::$machinery_contract, 
+																	    'join'=> $this->sql->join(array(Table_1::$machinery_code), array(Table_1::$machinery_contract . '.' . Field_2::$machinery_code . ' = ' . Table_1::$machinery_code . '.' . Field_1::$code), array('')), 
+																	    'where' => $this->sql->where(array('where'), array(Field_1::$id), array($post['machinery_contract']), array('')), 
+																	    'other' => '')), 'row_array');
+		$begin_date = $post['begin_year'] . '/' . $post['begin_month'] . '/' . $post['begin_day'];
+		$end_date = $post['end_year'] . '/' . $post['end_month'] . '/' . $post['end_day'];
 		
-		$price_data = search_machinery_price_kind($_POST["contract"]);
-		
-		$begin_date = $_POST["begin_year"] . "/" . $_POST["begin_month"] . "/" . $_POST["begin_day"];
-		$end_date 	= $_POST["end_year"] . "/" . $_POST["end_month"] . "/" . $_POST["end_day"];
-		$end_date2 	= $_POST["end_year"] . "/" . $_POST["end_month"] . "/" . $_POST["end_day"];
 		$entity_log_list = array();
 		$push_log_list = array();
-		$machinery_name = search_machinery_code_name($_POST["machinery"]);
-		$machinery_contract_name = search_machinery_contract_name($_POST["contract"]);
-		
-		if($begin_date == $end_date) {
-			$end_date = $end_date . " 23:59:59";
-		}
-		
-		foreach ($trader_bill_list as $trader_bill) {
-			array_push($entity_log_list, search_entity_log($trader_bill["trader_code"], $trader_bill["bill_kind_code"], $begin_date, $end_date));
-			array_push($push_log_list, search_action_bill_log($trader_bill["trader_code"], $trader_bill["bill_kind_code"], $begin_date, $end_date));
+
+		//查詢實體帳單及推播行動帳單紀錄
+		foreach($trader_bill_list as $trader_bill) {
+			//查詢實體帳單紀錄
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_2::$send_time, Table_1::$trader_code . '.' . Field_1::$name . ' AS trader', Table_1::$bill_kind_code . '.' . Field_1::$name . ' AS bill_kind', Field_2::$file_name, Field_2::$bill_count, Field_2::$print_trader_email), 'function'),
+																			 'from' => Table_1::$entity_bill_log,
+																			 'join'=> $this->sql->join(array(Table_1::$trader_code, Table_1::$bill_kind_code), array(Table_1::$entity_bill_log . '.' . Field_1::$trader_code . ' = ' . Table_1::$trader_code . '.' . Field_1::$code, Table_1::$entity_bill_log . '.' . Field_1::$bill_kind_code . ' = ' . Table_1::$bill_kind_code . '.' . Field_1::$code), array('', '')),
+																			 'where' => $this->sql->where(array('where', 'where', 'where', 'where', 'where'), array(Field_1::$trader_code, Field_1::$bill_kind_code, Field_2::$send_result, 'DATE(' . Field_2::$send_time . ') >=', 'DATE(' . Field_2::$send_time . ') <='), array($trader_bill['trader_code'], $trader_bill['bill_kind_code'], 1, $begin_date, $end_date), array('', '', '', '', '')),
+																			 'other' => '')), 'result_array');
+			array_push($entity_log_list, $sql_result);
+	
+			//查詢行動帳單紀錄
+			$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$last_name, Field_1::$first_name, Field_1::$mobile_phone, Field_1::$billez_code, Field_2::$time), ''),
+																			 'from' => Table_1::$push_state,
+																			 'join'=> $this->sql->join(array(Table_1::$action_member), array(Table_1::$push_state . '.' . Field_1::$id . ' = ' . Table_1::$action_member . '.' . Field_1::$id), array('')),
+																			 'where' => $this->sql->where(array('like', 'where', 'where', 'where'), array(Field_1::$billez_code, Field_1::$read, 'DATE(' . Field_2::$time . ') >=', 'DATE(' . Field_2::$time . ') <='), array($trader_bill['trader_code'] . $trader_bill['bill_kind_code'], 'y', $begin_date, $end_date), array('after', '', '', '')),
+																			 'other' => '')), 'result_array');
+			array_push($push_log_list, $sql_result);
 		}
 		
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -34,13 +56,13 @@ class Machinery_model extends CI_Model {
 		$pdf->SetFont('msungstdlight','',10);
 		$pdf->AddPage();
 		
-		$html1 = '<p><span style="color:red">' . $machinery_name . ' ' . $machinery_contract_name . '</span> 費用報表</p>';
-		$html1 = $html1 . '<p>查詢範圍 : <span style="color:red">' . $begin_date . '</span> ~ <span style="color:red">' . $end_date2 . '</span></p>';
+		$html1 = '<p><span style="color:red">' . $machinery['machinery'] . ' ' . $machinery['machinery_contract'] . '</span> 費用報表</p>';
+		$html1 = $html1 . '<p>查詢範圍 : <span style="color:red">' . $begin_date . '</span> ~ <span style="color:red">' . $end_date . '</span></p>';
 		
-		if($price_data["bill_cost_kind"] == "rent") {
-			$year  = $_POST["end_year"] - $_POST["begin_year"];
-			$month = $_POST["end_month"] - $_POST["begin_month"];
-			$day = $_POST["end_day"] - $_POST["begin_day"];
+		if($price_data["bill_cost_kind"] == "1") {
+			$year  = $post["end_year"] - $post["begin_year"];
+			$month = $post["end_month"] - $post["begin_month"];
+			$day = $post["end_day"] - $post["begin_day"];
 		
 			if($year <= 0) {
 				$pay = $month * $price_data["month_rent_price"];
@@ -61,6 +83,7 @@ class Machinery_model extends CI_Model {
 			$billez_code_list = array();
 			$action_bill_count = array();
 			$i = 0;
+			$isfitst = true;
 		
 			foreach ($push_log_list as $push_logs) {
 				$billez_code_list = array();
@@ -71,15 +94,23 @@ class Machinery_model extends CI_Model {
 					
 				array_push($action_bill_count, count(array_unique($billez_code_list)));
 			}
-				
+
 			foreach ($entity_log_list as $entity_logs) {
+				
 				foreach ($entity_logs as $entity_log) {
-					$html1 = $html1 . '<p> ' . $entity_log["trader_name"] . ' ' . $entity_log["bill_kind_name"] . ' 實體帳單數量為 : ' . $entity_log["bill_count"] . ' 行動帳單數量為 : ' . $action_bill_count[$i] . '</p>';
+					if($isfitst) {
+						$html1 = $html1 . '<p> ' . $entity_log["trader"] . ' ' . $entity_log["bill_kind"]; 
+						$isfitst = false;
+					}
 		
 					$entity_bill_num = $entity_bill_num + $entity_log["bill_count"];
-					$action_bill_num = $action_bill_num + $action_bill_count[$i];
-					$i++;
+								
+					
 				}
+				
+				$action_bill_num = $action_bill_num + $action_bill_count[$i];
+				$i++;
+				$html1 = $html1 . ' 實體帳單數量為 : ' . $entity_bill_num . ' 行動帳單數量為 : ' . $action_bill_num . '</p>';
 			}
 				
 			$pay = $entity_bill_num * $price_data["entity_price"] + $action_bill_num * $price_data["action_price"];
@@ -134,7 +165,7 @@ class Machinery_model extends CI_Model {
 										<td>' . $push_log["time"] . '</td>
 										<td>' . $push_log["last_name"] . '</td>
 										<td>' . $push_log["first_name"] . '</td>
-										<td>' . $push_log["monile_phone"] . '</td>
+										<td>' . $push_log["mobile_phone"] . '</td>
 										<td>' . $push_log["billez_code"] . '</td>
 									</tr>';
 				}

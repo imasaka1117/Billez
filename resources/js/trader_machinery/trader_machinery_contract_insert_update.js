@@ -121,7 +121,6 @@ function begin_end(year, month) {
 //帶入資料
 function init_update() {
 	data = update_ajax(ajax_path + class_name + '/search_contract_data', id);
-	alert(data);
 	data_parse(data);
 	data_parse2(data);
 	data_parse3(data);

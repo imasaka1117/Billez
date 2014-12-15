@@ -16,9 +16,25 @@ class Login_model extends CI_Model {
 		
 		//設置session
 		session_start();
-		$_SESSION['user'] = array('id'=>$sql_result['id'], 
-								  'name'=>$sql_result['name'], 
-								  'kind'=>$sql_result['kind']);
+		
+		$_SESSION['user'] = array('id'=>$sql_result['id'],
+				'name'=>$sql_result['name'],
+				'kind'=>$sql_result['kind']);
+		
+		$sql_result2 = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array('*'), ''),
+																		   'from' => Table_1::$function_authority,
+																		   'join'=> '',
+																		   'where' => $this->sql->where(array('where'),
+																			 		                    array(Field_1::$id),
+																					                    array($_SESSION['user']['id']),
+																					                    array('')),
+																		   'other' => '')),
+																		   'row_array');
+		
+		
+		$_SESSION['user']['function_authority']=$sql_result2;
+		
+		
 		return 'home/ma';
 	}
 }//end
