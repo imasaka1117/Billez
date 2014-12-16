@@ -1,5 +1,5 @@
 /**
- * 更改等級
+ * 更改等級名稱
  */
 $(document).ready(function() {
 	init();
@@ -15,7 +15,7 @@ function update() {
 	var path = check_ajax(ajax_path + class_name + '/update', 
 						  new Array('id', 'name'), 
 						  new Array('更改成功', '已有相同等級名稱存在！！', '伺服器忙碌中！！請在試一次'));
-	if(path !== '') location.href = ajax_path + class_name + '/search_web'; 
+	if(path !== '') location.reload(); 
 }
 
 //初始化
