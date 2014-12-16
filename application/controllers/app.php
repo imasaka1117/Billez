@@ -97,11 +97,7 @@ class App extends CI_Controller {
 		if($route_data['control_param'] != 0) {
 			$data['response'] = $this->$function[$route_data['control_param']]->index($route_data);
 			$this->route_model->insert_temp_return($data['response'], $route_data);
-		}
-
-// 		if(!isset($_REQUEST['retry'])) {
-// 			sleep(20);
-// 		}
+		}		
 		
 		//將要回應給APP的結果載入view輸出
 		$this->load->view('app/response.php', $data);

@@ -18,7 +18,6 @@ class Table_1 {
 	static public $entity_bill_log = 'entity_bill_log';
 	static public $import_error_log = 'import_error_log';
 	static public $key = 'key';
-	static public $level_kind = 'level_kind';
 	static public $level = 'level';
 	static public $machinery_code = 'machinery_code';
 	static public $machinery_contract = 'machinery_contract';

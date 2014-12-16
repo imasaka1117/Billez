@@ -24,10 +24,6 @@ var class_name = '<?=$class_name ?>';
 				<td><span id="id" style="color:red"></span></td>	
 			</tr>
 			<tr>
-				<td>等級對象 : </td>	
-				<td><span id="object" style="color:red"></span></td>	
-			</tr>
-			<tr>
 				<td>等級名稱 : </td>	
 				<td><input type="text" id="name" class="required"/></td>	
 			</tr>

@@ -174,7 +174,7 @@ class User_model extends CI_Model {
 	 */
 	public function update($post, $user) {
 
-		//查詢使用者名稱
+		//查詢使用者電子郵件
 		$sql_result = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id), ''),
 																		 'from' => Table_1::$user_list,
 																		 'join'=> '',
@@ -187,9 +187,9 @@ class User_model extends CI_Model {
 		if($sql_result) return 1;
 		//更新使用者資料
 					 $this->sql->add_static(array('table'=> Table_1::$user_list,
-												   'select'=> $this->sql->field(array(Field_1::$name, Field_1::$password, Field_1::$email, Field_2::$kind, 
+												   'select'=> $this->sql->field(array(Field_1::$name, Field_1::$email, Field_2::$kind, 
 																					   Field_1::$update_user, Field_1::$update_time),
-																				 array($post['name'], $post['password'], $post['email'], $post['kind'],
+																				 array($post['name'], $post['email'], $post['kind'],
 																				 		$user['id'], $this->sql->get_time(1))),
 													'where'=> $this->sql->where(array('where'), 
 																				array(Field_1::$id), 
@@ -232,8 +232,6 @@ class User_model extends CI_Model {
 				case 'name':
 					break;
 				case 'email':
-					break;
-				case 'password':
 					break;
 				case 'kind':
 					break;
@@ -375,7 +373,6 @@ class User_model extends CI_Model {
 	public function search_data($post) {
 		$sql_result1 = $this->sql->result($this->query_model->query(array('select' => $this->sql->select(array(Field_1::$id,
 																											   Field_1::$name,
-																											   Field_1::$password,
 																											   Field_1::$email,
 																											   Field_2::$kind) , 
 																											   ''),

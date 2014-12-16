@@ -50,7 +50,7 @@ function insert() {
 	function_authority_array.push('kind');
 
 	var path = check_ajax(ajax_path + 'user/insert', function_authority_array, 
-						  new Array('新增成功', '使用者已存在！！', '伺服器忙碌中！！請在試一次'));
+						  new Array('新增成功', '使用者電子郵件已存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path != '') location.reload(); 
 }
 

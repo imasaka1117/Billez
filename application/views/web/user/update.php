@@ -20,16 +20,12 @@ var class_name = '<?=$class_name ?>';
 		<h4 id="tip_h4" style="color:red">* 號為必填</h4>
 		<table cellpadding="10">
 			<tr>
-				<td>*使用者編號 : </td>
+				<td>使用者編號 : </td>
 				<td><span id="id" style="color: red"><?=$id ?></span></td>
 			</tr>
 			<tr>
 				<td>*名稱 : </td>
 				<td><input type="text" id="name" class="word,required"/></td>
-			</tr>
-			<tr>
-				<td>*密碼 : </td>
-				<td><input type="text" id="password" class="word,required"/></td>
 			</tr>
 			<tr>
 				<td>*電子郵件 : </td>
@@ -49,156 +45,97 @@ var class_name = '<?=$class_name ?>';
 			</tr>
 			<tr>
 				<td>權限選擇:</td>
+				<td><input name="selectAll" id="selectAll" type="button" value="全選"/>
+					<input name="cancelAll" id="cancelAll" type="button" value="全刪除"/></td>
 			</tr>
 			<tr>
-				<td></td>
-			<td>
-			<input name="selectAll" id="selectAll" type="button" value="全選"/>
-			<input name="cancelAll" id="cancelAll" type="button" value="全刪除"/>
-			</td>
+				<th>業者</th>
+				<td><input type="checkbox" name="function_authority" id="insert_trader" value="y" />新增業者<br />
+					<input type="checkbox" name="function_authority" id="insert_trader_contract" value="y" />新增業者合約<br />
+					<input type="checkbox" name="function_authority" id="search_trader" value="y" />查詢業者<br />
+					<input type="checkbox" name="function_authority" id="search_trader_contract" value="y" />查詢業者合約<br />
+					<input type="checkbox" name="function_authority" id="export_trader" value="y" />匯出業者<br />
+					<input type="checkbox" name="function_authority" id="export_trader_report" value="y" />匯出業者報表</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_trader" value="y" />新增業者
-					<input type="checkbox" name="function_authority" id="insert_trader_contract" value="y" />新增業者合約
-					<input type="checkbox" name="function_authority" id="search_trader" value="y" />查詢業者
-				</td>
+				<th>代收機構</th>
+				<td><input type="checkbox" name="function_authority" id="insert_machinery" value="y"/>新增代收機構<br />
+					<input type="checkbox" name="function_authority" id="insert_machinery_contract" value="y" />新增代收機構合約<br />
+					<input type="checkbox" name="function_authority" id="search_machinery" value="y" />查詢代收機構<br />
+					<input type="checkbox" name="function_authority" id="search_machinery_contract" value="y"/>查詢代收機構合約<br />
+					<input type="checkbox" name="function_authority" id="export_machinery" value="y"/>匯出代收機構<br />
+					<input type="checkbox" name="function_authority" id="export_machinery_report" value="y"/>匯出代收機構報表</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="search_trader_contract" value="y" />查詢業者合約
-					<input type="checkbox" name="function_authority" id="export_trader" value="y" />匯出業者
-					<input type="checkbox" name="function_authority" id="export_trader_report" value="y" />匯出業者報表
-				</td>
+				<th>帳單</th>
+				<td><input type="checkbox" name="function_authority" id="insert_bill_kind" value="y"/>新增帳單種類<br />
+					<input type="checkbox" name="function_authority" id="insert_bill_basis" value="y"/>新增帳單依據<br />
+					<input type="checkbox" name="function_authority" id="search_bill" value="y"/>查詢帳單<br />
+					<input type="checkbox" name="function_authority" id="insert_pay_bill_set" value="y"/>新增繳費單格式<br />
+					<input type="checkbox" name="function_authority" id="insert_receive_bill_set" value="y"/>新增入帳單格式<br />
+					<input type="checkbox" name="function_authority" id="update_pay_bill_set" value="y"/>修改繳費單格式<br />
+					<input type="checkbox" name="function_authority" id="update_receive_bill_set" value="y"/>修改入帳單格式<br />
+					<input type="checkbox" name="function_authority" id="insert_customer_pay_bill_set" value="y"/>新增客製繳費格式<br />
+					<input type="checkbox" name="function_authority" id="update_customer_pay_bill_set" value="y"/>修改客製繳費格式<br />
+					<input type="checkbox" name="function_authority" id="import_pay_bill" value="y"/>匯入繳費帳單<br />
+					<input type="checkbox" name="function_authority" id="import_receive_bill" value="y"/>匯入入賬帳單<br />
+					<input type="checkbox" name="function_authority" id="push_bill" value="y"/>推播帳單</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_machinery" value="y"/>新增代收機構
-					<input type="checkbox" name="function_authority" id="insert_machinery_contract" value="y" />新增代收機構合約
-					<input type="checkbox" name="function_authority" id="search_machinery" value="y" />查詢代收機構
-				</td>
+				<th>訂閱</th>
+				<td><input type="checkbox" name="function_authority" id="search_subscribe" value="y"/>查詢訂閱<br />
+					<input type="checkbox" name="function_authority" id="update_trader_subscribe_state" value="y"/>業者訂閱狀態更改<br />
+					<input type="checkbox" name="function_authority" id="update_trader_machinery" value="y"/>業者代收機構更改</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="search_machinery_contract" value="y"/>查詢代收機構合約
-					<input type="checkbox" name="function_authority" id="export_machinery" value="y"/>匯出代收機構
-					<input type="checkbox" name="function_authority" id="export_machinery_report" value="y"/>匯出代收機構報表
-				</td>
+				<th>行動會員</th>
+				<td><input type="checkbox" name="function_authority" id="search_action_member" value="y"/>查詢行動會員<br />
+					<input type="checkbox" name="function_authority" id="export_action_member" value="y"/>匯出行動會員</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_bill_kind" value="y"/>新增帳單種類
-					<input type="checkbox" name="function_authority" id="insert_bill_basis" value="y"/>新增帳單依據
-					<input type="checkbox" name="function_authority" id="search_bill" value="y"/>查詢帳單
-				</td>
+				<th>一般會員</th>
+				<td><input type="checkbox" name="function_authority" id="search_normal_member" value="y"/>查詢一般會員</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_pay_bill_set" value="y"/>新增繳費單格式
-					<input type="checkbox" name="function_authority" id="insert_receive_bill_set" value="y"/>新增入帳單格式
-					<input type="checkbox" name="function_authority" id="update_pay_bill_set" value="y"/>修改繳費單格式
-				</td>
+				<th>等級</th>
+				<td><input type="checkbox" name="function_authority" id="insert_level" value="y"/>新增等級<br />
+					<input type="checkbox" name="function_authority" id="search_level" value="y"/>查詢等級</td>
+				
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="update_receive_bill_set" value="y"/>修改入帳單格式
-					<input type="checkbox" name="function_authority" id="insert_customer_pay_bill_set" value="y"/>新增客製繳費格式
-					<input type="checkbox" name="function_authority" id="update_customer_pay_bill_set" value="y"/>修改客製繳費格式
-				</td>
+				<th>促銷優惠</th>
+				<td><input type="checkbox" name="function_authority" id="insert_promotion" value="y"/>新增促銷優惠<br />
+					<input type="checkbox" name="function_authority" id="search_promotion" value="y"/>查詢促銷優惠<br />
+					<input type="checkbox" name="function_authority" id="send_promotion_email" value="y"/>寄發電子報</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="import_pay_bill" value="y"/>匯入繳費帳單
-					<input type="checkbox" name="function_authority" id="import_receive_bill" value="y"/>匯入入賬帳單
-					<input type="checkbox" name="function_authority" id="push_bill" value="y"/>推播帳單
-				</td>
+				<th>問題記錄</th>
+				<td><input type="checkbox" name="function_authority" id="insert_problem" value="y"/>新增問題<br />
+					<input type="checkbox" name="function_authority" id="search_problem" value="y"/>查詢問題</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="search_subscribe" value="y"/>查詢訂閱
-					<input type="checkbox" name="function_authority" id="update_trader_subscribe_state" value="y"/>業者訂閱狀態更改
-					<input type="checkbox" name="function_authority" id="update_trader_machinery" value="y"/>業者代收機構更改
-				</td>
+				<th>錯誤記錄</th>
+				<td><input type="checkbox" name="function_authority" id="bill_import_error" value="y"/>帳單匯入錯誤<br />
+					<input type="checkbox" name="function_authority" id="push_error" value="y"/>推播錯誤<br />
+					<input type="checkbox" name="function_authority" id="sms_error" value="y"/>簡訊錯誤<br />
+					<input type="checkbox" name="function_authority" id="email_error" value="y"/>電子郵件錯誤<br />
+					<input type="checkbox" name="function_authority" id="system_error" value="y"/>系統錯誤</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="search_action_member" value="y"/>查詢行動會員
-					<input type="checkbox" name="function_authority" id="export_action_member" value="y"/>匯出行動會員
-					<input type="checkbox" name="function_authority" id="search_normal_member" value="y"/>查詢一般會員
-				</td>
+				<th>操作設定</th>
+				<td><input type="checkbox" name="function_authority" id="search_operator" value="y"/>查詢操作<br />
+					<input type="checkbox" name="function_authority" id="insert_system_set" value="y"/>新增系統設定<br />
+					<input type="checkbox" name="function_authority" id="search_system_set" value="y"/>查詢系統設定<br />
+					<input type="checkbox" name="function_authority" id="scheduling_set" value="y"/>排程設定<br />
+					<input type="checkbox" name="function_authority" id="insert_email_set" value="y"/>新增電子郵件設定<br />
+					<input type="checkbox" name="function_authority" id="search_email_set" value="y"/>查詢電子郵件設定<br />
+					<input type="checkbox" name="function_authority" id="insert_sms_set" value="y"/>新增簡訊設定<br />
+					<input type="checkbox" name="function_authority" id="search_sms_set" value="y"/>檢查簡訊設定</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_level_object" value="y"/>新增等級對象
-					<input type="checkbox" name="function_authority" id="insert_level_name" value="y"/>新增等級名稱
-					<input type="checkbox" name="function_authority" id="search_level" value="y"/>查詢等級
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_promotion" value="y"/>新增促銷優惠
-					<input type="checkbox" name="function_authority" id="search_promotion" value="y"/>查詢促銷優惠
-					<input type="checkbox" name="function_authority" id="send_promotion_email" value="y"/>寄發電子報
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_problem" value="y"/>新增問題
-					<input type="checkbox" name="function_authority" id="search_problem" value="y"/>查詢問題
-					<input type="checkbox" name="function_authority" id="bill_import_error" value="y"/>帳單匯入錯誤
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="push_error" value="y"/>推播錯誤
-					<input type="checkbox" name="function_authority" id="sms_error" value="y"/>簡訊錯誤
-					<input type="checkbox" name="function_authority" id="email_error" value="y"/>電子郵件錯誤
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="system_error" value="y"/>系統錯誤
-					<input type="checkbox" name="function_authority" id="search_operator" value="y"/>查詢操作
-					<input type="checkbox" name="function_authority" id="insert_system_set" value="y"/>新增系統設定
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="search_system_set" value="y"/>查詢系統設定
-					<input type="checkbox" name="function_authority" id="scheduling_set" value="y"/>排程設定
-					<input type="checkbox" name="function_authority" id="search_user" value="y"/>查詢使用者
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_user" value="y"/>新增使用者
-					<input type="checkbox" name="function_authority" id="insert_email_set" value="y"/>新增電子郵件設定
-					<input type="checkbox" name="function_authority" id="search_email_set" value="y"/>查詢電子郵件設定
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" name="function_authority" id="insert_sms_set" value="y"/>新增簡訊設定
-					<input type="checkbox" name="function_authority" id="search_sms_set" value="y"/>檢查簡訊設定
-				</td>
+				<th>系統使用者</th>
+				<td><input type="checkbox" name="function_authority" id="search_user" value="y"/>查詢使用者<br />
+					<input type="checkbox" name="function_authority" id="insert_user" value="y"/>新增使用者</td>
 			</tr>
 		</table>
 		<input type="button" id="update_btn" value="更改" />&nbsp;<input type="button" value="返回" onclick="history.back()" />

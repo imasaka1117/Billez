@@ -2,6 +2,21 @@
 
 class Login_model extends CI_Model {
 	/*
+	 * 清除session 及回到登入頁面
+	 */
+	public function logout() {
+		//將session清除
+		session_start();
+		unset($_SESSION["user"]);
+		
+		$url = base_url() . Param::$index_url . 'login';
+		
+		//回到登入畫面
+		header("Location: " . $url);
+		exit();
+	}
+	
+	/*
 	 * 檢查登入者的帳號密碼是否正確
 	 * $post 帳號密碼資料
 	 */

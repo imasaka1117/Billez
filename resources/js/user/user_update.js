@@ -44,7 +44,6 @@ function update()
 	//合併所有資料
 	function_authority_array.push('id');
 	function_authority_array.push('email');
-	function_authority_array.push('password');
 	function_authority_array.push('name');
 	function_authority_array.push('kind');
 
@@ -52,7 +51,7 @@ function update()
 //更新使用者資料
 	var path = check_ajax(ajax_path + class_name + '/update', 
 			function_authority_array,
-						   new Array('更改成功', '已有相同名稱存在！！', '伺服器忙碌中！！請在試一次'));
+						   new Array('更改成功', '已有相同電子郵件存在！！', '伺服器忙碌中！！請在試一次'));
 	if(path !== '') location.href = ajax_path + path;  
 }
 
@@ -76,7 +75,6 @@ function data_in_web()
 	{
 		if(i == 'id') $('#' + i).val(data[i]);
 		if(i == 'name') $('#' + i).val(data[i]);
-		if(i == 'password') $('#' + i).val(data[i]);
 		if(i == 'email') $('#' + i).val(data[i]);
 		if(i == 'kind') $('#' + i).val(data[i]);
 		

@@ -16,9 +16,9 @@ var class_name = '<?=$class_name ?>';
 	<div id="content_div">
 		<p class="title_p">查詢等級</p>
 		<table cellpadding="10">
-			<tr>
-				<td>等級對象 : </td>	
-				<td><select id="object"></select></td>		
+			<tr>	
+				<td>等級編號 : </td>	
+				<td><input id="code" type="text"/></td>
 				<td>等級名稱 : </td>	
 				<td><input id="name" type="text"/></td>
 				<td><input id="search_btn" type="button" value="查詢" /></td>

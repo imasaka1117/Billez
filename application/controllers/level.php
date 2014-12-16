@@ -71,44 +71,22 @@ class Level extends CI_Controller {
 	/*
 	 * 新增等級名稱
 	 */
-	public function insert_name() {
+	public function insert() {
 		session_start();
 		$this->load->model('web/level_model');
 		$this->load->library('create');
-		$data['ajax'] = $this->level_model->insert_name($this->input->post(), $_SESSION['user']);
+		$data['ajax'] = $this->level_model->insert($this->input->post(), $_SESSION['user']);
 		$this->load->view('web/ajax', $data);
 	}
 	
 	/*
 	 * 新增等級名稱頁面
 	 */
-	public function insert_name_web() {
+	public function insert_web() {
 		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'level/level_name_insert.js';
+		$data['now_use'] = 'level/level_insert.js';
 		$data['class_name'] = 'level';
 		$this->load->view('templates/header', $data);
-		$this->load->view('web/level/insert_name', $data);
-	}
-	
-	/*
-	 * 新增等級對象
-	 */
-	public function insert_object() {
-		session_start();
-		$this->load->model('web/level_model');
-		$this->load->library('create');
-		$data['ajax'] = $this->level_model->insert_object($this->input->post(), $_SESSION['user']);
-		$this->load->view('web/ajax', $data);
-	}
-	
-	/*
-	 * 新增等級對象頁面
-	 */
-	public function insert_object_web() {
-		$data = $this->param->resources(array('validate_js'=>Param::$validate_js, 'base_css'=>Param::$base_css, 'js_path'=>Param::$js_path, 'jquery_js'=>Param::$jquery_js, 'function_js'=>Param::$function_js, 'index_url'=>Param::$index_url));
-		$data['now_use'] = 'level/level_object_insert.js';
-		$data['class_name'] = 'level';
-		$this->load->view('templates/header', $data);
-		$this->load->view('web/level/insert_object', $data);
+		$this->load->view('web/level/insert', $data);
 	}
 }//end

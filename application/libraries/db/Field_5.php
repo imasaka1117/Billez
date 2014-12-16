@@ -35,8 +35,7 @@ class Field_5 {
 	static public $search_action_member = 'search_action_member';	
 	static public $export_action_member = 'export_action_member';
 	static public $search_normal_member = 'search_normal_member';
-	static public $insert_level_object = 'insert_level_object';
-	static public $insert_level_name = 'insert_level_name';
+	static public $insert_level = 'insert_level';
 	static public $search_level = 'search_level';
 	static public $insert_promotion = 'insert_promotion';
 	static public $search_promotion = 'search_promotion';

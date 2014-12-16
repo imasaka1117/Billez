@@ -32,8 +32,7 @@
 						  'search_action_member'=>'action_member/search_web">查詢行動會員',
 						  'export_action_member'=>'action_member/export_web">匯出行動會員',
 						  'search_normal_member'=>'normal_member/search_web">查詢一般會員',
-						  'insert_level_object'=>'level/insert_object_web">新增等級對象',
-						  'insert_level_name'=>'level/insert_name_web">新增等級名稱',
+						  'insert_level'=>'level/insert_web">新增等級',
 					      'search_level'=>'level/search_web">查詢等級',
 						  'insert_promotion'=>'promo/insert_web">新增促銷優惠',
 						  'search_promotion'=>'promo/search_web">查詢促銷優惠',
@@ -311,8 +310,7 @@
 <!--  
 			<li><a href="#">等級</a>
 				<ul>
-					<li><a href="<?=$index_url ?>level/insert_object_web">新增等級對象</a></li>
-					<li><a href="<?=$index_url ?>level/insert_name_web">新增等級名稱</a></li>
+					<li><a href="<?=$index_url ?>level/insert_web">新增等級</a></li>
 					<li><a href="<?=$index_url ?>level/search_web">查詢等級</a></li>
 				</ul>
 			</li>
@@ -432,7 +430,7 @@
 				</ul>
 			</li>
 -->
-			<li><a href="<?=$index_url ?>" onclick="javascript : return confirm('確定要登出嗎?');">登出系統</a></li>
+			<li><a href="<?=$index_url ?>login/logout" onclick="javascript : return confirm('確定要登出嗎?');">登出系統</a></li>
 		</ul>
 	</div>
 </div>

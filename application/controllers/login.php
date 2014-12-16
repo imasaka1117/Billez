@@ -30,4 +30,12 @@ class Login extends CI_Controller {
 		$data['ajax'] = $this->login_model->login($this->input->post());
 		$this->load->view('web/ajax', $data);
 	}
+	
+	/*
+	 * 登出清除session資料
+	*/
+	public function logout() {
+		$this->load->model('web/login_model');
+		$this->login_model->logout();
+	}
 }//end
